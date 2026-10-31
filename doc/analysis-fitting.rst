@@ -16,6 +16,17 @@ Generic Models
     :no-inheritance-diagram:
     :headings: -~
 
+Image background surfaces
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+See :doc:`UserGuide/image_fitting` for ImageFile.fit, physical coefficient order
+and covariance conventions. Surface shortcuts are image-specific; the existing
+one-dimensional model catalogue is retained.
+
+.. automodapi:: Stoner.analysis.fitting.models.surfaces
+    :no-inheritance-diagram:
+    :headings: -~
+
 Thermal Physics models
 ^^^^^^^^^^^^^^^^^^^^^^
 

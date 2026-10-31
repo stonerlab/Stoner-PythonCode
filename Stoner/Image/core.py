@@ -349,6 +349,17 @@ class ImageFile(metadataObject):
         return ImageROI(self)
 
     @property
+    def fit(self):
+        """Return an inert owner-bound :py:class:`~Stoner.Image.fitting.ImageFitter`.
+
+        Calling defaults to lmfit. Plane and quadratic_surface shortcuts estimate
+        selected backgrounds; evaluate and flatten operate over the whole grid.
+        """
+        from .fitting import ImageFitter
+
+        return ImageFitter(self)
+
+    @property
     def image(self):
         """Return native intensity/exclusions, or a borrowed view for a shared handle."""
         from .storage_bridge import owner_of

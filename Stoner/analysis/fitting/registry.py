@@ -52,6 +52,8 @@ class ModelRegistration:
             Qualified source name used in collision diagnostics.
         display_name (str):
             Original public class or decorated-function name.
+        independent_vars (tuple or None):
+            Declared independent variables, or None for capability-unknown factories.
     """
 
     name: str
@@ -59,6 +61,7 @@ class ModelRegistration:
     module: str
     qualname: str
     display_name: str
+    independent_vars: tuple | None = None
 
 
 class ModelRegistry(Mapping):
@@ -91,7 +94,7 @@ class ModelRegistry(Mapping):
         """Return immutable provenance for a registered name."""
         return self._entries[name]
 
-    def register(self, model, *, name=None, replace=False):
+    def register(self, model, *, name=None, replace=False, independent_vars=None):
         """Register a Model subclass or explicitly named factory.
 
         Args:
@@ -104,6 +107,8 @@ class ModelRegistry(Mapping):
                 Factories require an explicit name.
             replace (bool):
                 Permit replacing a different registration. Defaults to False.
+            independent_vars (sequence of str or None):
+                Optional capability declaration, recorded without constructing a model.
 
         Returns:
             callable:
@@ -125,14 +130,26 @@ class ModelRegistry(Mapping):
                 raise ValueError("A model factory requires an explicit registry name")
             name = _model_name(source.__name__)
         name = _validate_name(name)
+        if independent_vars is None:
+            independent_vars = getattr(model, "_stoner_independent_vars", None)
+        if independent_vars is not None:
+            if isinstance(independent_vars, str):
+                raise TypeError("independent_vars must be a sequence of variable names.")
+            independent_vars = tuple(independent_vars)
+            if (not independent_vars or any(not isinstance(v, str) or not v.isidentifier() for v in independent_vars)
+                    or len(set(independent_vars)) != len(independent_vars)):
+                raise ValueError("independent_vars must contain unique variable names.")
         info = ModelRegistration(
             name, model, getattr(source, "__module__", type(source).__module__),
             getattr(source, "__qualname__", type(source).__qualname__),
             getattr(source, "__name__", type(source).__name__),
+            independent_vars,
         )
         previous = self._entries.get(name)
         if previous is not None:
             if previous.model is model:
+                if info.independent_vars is not None or previous.independent_vars is None:
+                    self._entries[name] = info
                 return model
             if not replace:
                 raise ValueError(
@@ -174,7 +191,7 @@ class ModelRegistry(Mapping):
 model_registry = ModelRegistry()
 
 
-def register_model(model=None, *, name=None, replace=False):
+def register_model(model=None, *, name=None, replace=False, independent_vars=None):
     """Register a model in the shared catalogue, directly or as a decorator.
 
     Args:
@@ -186,6 +203,8 @@ def register_model(model=None, *, name=None, replace=False):
             Registry key; None derives snake_case from a Model subclass name.
         replace (bool):
             Explicitly replace a different object under the same name.
+        independent_vars (sequence of str or None):
+            Optional independent-variable capability declaration for discovery.
 
     Returns:
         callable:
@@ -198,5 +217,5 @@ def register_model(model=None, *, name=None, replace=False):
             If the name is invalid, reserved, missing for a factory or duplicated.
     """
     if model is None:
-        return lambda candidate: register_model(candidate, name=name, replace=replace)
-    return model_registry.register(model, name=name, replace=replace)
+        return lambda candidate: register_model(candidate, name=name, replace=replace, independent_vars=independent_vars)
+    return model_registry.register(model, name=name, replace=replace, independent_vars=independent_vars)

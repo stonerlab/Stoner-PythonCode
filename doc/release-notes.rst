@@ -1,6 +1,33 @@
 Release notes
 =============
 
+0.12.0a8 (2026-10-31)
+---------------------
+
+``ImageFile.fit`` completes the planned image-accessor alpha sequence. Callable
+lmfit fitting and registered ``plane``/``quadratic_surface`` shortcuts estimate
+backgrounds from current or explicit ROI selections. ``evaluate(report)`` and
+``flatten(report)`` apply a captured model over the entire matching grid, returning
+independent float64 images with preserved calibration and exclusions. Raw intensity
+units are retained without clipping or normalisation. ``BackgroundReference``
+selects zero or the weighted reference-region mean; a finite numeric level is
+also accepted.
+
+The joint quadratic includes its x*y cross-term. Conditioned built-in fits and
+an analytic Jacobian provide stable predictions for offset coordinates. Native
+ModelResult reports retain their free-parameter covariance convention; physical
+coefficients and fully transformed covariance are returned by FIT and the frozen
+``report.image_fit`` context. All six FitOutput modes are supported. Successful
+ordinary fits record versioned provenance; combined correction preserves its source.
+
+``make_model(independent_vars=("x", "y"))`` extends the shared registry/decorator
+for custom surfaces, including two-coordinate guessers. Declared capabilities
+support contextual completion without constructing factories. Existing Data
+fitting models and its explicit multidimensional curve_fit path are retained.
+Legacy ``level_image`` remains a separate directional algorithm. In-place and
+folder-wide image correction remain deferred. See :doc:`UserGuide/image_fitting`
+for uncertainties, constraints, replay, extrapolation and covariance conventions.
+
 0.12.0a7 (2026-10-31)
 ---------------------
 

@@ -410,6 +410,7 @@ The legacy :meth:`ImageFile.imshow` retains its Figure return.
 
    image_plotting
    image_roi
+   image_fitting
 
 Using image data with NumPy
 ===========================

@@ -128,7 +128,8 @@ Plotting establishes `CoordinateMode` (native coordinates or explicit pixel
 indices) for all three. Fitting adds `BackgroundReference` (zero or fitted-region
 mean, with a finite numeric reference as a separate accepted argument type).
 `CoordinateMode` is now implemented with native/pixel values and shared by the
-image plotting grid resolver; BackgroundReference remains planned. Reuse `FitOutput`; do not add a
+image plotting grid resolver. BackgroundReference is implemented for the image
+fitting alpha with zero/region_mean values. Reuse `FitOutput`; do not add a
 competing image-output enum or enums for extensible model registry names. Test
 string parity, wrong-domain rejection and serialised values in those batches.
 Freeze accepted domains/defaults and stored strings at the

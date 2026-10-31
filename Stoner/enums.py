@@ -2,7 +2,16 @@
 
 from enum import Enum, StrEnum
 
-__all__ = ["CoordinateMode", "FitOutput"]
+__all__ = ["BackgroundReference", "CoordinateMode", "FitOutput"]
+
+
+class BackgroundReference(StrEnum):
+    """Choose the retained constant intensity after image background correction."""
+
+    #: Remove the entire fitted background.
+    ZERO = "zero"
+    #: Retain the inverse-variance weighted fitted mean on eligible reference pixels.
+    REGION_MEAN = "region_mean"
 
 
 class CoordinateMode(StrEnum):

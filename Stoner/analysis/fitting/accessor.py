@@ -99,6 +99,9 @@ class DataFitter:
         if name.startswith("_"):
             raise AttributeError(name)
         if name in model_registry:
+            variables = model_registry.registration(name).independent_vars
+            if variables is not None and len(variables) != 1:
+                raise AttributeError(f"{name!r} is a spatial model; use ImageFile.fit or an explicit model argument.")
             return _ModelFit(self, name)
         matches = get_close_matches(name, model_registry, n=3)
         suggestion = f" Did you mean {', '.join(matches)}?" if matches else ""
@@ -106,7 +109,9 @@ class DataFitter:
 
     def __dir__(self):
         """Include registered-model shortcuts in interactive completion."""
-        return sorted(set(super().__dir__()) | set(model_registry))
+        compatible = {key for key in model_registry if model_registry.registration(key).independent_vars is None
+                      or len(model_registry.registration(key).independent_vars) == 1}
+        return sorted(set(super().__dir__()) | compatible)
 
     def __call__(self, model, x=None, y=None, p0=None, sigma=None, **kwargs):
         """Fit a model with lmfit; accept the same options as the lmfit method.
@@ -162,6 +167,9 @@ class DataFitter:
                 Complete algorithm-specific options, selection and return rules.
         """
         _reject_legacy_coordinates(kwargs)
+        variables = getattr(model, "_stoner_independent_vars", None) or getattr(model, "independent_vars", None)
+        if variables is not None and len(variables) != 1:
+            raise ValueError("Data.fit.lmfit needs one independent variable; use ImageFile.fit for spatial models.")
         return functions.lmfit(self._data, model, xcol=x, ycol=y, p0=p0, sigma=sigma, **kwargs)
 
     def curve_fit(self, func, x=None, y=None, sigma=None, **kwargs):

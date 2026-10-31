@@ -17,6 +17,8 @@ __all__ = [
     "ImageFile",
     "ImagePlotter",
     "ImageROI",
+    "ImageFitter",
+    "ImageFitContext",
     "ImageFolder",
     "ImageStack",
     "KerrStack",
@@ -30,3 +32,4 @@ from .kerr import KerrImageFile, KerrStack, MaskStack
 from .stack import ImageStack
 from .plotting import ImagePlotter
 from .roi import ImageROI
+from .fitting import ImageFitter, ImageFitContext

@@ -1,11 +1,38 @@
 # ImageFile.fit implementation and testing plan
 
 Date: 2026-10-31. Target checkout: `devel`.
-Status: design and implementation plan only; no image fitting accessor is implemented.
+Status: mandatory batches 1-5 implemented and locally validated for 0.12.0a8;
+hosted exact-source release gates remain pending.
+
+## Alpha implementation decisions (2026-10-31)
+
+The authorised alpha implements the mandatory batches below, retaining level_image.
+In-place correction and folder dispatch remain deferred. The numerical spike
+confirmed lmfit supports extra free parameters and physical coefficients expressed
+in those parameters without fabricating reports. Unconstrained built-in surfaces
+fit centred/scaled coefficients, with physical coefficients as lmfit expressions.
+Model evaluation uses the stable basis. Native REPORT.covar follows REPORT.var_names
+(conditioned free parameters); FIT returns physical coefficients and transformed
+covariance. Immutable REPORT.image_fit records physical parameter order/covariance,
+conditioning, selected/eligible membership, weights and grid identity.
+
+Physical bounds/fixed values/expressions use a physical-basis fit; rank and
+conditioning checks reject unresolved or ill-conditioned constrained systems.
+Custom two-variable models retain ordinary lmfit semantics. Both coordinate arrays
+reach decorated guessers. Capability metadata supports contextual discovery without
+constructing factories; unknown factory dimensions are checked on call. Registrations
+named evaluate/flatten remain registered; image accessor members take precedence.
+
+FULL is (native report, interleaved row); ROW ends in reduced chi-square. FIT
+includes every physical model coefficient; fixed coefficients have zero covariance.
+Successful ordinary fits record prefix:image_fit. Flatten fitting does not publish
+on its source. evaluate/flatten replay frozen fitted parameters on the matching
+grid, independently of current ROI, registry replacements or later source value edits.
 
 The plotting and ROI prerequisites are published in 0.12.0a6 and 0.12.0a7.
-The next bounded feature batch is the fit contract/numerical-conditioning review,
-using `Stoner.ROI` and the ImageROI selection adapter, subject to maintainer instruction.
+ImageFitter now consumes Stoner.ROI and the ImageROI selection adapter. The next
+release-series milestone is the API-lock/migration review before beta, subject to
+maintainer instruction; publication of this alpha does not itself lock the API.
 
 Implementation sequence: [image plotting](IMAGE_PLOT_ACCESSOR_PLAN.md), then
 [image ROI management](IMAGE_ROI_ACCESSOR_PLAN.md), then image fitting. The
@@ -97,7 +124,8 @@ those of the owner. No unrestricted forwarding to xarray or lmfit attributes.
 
 ## 4. Proposed first user workflow
 
-The following is future API documentation, not an executable example yet:
+The following API is implemented; doc/samples/image_fit_accessor.py provides the
+complete executable calibrated plane/quadratic workflow:
 
 ```python
 import numpy as np
@@ -272,12 +300,12 @@ named values/errors/statistics, `FULL` with a precisely documented tuple, and
 Enum/string parity and the exact matrix must be documented before exposing all
 six modes. Do not invent a second default report return for model shortcuts.
 
-Recommended REPORT extension: an image-specific immutable fitting context carried
+Implemented REPORT extension: an image-specific immutable fitting context carried
 with the native ModelResult, rather than a parallel report wrapper. It records
 coordinate conventions, selection/eligibility, preprocessing, uncertainty policy
 and grid signature, with no live owner/Matplotlib references. `params`, `eval` and
 `fit_report()` retain lmfit behaviour. Settle the context attachment/public name
-in batch 1; test report copying/pickling and the FULL/DATA representation.
+in batch 1 (settled as image_fit); test report copying/pickling and the FULL/DATA representation.
 
 Successful ordinary fits may record metadata as Data.fit does; failures publish
 nothing. Evaluation/flattening must use the report's captured model state rather
@@ -320,7 +348,9 @@ integer intensities by their dtype range, clip or normalise the scientific resul
 Set dtype-dependent fill metadata deliberately. The original owner, its metadata
 and any parent/shared frame must remain unchanged for the default operation.
 
-An explicit `inplace=True` is a later gated option: initially accept only writable
+In-place correction is deferred in this alpha: inplace=True is rejected before
+fitting or mutation. The following are prerequisites for a later gated option:
+accept only writable
 floating owners with compatible dtype/geometry. Reject integer/bool/complex input
 or unsupported shared owners before mutation; do not wrap/truncate values. Commit
 pixels and correction provenance atomically through the owner, respecting existing
@@ -368,38 +398,38 @@ than advertise partial support in the first release.
 
 ## 10. Implementation and testing checklist
 
-- [ ] Exact/noisy plane recovery; full quadratic including a non-zero x*y term.
-- [ ] Foreground island excluded from a fit: correct slopes/curvature, entire
+- [x] Exact/noisy plane recovery; full quadratic including a non-zero x*y term.
+- [x] Foreground island excluded from a fit: correct slopes/curvature, entire
   image background removed, feature shape/amplitude preserved outside the ROI.
-- [ ] Offset rectangular ROI proves global evaluation does not re-zero coordinates;
+- [x] Offset rectangular ROI proves global evaluation does not re-zero coordinates;
   disjoint patches, holes, border-only reference, one-pixel axes and empty selection.
-- [ ] Too few samples, rank deficiency, near-singular geometry, large coordinate
+- [x] Too few samples, rank deficiency, near-singular geometry, large coordinate
   offsets/small spacing; compare predictions and transformed covariance to an
   independent weighted design-matrix calculation with scale-aware tolerances.
-- [ ] Non-square grids; unequal pixel sizes; non-uniform, decreasing and translated
+- [x] Non-square grids; unequal pixel sizes; non-uniform, decreasing and translated
   native axes; pixel/native differences; unsupported map/mismatched coordinate errors.
-- [ ] Boolean ndarray and labelled xarray alignment, order/dims/shape/coordinate
+- [x] Boolean ndarray and labelled xarray alignment, order/dims/shape/coordinate
   mismatch rejection, no broadcasting/reindexing; mask True vs where True polarity.
-- [ ] Current ROI, explicit override, ROI.all and clear precedence; fitting snapshots
+- [x] Current ROI, explicit override, ROI.all and clear precedence; fitting snapshots
   the actual selection; evaluate/flatten still cover the whole grid after ROI changes.
-- [ ] Excluded/non-finite values, no observations, padded frames, numeric/nullable
+- [x] Excluded/non-finite values, no observations, padded frames, numeric/nullable
   selectors; prove source pixels, persistent mask and owner generation do not change
   for fitting-only and failed operations.
-- [ ] Scalar/array/labelled sigma, invalid participating sigma, absolute/relative
+- [x] Scalar/array/labelled sigma, invalid participating sigma, absolute/relative
   covariance scaling, parameter constraints, prefixes, fixed parameters and output
   enum/string parity. Reject unsupported/wrong-domain choices before optimisation.
-- [ ] Known coefficients, uncertainty/covariance ordering and units, independent
+- [x] Known coefficients, uncertainty/covariance ordering and units, independent
   report replay after registry replacement, changed owner pixels and incompatible grids.
-- [ ] Zero/region-mean/numeric reference modes; correction beyond ROI; corrected
+- [x] Zero/region-mean/numeric reference modes; correction beyond ROI; corrected
   excluded raw values retain exclusions; NaNs/infinities remain non-finite.
-- [ ] Signed/unsigned/bool/float input retains raw intensity units; float output
+- [x] Signed/unsigned/bool/float input retains raw intensity units; float output
   contains negative values; no implicit clipping, normalisation or dtype overflow.
-- [ ] Default corrections/backgrounds do not alias source/parent/frame buffers or
-  nested typed metadata. Explicit in-place success/failure and transaction conflicts
-  follow the specified owner rules, with no partial pixels/metadata publication.
-- [ ] Accessor/signature/dir/help lookup is inert; factories are fresh; clone/copy/
+- [x] Default corrections/backgrounds do not alias source/parent/frame buffers or
+  nested typed metadata. In-place calls are deliberately rejected before fitting;
+  transaction conflicts fail without partial pixels/metadata publication.
+- [x] Accessor/signature/dir/help lookup is inert; factories are fresh; clone/copy/
   pickle do not capture bound accessors, live owners, locks, GUI objects or workers.
-- [ ] Preserve all existing Data fitting/registry/output and legacy `level_image`
+- [x] Preserve all existing Data fitting/registry/output and legacy `level_image`
   tests. Do not assert equivalence between the two levelling algorithms.
 
 ## 11. Documentation, compatibility and completion
@@ -427,7 +457,33 @@ matrix/lower-dependency/package/docs gates before a later release. Scientific
 benchmarks/fixtures complement synthetic recovery; neither certifies all image
 formats, facility data or physical instrument calibrations.
 
-Next fitting step, after the plot and ROI milestones: batch 1 contract/numerical
-spike, followed by surface-model and fitting eligibility preparation using the
-shared ROI resolver. No production implementation or deprecation is part of this
-planning change.
+## 12. Implementation handover
+
+ImageFitter, ImageFile.fit and the two registered surface classes are implemented.
+The existing make_model decorator accepts explicit independent variables and
+passes both selected arrays to guessers. Registry declarations support inert
+contextual discovery; existing 1D models and multidimensional Data.curve_fit remain.
+Raw plane_surface is deliberately named distinctly from Plane to avoid new
+case-only Sphinx filename collisions on Windows.
+
+All six FitOutput choices are implemented. Native reports contain frozen
+ImageFitContext and genuine lmfit parameters/expressions; covariance follows the
+explicit convention at the start of this plan. FIT transforms the complete
+covariance to physical coefficient order. Conditioned default fits use an exact
+residual Jacobian. Physical constraints use checked native-basis fitting.
+Custom callables retain native Python/lmfit serialisation limitations.
+
+Current/explicit/all/box selection, uncertainties, calibration, raw-unit float64
+evaluation/correction, reference levels and versioned provenance are implemented.
+Independent corrections preserve source pixels, masks, metadata and shared
+parents/frames. In-place atomic correction and folder dispatch remain explicitly
+deferred; no partial version of either is advertised. Legacy level_image is unchanged.
+
+Local Windows py314 validation passed 1,937 offline tests, including all 86
+offline examples; the network example passed separately. All 67 scientific cases
+also passed with QtAgg/offscreen, including near-singular and legacy-Figure
+checks. New-code Ruff passed. Cached Sphinx passed with 62 baseline
+warnings, no unexpected warnings, missing dynamic Data methods or removed API
+objects. Final rendered-guide and hosted release evidence are recorded in
+MAINTENANCE_PLAN.md and the release. No manual GUI or physical calibration
+certification is claimed. Next: API-lock and cumulative migration review before beta.

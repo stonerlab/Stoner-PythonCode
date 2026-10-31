@@ -126,7 +126,8 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
   whole image, with a separate alpha for each accessor.
   Standalone ImagePlotter is published in 0.12.0a6, with exact-source hosted and
   publication evidence recorded below. The ROI milestone is published as
-  0.12.0a7; image fitting remains the following feature milestone.
+  0.12.0a7; image fitting is implemented for the final planned feature alpha,
+  0.12.0a8. API lock and cumulative migration review remain separate before beta.
 - [ ] Follow [RELEASE_0_12_PLAN.md](RELEASE_0_12_PLAN.md): API lock before beta,
   allowing only small compatible additions, then full API freeze/bug fixes only
   for RC. Review cumulative 0.11 breakage, migration and the final version series
@@ -148,6 +149,31 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
   for evidence and the remaining migration decisions.
 
 ## Current release follow-up
+
+### 0.12.0a8 preparation
+
+ImageFitter and ImageFile.fit provide joint plane/quadratic background fitting,
+captured full-grid evaluation and independent float64 flattening. Shared ROI,
+coordinates, model registry/decorator capabilities and FitOutput are reused.
+BackgroundReference adds zero/region_mean alongside numeric levels. Native lmfit
+reports retain free-parameter covariance; FIT/context provide fully transformed
+physical coefficient covariance. Combined correction preserves source scientific
+state; transient legacy plotting handles are not cloned into results.
+In-place correction and folder dispatch remain deferred; level_image is unchanged.
+
+Local Windows Conda py314 (Python 3.14.7) passed 1,937 offline tests, including all
+86 offline examples, and the network example separately. All 67 scientific tests
+also passed on QtAgg/offscreen, including near-singular and legacy-Figure checks.
+New-code Ruff passes. Cached Sphinx passed with 62 baseline warnings and
+no unexpected warnings, missing dynamic Data methods or removed API objects.
+The fitting figure, rendered API guide and accessor link were inspected over
+localhost. The new installed-package fitting probe passed from source; hosted
+wheel/sdist jobs must exercise it against built archives.
+
+Before tagging require the exact pushed commit's full matrix, lower-dependency,
+installed wheel/sdist and cached documentation gates. After publication verify
+public PyPI/Conda, the installed public wheel, Conda version test, versioned docs
+and DOI. No physical calibration/instrument or manual GUI certification is claimed.
 
 ### Published 0.12.0a7
 

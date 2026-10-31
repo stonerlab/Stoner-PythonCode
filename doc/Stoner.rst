@@ -239,6 +239,8 @@ Main Image Classes
 .. automodapi:: Stoner.Image
     :skip: ImagePlotter
     :skip: ImageROI
+    :skip: ImageFitter
+    :skip: ImageFitContext
     :inherited-members:
     :headings: -~
 
@@ -251,6 +253,15 @@ Main Image Classes
     :headings: -~
 
 .. automodapi:: Stoner.Image.roi
+    :no-inheritance-diagram:
+    :headings: -~
+
+.. automodapi:: Stoner.Image.fitting
+    :skip: ImageFitContext
+    :no-inheritance-diagram:
+    :headings: -~
+
+.. automodapi:: Stoner.Image.fit_support
     :no-inheritance-diagram:
     :headings: -~
 

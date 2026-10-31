@@ -25,19 +25,20 @@ def isolate_registrations(monkeypatch):
 def test_builtin_catalogue_covers_defined_models_only():
     expected = {
         obj for module in (models.generic, models.thermal, models.magnetism,
-                           models.tunnelling, models.e_transport, models.superconductivity)
+                           models.tunnelling, models.e_transport, models.superconductivity, models.surfaces)
         for obj in vars(module).values()
         if isinstance(obj, type) and issubclass(obj, Model) and obj.__module__ == module.__name__
+        and not obj.__name__.startswith("_")
     }
     assert set(model_registry.values()) == expected
-    assert len(model_registry) == 28
+    assert len(model_registry) == 30
     assert model_registry["bloch_grueneisen"] is models.e_transport.BlochGrueneisen
     assert model_registry["fuchs_sondheimer"] is models.e_transport.FluchsSondheimer
     assert model_registry["wl_fit"] is models.e_transport.WLfit
     assert "bloch_gruneisen" not in model_registry and "fluchs_sondheimer" not in model_registry
     assert Model not in model_registry.values()
     importlib.reload(models)  # Catalogue initialisation is idempotent.
-    assert len(model_registry) == 28
+    assert len(model_registry) == 30
 
 
 @pytest.mark.parametrize("class_name, key", [
@@ -179,7 +180,7 @@ def test_cold_import_orders(first_import):
     code = first_import + "\n" + "\n".join([
         "from Stoner.analysis.fitting.registry import model_registry",
         "from Stoner.analysis.fitting.models import generic",
-        "assert len(model_registry) == 28",
+        "assert len(model_registry) == 30",
         "assert model_registry['linear'] is generic.Linear",
         "assert model_registry.create('linear') is not model_registry.create('linear')",
     ])

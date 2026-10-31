@@ -7,6 +7,7 @@ __all__ = [
     "tunnelling",
     "e_transport",
     "superconductivity",
+    "surfaces",
     "_get_model_",
     "make_model",
     "model_registry",
@@ -28,7 +29,7 @@ from lmfit.models import update_param_vals
 from ....compat import string_types
 from ....tools import make_Data
 from ..registry import model_registry, register_model
-from . import e_transport, generic, magnetism, superconductivity, thermal, tunnelling
+from . import e_transport, generic, magnetism, superconductivity, surfaces, thermal, tunnelling
 
 
 def _get_model_(model):
@@ -67,7 +68,7 @@ def _get_model_(model):
     return model
 
 
-def make_model(model_func=None, *, name=None, replace=False):
+def make_model(model_func=None, *, name=None, replace=False, independent_vars=None):
     """Turn a function into an lmfit model and register its generated class.
 
     Args:
@@ -79,6 +80,9 @@ def make_model(model_func=None, *, name=None, replace=False):
             Explicit snake_case registry key. None derives it from the function name.
         replace (bool):
             Explicitly replace a different registration under the same name.
+        independent_vars (sequence of str or None):
+            Explicit independent variable names, for example ("x", "y") for
+            surfaces. None preserves lmfit's existing single-variable inference.
 
     Returns:
         type or callable:
@@ -120,15 +124,27 @@ def make_model(model_func=None, *, name=None, replace=False):
         internal class name and fitting metadata prefix remain unchanged.
     """
     if model_func is None:
-        return partial(make_model, name=name, replace=replace)
+        return partial(make_model, name=name, replace=replace, independent_vars=independent_vars)
     if not callable(model_func):
         raise TypeError("make_model requires a callable model function")
+    if independent_vars is not None:
+        from inspect import signature
+
+        if isinstance(independent_vars, str):
+            raise TypeError("independent_vars must be a sequence of variable names.")
+        independent_vars = tuple(independent_vars)
+        if (not independent_vars or len(set(independent_vars)) != len(independent_vars)
+                or any(var not in signature(model_func).parameters for var in independent_vars)):
+            raise ValueError("independent_vars must name unique arguments of the decorated function.")
 
     class _ModelDecorator(Model):  # pylint: disable=abstract-method
         __doc__ = model_func.__doc__
         _model_function = staticmethod(model_func)
+        _stoner_independent_vars = independent_vars
 
         def __init__(self, *args, **kwargs):
+            if independent_vars is not None:
+                kwargs.setdefault("independent_vars", list(independent_vars))
             super().__init__(model_func, *args, **kwargs)
             if hasattr(self, "_limits"):
                 for param, limit in self._limits().items():
@@ -447,6 +463,8 @@ def cfg_model_from_ini(inifile, model=None, data=None):
 # Explicit catalogue: exclude raw functions, imported lmfit bases and helpers.
 # Physics names may differ from legacy Python names; preserve those imports.
 _BUILTIN_MODELS = {
+    "plane": surfaces.Plane,
+    "quadratic_surface": surfaces.QuadraticSurface,
     "linear": generic.Linear,
     "quadratic": generic.Quadratic,
     "power_law": generic.PowerLaw,
@@ -477,4 +495,4 @@ _BUILTIN_MODELS = {
     "ic_b_airy": superconductivity.Ic_B_Airy,
 }
 for _name, _model in _BUILTIN_MODELS.items():
-    register_model(_model, name=_name)
+    register_model(_model, name=_name, independent_vars=getattr(_model, "_stoner_independent_vars", ("x",)))

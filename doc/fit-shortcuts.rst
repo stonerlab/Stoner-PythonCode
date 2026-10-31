@@ -1,6 +1,10 @@
 Registered fitting shortcuts
 *****************************
 
+Two-variable ``plane`` and ``quadratic_surface`` shortcuts are available on
+``ImageFile.fit``; see :doc:`UserGuide/image_fitting`. They are omitted from Data
+completion, while the shared model registry retains all registrations.
+
 .. currentmodule:: Stoner.analysis.fitting.accessor
 
 Each method below uses lmfit with its registered model already selected.

@@ -31,6 +31,7 @@ def main():
     check_plotting()
     check_image_plotting()
     check_image_roi()
+    check_image_fitting()
     print(f'Installed-package checks passed: {installed}')
 
 
@@ -54,6 +55,28 @@ def check_image_plotting():
     assert isinstance(image.imshow(), matplotlib.figure.Figure)
     plt.close('all')
     print('Image plotting accessor/property/context checks passed')
+
+
+def check_image_fitting():
+    """Exercise installed surface models, physical covariance and captured corrections."""
+    from Stoner import ROI
+    from Stoner.enums import FitOutput
+
+    x, y = np.meshgrid(np.arange(9.), np.arange(7.))
+    background = 3+.4*x-.2*y+.03*x*x+.02*x*y-.01*y*y
+    values = background.copy()
+    values[2:5, 3:6] += 10
+    image = ImageFile(values)
+    image.roi.set(ROI.all()-ROI.box(3, 6, 2, 5))
+    before = image.to_numpy()
+    report = image.fit.quadratic_surface(output=FitOutput.REPORT)
+    np.testing.assert_allclose(image.fit.evaluate(report).to_numpy(), background, atol=1e-9)
+    corrected = image.fit.flatten(report)
+    np.testing.assert_allclose(corrected.to_numpy(), values-background, atol=1e-9)
+    assert corrected.dtype == np.float64
+    assert np.asarray(report.image_fit.to_dict()['covariance']).shape == (6, 6)
+    np.testing.assert_array_equal(image.to_numpy(), before)
+    print('Image fitting surface/covariance/replay/correction checks passed')
 
 
 def check_image_roi():

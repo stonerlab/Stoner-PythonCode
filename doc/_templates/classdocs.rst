@@ -37,6 +37,10 @@
    .. rubric:: Region of interest accessor
 
    .. autoattribute:: roi
+
+   .. rubric:: Image fitting accessor
+
+   .. autoattribute:: fit
 {% endif %}
 
    {% block attributes %}

@@ -19,7 +19,7 @@ in this agreed order: [image plotting](IMAGE_PLOT_ACCESSOR_PLAN.md),
 [current ROI management and reusable selections](IMAGE_ROI_ACCESSOR_PLAN.md),
 then [image fitting and background flattening](IMAGE_FIT_ACCESSOR_PLAN.md).
 Standalone image plotting and ROI accessors are published in 0.12.0a6 and
-0.12.0a7. Image fitting remains the next planned extension. Their callable defaults,
+0.12.0a7. Image fitting is implemented for the 0.12.0a8 alpha. Their callable defaults,
 explicit methods, model shortcuts, result choices and plotting targets should
 follow the Data accessors while preserving image coordinate, exclusion and
 ownership rules. ROI state is distinct from the persistent image mask.
