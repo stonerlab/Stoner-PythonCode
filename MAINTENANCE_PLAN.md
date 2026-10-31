@@ -147,8 +147,10 @@ figure and API link were checked over localhost. The installed-package validatio
 fresh wheel/sdist jobs must exercise these on the exact pushed release source.
 
 Live manual GUI/backend behaviour and physical instrument compatibility are
-not claimed. Automated widget event tests cover acceptance, Escape/window close,
-errors, borrowed targets and cleanup. Release publication is authorised by the
+not claimed. All 67 ROI tests also passed with the QtAgg/offscreen GUI canvas;
+simulated sessions intercept the actual canvas event loop, including backend overrides.
+Automated widget event tests cover acceptance, Escape/window close, errors,
+borrowed targets and cleanup. Release publication is authorised by the
 maintainer, conditional on the exact-source matrix, lower-dependency,
 installed-distribution and documentation gates passing. Record their run links
 and public PyPI/Conda, installed wheel, documentation and DOI evidence after release.

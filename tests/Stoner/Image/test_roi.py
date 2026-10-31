@@ -329,7 +329,6 @@ def test_data_and_low_level_selection_remain_state_independent():
 @pytest.mark.parametrize("borrowed", [False, True])
 def test_interactive_lifecycle(monkeypatch, kind, outcome, borrowed):
     from matplotlib._pylab_helpers import Gcf
-    from matplotlib.backend_bases import FigureCanvasBase
 
     im = image()
     im.roi.box(0, 1, 0, 1)
@@ -358,7 +357,8 @@ def test_interactive_lifecycle(monkeypatch, kind, outcome, borrowed):
         else:
             session.key(SimpleNamespace(key="enter" if outcome == "accept" else "escape"))
 
-    monkeypatch.setattr(FigureCanvasBase, "start_event_loop", event_loop)
+    # GUI backends override the base event loop; intercept the actual canvas.
+    monkeypatch.setattr(type(fig.canvas), "start_event_loop", event_loop)
     monkeypatch.setattr(plt, "show", lambda **kwargs: None)
     method = getattr(im.roi, f"select_{kind}")
     if outcome == "error":

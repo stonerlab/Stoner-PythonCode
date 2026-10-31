@@ -353,6 +353,9 @@ The installed-package ROI probe was exercised from source. Ruff passed. Cached
 Sphinx passed with 62 reviewed baseline warnings, no unexpected warnings, missing
 dynamic Data methods or removed API targets; rendered guide/figure/API navigation
 were checked over localhost. Logs are ignored under `maintenance/runs/image-roi`.
+All 67 ROI tests additionally passed on the QtAgg/offscreen GUI canvas after
+correcting the event simulation to intercept backend-specific event-loop overrides.
+This is automated GUI-canvas coverage, not manual live interaction.
 
 Exact-source hosted release evidence will be recorded in MAINTENANCE_PLAN.md
 and the authorised release. ImageFitter must consume this
