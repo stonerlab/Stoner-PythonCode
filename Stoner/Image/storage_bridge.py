@@ -47,6 +47,9 @@ def snapshot(image, writable=False):
 
 def bind(image, owner, array=None):
     """Install a sole owner and retain only non-numerical presentation attributes."""
+    from .roi import invalidate_roi
+
+    invalidate_roi(image)
     if array is not None:
         image.__dict__["_image_attrs"] = {
             name: deepcopy(getattr(array, name))
@@ -102,6 +105,10 @@ def replace_image(image, values):
         image.metadata = metadata
     else:
         owner.replace(package)
+        if package.dataset.intensity.shape != old.dataset.intensity.shape:
+            from .roi import invalidate_roi
+
+            invalidate_roi(image)
 
 
 def calibrated(owner):
@@ -159,6 +166,9 @@ def call_method(image, function, args, kwargs, *, setter=False):
         if isinstance(target_owner, (ImageRegion, FrameOwner)):
             raise ValueError("Clone a shared region or frame before permuting its geometry")
         target_owner.replace(package)
+        from .roi import invalidate_roi
+
+        invalidate_roi(target)
         return target
     from .storage_interpolation import GEOMETRY, interpolate, require_alignment
 
@@ -176,6 +186,9 @@ def call_method(image, function, args, kwargs, *, setter=False):
         if package.dataset.intensity.shape != owner.shape and not force:
             target = image.clone
         owner_of(target).replace(package)
+        from .roi import invalidate_roi
+
+        invalidate_roi(target)
         return target
     if calibrated(owner) and name in {"align", "correct_drift"}:
         from scipy.ndimage import shift
@@ -212,6 +225,9 @@ def call_method(image, function, args, kwargs, *, setter=False):
             grid.coords.to_dataset().copy(deep=True).coords
         )
         target_owner.replace(package)
+        from .roi import invalidate_roi
+
+        invalidate_roi(target)
         return target
     working = snapshot(image, writable=True)
     if box is not False:
@@ -250,6 +266,10 @@ def call_method(image, function, args, kwargs, *, setter=False):
     if result.shape != owner.shape and not force:
         target = image.clone
     commit_result(target, result)
+    if name in GEOMETRY or name in {"align", "correct_drift"}:
+        from .roi import invalidate_roi
+
+        invalidate_roi(target)
     return target
 
 
@@ -353,6 +373,9 @@ def install(cls):
             result.metadata = _copy_metadata(self.metadata)
             return result
         result = type(self).from_storage(owner.export_storage())
+        from .roi import copy_roi
+
+        copy_roi(self, result)
         result.__dict__["_image_attrs"] = deepcopy(self.__dict__.get("_image_attrs", {}))
         for name in self._public_attrs:
             if not name.startswith("_") and name not in {"metadata", "image"}:
@@ -371,7 +394,11 @@ def install(cls):
             if len(bounds) == 2 and all(isinstance(bound, slice) for bound in bounds):
                 package = owner.export_storage()
                 package.dataset = package.dataset.isel(y=bounds[0], x=bounds[1])
-                return type(self).from_storage(package)
+                selected = type(self).from_storage(package)
+                from .roi import copy_roi
+
+                copy_roi(self, selected, stale=True)
+                return selected
             if calibrated(owner):
                 raise ValueError("Calibrated image selection requires rectangular slices")
             return type(self)(result, metadata=self.metadata.copy())
@@ -470,9 +497,10 @@ def install(cls):
                 Retain reduced dimensions with length one when true.
 
         Keyword Arguments:
-            where (Boolean array, xarray.DataArray or None):
+            where (ROI, Boolean array, xarray.DataArray or None):
                 Full image selection. True includes a pixel; labelled coordinates
-                must exactly match the image. None selects all pixels.
+                must exactly match the image. None uses current ROI, or all pixels
+                when inactive. ROI.all() bypasses current ROI.
 
         Returns:
             scalar or numpy.ndarray:
@@ -485,7 +513,9 @@ def install(cls):
         owner = owner_of(self)
         if owner is None:
             raise ValueError("A regional mean requires a populated image")
-        values = selected_image_values(owner._state.dataset, where)
+        from .roi import image_selection
+
+        values = selected_image_values(owner._state.dataset, image_selection(self, where))
         result = np.ma.asarray(values.mean(axis=axis, dtype=dtype, keepdims=keepdims))
         result = result.astype(np.result_type(result.dtype, float)).filled(np.nan)
         if out is not None:

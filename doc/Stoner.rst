@@ -238,10 +238,19 @@ Main Image Classes
 
 .. automodapi:: Stoner.Image
     :skip: ImagePlotter
+    :skip: ImageROI
     :inherited-members:
     :headings: -~
 
 .. automodapi:: Stoner.Image.plotting
+    :no-inheritance-diagram:
+    :headings: -~
+
+.. automodapi:: Stoner.core.roi
+    :no-inheritance-diagram:
+    :headings: -~
+
+.. automodapi:: Stoner.Image.roi
     :no-inheritance-diagram:
     :headings: -~
 

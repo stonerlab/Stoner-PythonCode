@@ -14,6 +14,7 @@ __all__ = [
     "tools",
     "Image",
     "Data",
+    "ROI",
     "DataFolder",
     "ImageFile",
     "ImageFolder",
@@ -27,6 +28,7 @@ import pathlib
 
 from . import Image, analysis, core, enums, formats, plot, tools
 from .core.data import Data
+from .core.roi import ROI
 from .folders import DataFolder
 from .Image import ImageFile, ImageFolder, ImageStack
 from .tools import Options as _Options
@@ -38,7 +40,7 @@ from .tools import get_option, set_option
 Options = _Options()
 
 
-__version__ = "0.12.0a6"
+__version__ = "0.12.0a7"
 __version_info__ = tuple(__version__.split("."))
 
 __homepath__ = pathlib.Path(__file__).parent.resolve()

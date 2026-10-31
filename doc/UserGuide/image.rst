@@ -409,6 +409,7 @@ The legacy :meth:`ImageFile.imshow` retains its Figure return.
    :maxdepth: 1
 
    image_plotting
+   image_roi
 
 Using image data with NumPy
 ===========================

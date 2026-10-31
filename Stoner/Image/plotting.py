@@ -84,8 +84,9 @@ class ImagePlotter(PlotAccessor):
                 Upper places the first row at the top; lower at the bottom.
             aspect (str or float):
                 Matplotlib aspect, defaulting to equal spatial units.
-            where (Boolean array, xarray.DataArray or None):
+            where (ROI, Boolean array, xarray.DataArray or None):
                 Temporary pixel inclusion; combined with exclusions/finite values.
+                None displays the whole image, independently of current ROI.
             mask_color (colour or None):
                 Optional overlay for ineligible pixels; None leaves them transparent.
             mask_alpha (float):
@@ -189,7 +190,9 @@ class ImagePlotter(PlotAccessor):
             raise ValueError("origin must be 'upper' or 'lower'.")
         grid = resolve_grid(self._data, x, y, coordinates)
         dataset = owner_of(self._data)._state.dataset
-        values = selected_image_values(dataset, where)
+        from .roi import image_selection
+
+        values = selected_image_values(dataset, image_selection(self._data, where, current=False))
         if kind == "imshow" and not grid.uniform:
             raise ValueError("imshow requires uniform coordinates; use image or pcolormesh.")
         mesh = kind == "pcolormesh" or (kind == "image" and not grid.uniform)
@@ -246,8 +249,9 @@ class ImagePlotter(PlotAccessor):
                 Explicit target, otherwise current compatible axes.
             bins (int, str or array):
                 Native Matplotlib histogram bins, defaulting to 256.
-            where (Boolean array, xarray.DataArray or None):
-                Exact-shape temporary inclusion, True includes.
+            where (ROI, Boolean array, xarray.DataArray or None):
+                None uses current ROI. Explicit inclusion overrides it; ROI.all()
+                selects the whole domain. True includes, with exclusions retained.
             weights (array, xarray.DataArray or None):
                 Exact-shape weights; labelled inputs must match intensity axes.
                 Invalid participating weights are rejected; negative weights are allowed.
@@ -270,7 +274,9 @@ class ImagePlotter(PlotAccessor):
         if owner is None:
             raise ValueError("Image plotting requires a populated ImageFile owner.")
         dataset = owner._state.dataset
-        values = selected_image_values(dataset, where)
+        from .roi import image_selection
+
+        values = selected_image_values(dataset, image_selection(self._data, where))
         eligible = ~np.ma.getmaskarray(values)
         if not eligible.any():
             raise ValueError("No finite, unexcluded pixels remain for the histogram.")
@@ -292,4 +298,53 @@ class ImagePlotter(PlotAccessor):
         default_x, default_y = ((frequency, "Intensity") if kwargs.get("orientation") == "horizontal"
                                 else ("Intensity", frequency))
         self._decorate(ax, default_x if xlabel is None else xlabel, default_y if ylabel is None else ylabel, title)
+        return ax
+
+    def roi(self, *, ax=None, where=None, coordinates=CoordinateMode.NATIVE, color="red", **kwargs):
+        """Outline ROI membership at pixel edges without changing the image display.
+
+        Keyword Arguments:
+            ax (matplotlib.axes.Axes or None):
+                Explicit target, otherwise the current compatible axes.
+            where (ROI, Boolean array, xarray.DataArray or None):
+                None uses current ROI; explicit inclusion overrides it.
+            coordinates (CoordinateMode or str):
+                Native by default, or local pixel indices; match the base image.
+            color (colour):
+                Outline colour, defaulting to red.
+            **kwargs (dict):
+                LineCollection options, for example linewidths, label or zorder.
+
+        Returns:
+            matplotlib.axes.Axes:
+                Target containing exact cell-edge boundaries, including holes.
+
+        Notes:
+            Membership includes excluded/non-finite pixels. Does not draw an
+            intensity image or change existing limits, orientation or labels.
+        """
+        from matplotlib.collections import LineCollection
+        from .roi import image_selection
+
+        grid = resolve_grid(self._data, coordinates=coordinates)
+        included = image_selection(self._data, where)
+        # Compare padded neighbours to retain domain edges, empty/full ROIs,
+        # singleton grids and holes without contour interpolation artefacts.
+        padded = np.pad(included, 1)
+        segments = []
+        for row, column in np.argwhere(included):
+            x0, x1 = grid.x_edges[column:column+2]
+            y0, y1 = grid.y_edges[row:row+2]
+            if not padded[row, column+1]:
+                segments.append([(x0, y0), (x1, y0)])
+            if not padded[row+2, column+1]:
+                segments.append([(x0, y1), (x1, y1)])
+            if not padded[row+1, column]:
+                segments.append([(x0, y0), (x0, y1)])
+            if not padded[row+1, column+2]:
+                segments.append([(x1, y0), (x1, y1)])
+        artist = LineCollection(segments, colors=color, **kwargs)
+        ax = self._target(ax)
+        ax.add_collection(artist, autolim=False)
+        self._record(ax.figure, ax)
         return ax

@@ -30,6 +30,7 @@ def main():
     check_reviewed_wrappers()
     check_plotting()
     check_image_plotting()
+    check_image_roi()
     print(f'Installed-package checks passed: {installed}')
 
 
@@ -53,6 +54,31 @@ def check_image_plotting():
     assert isinstance(image.imshow(), matplotlib.figure.Figure)
     plt.close('all')
     print('Image plotting accessor/property/context checks passed')
+
+
+def check_image_roi():
+    """Exercise installed ROI construction, replay, reduction and outline integration."""
+    from Stoner import ROI
+
+    image = ImageFile(np.arange(20.).reshape(4, 5))
+    image.mask[1, 1] = True
+    before = image.export_storage()
+    image.roi.box(1, 4, 1, 3)
+    assert image.roi.active and not image.roi.stale
+    assert int(image.roi.resolve().sum()) == 6
+    assert image.mean() == np.mean([7., 8., 11., 12., 13.])
+    region = ROI.from_dict(image.roi.current.to_dict())
+    image.roi.set(region - ROI.circle((2, 2), 0.5))
+    assert int(image.roi.resolve().sum()) == 5
+    ax = image.plot()
+    assert image.plot.roi(ax=ax) is ax
+    image.plot.hist(bins=3)
+    assert image.mean(where=ROI.all()) == np.mean(np.delete(np.arange(20.), 6))
+    image.roi.clear()
+    assert not image.roi.active
+    xr.testing.assert_identical(image.image, before.dataset)
+    plt.close('all')
+    print('Image ROI geometry/replay/reduction/plot checks passed')
 
 
 def check_plotting():

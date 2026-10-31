@@ -1,6 +1,8 @@
 Plot an image
 **************
 
+See :doc:`image_roi` for current ROI selection, histogram defaults and outlines.
+
 Use :py:attr:`~Stoner.Image.core.ImageFile.plot` to display an image and return
 its Matplotlib Axes, consistently with ``Data.plot``::
 

@@ -338,6 +338,17 @@ class ImageFile(metadataObject):
         return ImagePlotter(self)
 
     @property
+    def roi(self):
+        """Return an inert handle-local :py:class:`~Stoner.Image.roi.ImageROI` accessor.
+
+        ROI setters return this image and never alter pixels or exclusions.
+        Geometry defaults to local pixel coordinates; native mode is explicit.
+        """
+        from .roi import ImageROI
+
+        return ImageROI(self)
+
+    @property
     def image(self):
         """Return native intensity/exclusions, or a borrowed view for a shared handle."""
         from .storage_bridge import owner_of
@@ -376,8 +387,11 @@ class ImageFile(metadataObject):
 
     def _permutation(self, name):
         from .storage_transforms import permute
+        from .roi import copy_roi
 
-        return type(self).from_storage(permute(self.export_storage(), name))
+        result = type(self).from_storage(permute(self.export_storage(), name))
+        copy_roi(self, result, stale=True)
+        return result
 
     @property
     def mask(self):
@@ -405,6 +419,7 @@ class ImageFile(metadataObject):
     def __getstate__(self):
         """Record state for pickling ImageFiles."""
         ret = copy(self.__dict__)
+        ret.pop("_roi_selector", None)
         ret.update({"metadata": self.metadata})
         return ret
 

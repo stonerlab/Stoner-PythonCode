@@ -2,8 +2,9 @@
 
 Date: 2026-10-30. Working release series: 0.12.
 Status: agreed feature sequence and release-phase policy. The standalone
-ImagePlotter alpha is published as 0.12.0a6; the ROI/fit milestones remain future
-work. This plan does not authorise subsequent publication by itself.
+ImagePlotter alpha is published as 0.12.0a6; ImageROI is implemented and the
+maintainer has authorised 0.12.0a7 publication after validation. ImageFitter remains
+future work. This plan does not authorise subsequent publication by itself.
 
 See [maintenance guidance](MAINTENANCE_PLAN.md), the
 [accessor roadmap](DATA_ACCESSOR_PLAN.md), and the detailed
@@ -150,7 +151,7 @@ beta/RC evidence in commits, releases/PRs and CI links rather than accumulating
 separate historical phase reports. A green suite alone does not establish a
 frozen or compatible API; the contract/migration review is a separate gate.
 
-Next work: ImageROI R1 inventory/contract review, then the shared descriptions,
-current-selection state and resolver, reusing the released plotting/coordinate
-foundation. A subsequent alpha publication requires its own authorisation and
-exact-source gates; this plan does not automatically create future tags.
+Current work: validate and publish the authorised 0.12.0a7 ROI alpha against its
+exact committed source. Next feature work is ImageFitter, reusing the implemented
+ROI/coordinate services. A subsequent alpha publication requires its own
+authorisation and exact-source gates; this plan does not automatically create future tags.

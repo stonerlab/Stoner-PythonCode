@@ -1,6 +1,30 @@
 Release notes
 =============
 
+0.12.0a7 (2026-10-31)
+---------------------
+
+``ImageFile.roi`` manages handle-local current regions independently of pixels,
+exclusions and scientific metadata. Immutable ``Stoner.ROI`` descriptions support
+boxes, circles, ellipses, polygons, exact labelled Boolean masks, whole-domain
+selection, combinations and versioned JSON replay. Geometry defaults to local
+pixel coordinates; native mode captures unit labels and uses stored separable
+coordinates without resampling. Boxes are half-open; other shape edges are included.
+
+``image.mean()`` and ``image.plot.hist()`` use current ROI by default. Explicit
+``where`` overrides it, and ``where=ROI.all()`` bypasses it while retaining
+scientific exclusions and validity checks. Whole-image rendering retains its
+default; ``image.plot.roi()`` draws exact cell-edge outlines with Axes returns.
+Other operations retain existing selection behaviour.
+
+Interactive rectangle/polygon selection commits on acceptance and preserves the
+old ROI on cancellation. Crops and geometric transforms mark inherited current
+ROI stale; clear or reselect before using it. Value-only edits preserve state;
+clone/deepcopy/pickle retain independent state. Image storage/save-load does not
+implicitly persist operational ROI. Folder/stack-wide selection, ROI extraction
+conveniences and ImageFile fitting remain future work. See
+:doc:`UserGuide/image_roi` for boundaries, defaults, replay and GUI validation limits.
+
 0.12.0a6 (2026-10-30)
 ---------------------
 

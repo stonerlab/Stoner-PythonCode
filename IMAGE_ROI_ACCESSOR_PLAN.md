@@ -1,7 +1,7 @@
 # ImageFile.roi implementation and testing plan
 
-Date: 2026-10-30. Target checkout: `devel`.
-Status: plan only; no ROI accessor is implemented by this change.
+Date: 2026-10-31. Target checkout: `devel`.
+Status: R1-R5 mandatory alpha scope implemented and locally validated; authorised 0.12.0a7 hosted gates pending.
 
 Implementation order: [ImageFile.plot](IMAGE_PLOT_ACCESSOR_PLAN.md), then
 `ImageFile.roi`, then [ImageFile.fit](IMAGE_FIT_ACCESSOR_PLAN.md). This order is
@@ -11,7 +11,7 @@ see the release checkpoint in [DATA_ACCESSOR_PLAN.md](DATA_ACCESSOR_PLAN.md).
 Follow [AGENTS.md](AGENTS.md), [DOCSTRING_STYLE.md](DOCSTRING_STYLE.md), the shared
 [selection implementation](Stoner/core/selection.py) and
 [string-enum plan](STRING_ENUM_PLAN.md). Detailed names/defaults below are
-recommended contracts to settle in the first ROI batch, not implemented APIs.
+the working contracts. The implementation decisions and validation boundary are recorded below.
 
 ## 1. Purpose and separation of concerns
 
@@ -60,7 +60,7 @@ route ROI creation through a temporary mutation of `image.mask`.
 
 ## 3. Proposed public interface
 
-Future API sketches, not executable against the current package:
+Implemented API (the separately labelled ImageFile.fit sketch remains future work):
 
 ```python
 # Set current ROI by replacing the previous selection.
@@ -100,8 +100,9 @@ image.roi.add(ROI.circle(centre=(50, 50), radius=5))
 image.roi.intersect(usable_area)
 image.roi.subtract(foreground_region)
 
-report = image.fit.plane(output="report")  # future: use current ROI
-whole_image_report = image.fit.plane(where=ROI.all(), output="report")
+# Future ImageFile.fit alpha, not part of the ROI implementation:
+# report = image.fit.plane(output="report")
+# whole_image_report = image.fit.plane(where=ROI.all(), output="report")
 ```
 
 `ROI` constructors create descriptions without changing an image; accessor
@@ -262,26 +263,27 @@ own definition of output/edge effects and is deferred beyond selection support.
 
 ## 8. Testing and documentation checklist
 
-- [ ] Lookup/current/active are inert; setters/clear return the owner; no stored
+- [x] Lookup/current/active are inert; setters/clear return the owner; no stored
   accessors, numerical copies, figures or masks created merely by property lookup.
-- [ ] Pixel/native boxes, centres, axes order, half-open bounds, shape boundaries,
-  outside/empty regions, invalid arguments, no negative wrapping and exact crop
-  compatibility conversion. Test non-square/offset/anisotropic/decreasing grids.
-- [ ] Native unit/grid compatibility; mask alignment; dtype/nullable/numeric mask
+- [x] Pixel/native boxes, centres, axes order, half-open bounds, shape boundaries,
+  outside/empty regions, invalid arguments, no negative wrapping and unchanged
+  legacy crop behaviour. Test non-square/offset/anisotropic/decreasing grids.
+- [x] Native unit/grid compatibility; mask alignment; dtype/nullable/numeric mask
   rejection; full/empty/complement and immutable compound operations.
-- [ ] Reuse rectangle/polygon/circle descriptions across compatible images; combine
+- [x] Reuse rectangle/polygon/circle descriptions across compatible images; combine
   disjoint patches and holes; mutable caller arrays cannot modify saved state.
-- [ ] Default-current, explicit override, explicit all, box intersection and clear
+- [x] Default-current, explicit override, explicit all and clear
   precedence; empty current ROI remains empty and does not become full-image.
-- [ ] ROI membership remains distinct from exclusions/finite-value eligibility;
+- [x] ROI membership remains distinct from exclusions/finite-value eligibility;
   selectors leave pixels, dtype, masks, typed metadata and calibration untouched.
-- [ ] Clone/deepcopy/pickle, value edits, crop/flip/transpose/shape changes, stale
+- [x] Clone/deepcopy/pickle, value edits, crop/flip/transpose/shape changes, stale
   geometry and parent/region/frame isolation follow the declared lifecycle table.
-- [ ] Interactive accept/cancel/Escape/close, mask-polarity adapters, supplied Axes,
-  callback teardown and repeated use. Event simulation plus explicit manual checks.
-- [ ] Reductions/histograms/plot outlines agree on membership; masks still affect
+- [x] Interactive accept/cancel/Escape/close, supplied Axes, callback teardown and
+  repeated use simulated. Legacy mask-polarity contracts retained. Live manual
+  GUI/backend coverage is explicitly not claimed and remains a validation limit.
+- [x] Reductions/histograms/plot outlines agree on membership; masks still affect
   eligibility; displaying a region never implicitly crops or modifies it.
-- [ ] Existing mask.draw/select, RegionSelect/ShapeSelect, crop, image mean/stack
+- [x] Existing mask.draw/select, RegionSelect/ShapeSelect, crop, image mean/stack
   selection and Data.where tests remain valid except documented opt-in active-ROI
   integration behaviour. Existing calls without active ROI retain their results.
 
@@ -298,6 +300,60 @@ and inspect generated HTML over localhost. Record manual widget/backend limits
 and exact-commit hosted release evidence; do not claim future APIs were tested by
 structural validation of this plan.
 
-Next bounded ROI step, after ImagePlotter: R1 inventory/contract review and pure
-description/current-state implementation. ImageFitter must use this facility,
-not introduce its own independent region selector.
+## 9. Implemented alpha contract and handover
+
+R1 audited RegionSelect/ShapeSelect, MaskProxy/DrawProxy, the crop parser,
+storage bridge/owners and the common selection validator. The legacy rectangle
+selector closes its figure and has no cancel contract; ShapeSelect conflates
+cancel/empty mask and exclusion polarity. Their public behaviour is retained.
+The new session uses their underlying Matplotlib rectangle/polygon widgets with
+an isolated accept/cancel lifecycle. Polygon membership reuses scikit-image's
+point-in-polygon primitive, retaining boundary points without integer rounding.
+No ROI creation routes through exclusion mutation.
+
+R2 provides `Stoner.ROI` in `core/roi.py`, ImageROI in `Image/roi.py`, the inert
+ImageFile.roi property and atomic current state. Setters return the owner;
+`current`, `active`, `stale` and detached labelled `resolve` inspect it. No-active,
+explicit-all and active-empty are distinct; Boolean accessor coercion is rejected.
+Standalone native geometry requires an intensity DataArray/Dataset `reference`
+to capture x/y units. Accessor native builders capture the owner automatically.
+Unit labels match exactly; circles/ellipses require equal axis unit labels.
+Pixel/native geometry composition requires an explicit mask conversion.
+
+R3 provides closed polygons/circles/axis-aligned ellipses and explicit rectangle/
+polygon sessions. Enter accepts; Escape/window close cancels. Temporary figures,
+callbacks and preview artists are cleaned up even on backend errors; borrowed
+targets, labels, limits, aspect, autoscale settings and pyplot target are restored.
+Tests simulate the lifecycle; live manual GUI/backend verification is not claimed.
+
+R4 integrates current/explicit/all precedence only into ImageFile.mean and
+plot.hist; image/mesh/contour accept explicit descriptions without current-state
+cropping. plot.roi draws exact cell-edge membership including holes and full/empty
+domains. Low-level resolve_selection(None) and Data defaults remain unchanged.
+Scientific eligibility still combines exclusions and finite intensities separately.
+
+Clone/deepcopy/pickle retain independent operational state. Value edits preserve
+it. Geometric operations conservatively mark inherited state stale rather than
+implicitly transforming it. Explicit selections can bypass stale current state;
+clear/reselection acknowledges the changed geometry. Parent/crop/frame handles
+remain independent. ImageStorage v1 and ordinary save/load omit ROI state.
+
+R5 adds version-1 JSON records with validated replay, a calibrated executable
+guide/example, retained cache assets, API pages and installed-package smoke probes.
+Coordinate metadata captured by state/replay must be JSON-compatible. Optional
+rectangular ROI extraction is explicitly deferred; existing crop is unchanged.
+There is no new fitting-box/crop-parser compatibility path in this alpha, so box
+intersection and fitting examples await ImageFitter. General processing, lines,
+strips, rotated ellipses, 2D coordinate maps and folder/stack-wide current state
+remain outside the planned minimum deliverable.
+
+Local evidence: 1,867 offline tests and the network example passed; after final
+lifecycle additions, 108 focused ROI/plotting tests and the updated example passed.
+The installed-package ROI probe was exercised from source. Ruff passed. Cached
+Sphinx passed with 62 reviewed baseline warnings, no unexpected warnings, missing
+dynamic Data methods or removed API targets; rendered guide/figure/API navigation
+were checked over localhost. Logs are ignored under `maintenance/runs/image-roi`.
+
+Exact-source hosted release evidence will be recorded in MAINTENANCE_PLAN.md
+and the authorised release. ImageFitter must consume this
+shared resolver; the next feature milestone is the separate 0.12.0a8 alpha.

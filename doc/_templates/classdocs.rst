@@ -33,6 +33,10 @@
    .. rubric:: Plotting accessor
 
    .. autoattribute:: plot
+
+   .. rubric:: Region of interest accessor
+
+   .. autoattribute:: roi
 {% endif %}
 
    {% block attributes %}

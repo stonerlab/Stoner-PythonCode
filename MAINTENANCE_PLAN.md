@@ -126,7 +126,32 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
   whole image, with a separate alpha for each accessor.
   Standalone ImagePlotter is published in 0.12.0a6, with exact-source hosted and
   publication evidence recorded below. Its handover and the next ROI R1 batch
-  are in the plotting/ROI plans; ROI and image fitting are not implemented.
+  are in the plotting/ROI plans. ROI is now implemented for the authorised
+  0.12.0a7 alpha; image fitting remains the following milestone.
+
+## 0.12.0a7 ROI alpha preparation
+
+The mandatory R1-R5 scope is implemented: immutable reusable descriptions,
+ImageFile.roi state, programmatic shapes and cancellable interactive sessions,
+reviewed mean/histogram/outline integration, version-1 JSON replay and user/API
+documentation. Optional ROI extraction and general processing remain deferred;
+ImageFile.fit is the subsequent 0.12.0a8 milestone. Runtime dependencies are unchanged.
+
+Local Windows Conda py314 validation passed 1,867 offline tests, including all
+85 offline documentation examples, and the network example separately. The
+focused ROI/example tests were rerun after final documentation changes, and 108
+ROI/image-plotting tests passed after the final lifecycle fixes. New-code Ruff
+passes. Cached Sphinx passed with 62 baseline warnings, no unexpected warnings,
+missing dynamic Data methods or removed API objects. The rendered guide, calibrated
+figure and API link were checked over localhost. The installed-package validation script includes ROI probes;
+fresh wheel/sdist jobs must exercise these on the exact pushed release source.
+
+Live manual GUI/backend behaviour and physical instrument compatibility are
+not claimed. Automated widget event tests cover acceptance, Escape/window close,
+errors, borrowed targets and cleanup. Release publication is authorised by the
+maintainer, conditional on the exact-source matrix, lower-dependency,
+installed-distribution and documentation gates passing. Record their run links
+and public PyPI/Conda, installed wheel, documentation and DOI evidence after release.
 - [ ] Follow [RELEASE_0_12_PLAN.md](RELEASE_0_12_PLAN.md): API lock before beta,
   allowing only small compatible additions, then full API freeze/bug fixes only
   for RC. Review cumulative 0.11 breakage, migration and the final version series
