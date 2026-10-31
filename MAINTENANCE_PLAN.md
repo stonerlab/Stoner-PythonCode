@@ -125,35 +125,8 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
   coordinate services, then fit plane/quadratic reference regions and correct the
   whole image, with a separate alpha for each accessor.
   Standalone ImagePlotter is published in 0.12.0a6, with exact-source hosted and
-  publication evidence recorded below. Its handover and the next ROI R1 batch
-  are in the plotting/ROI plans. ROI is now implemented for the authorised
-  0.12.0a7 alpha; image fitting remains the following milestone.
-
-## 0.12.0a7 ROI alpha preparation
-
-The mandatory R1-R5 scope is implemented: immutable reusable descriptions,
-ImageFile.roi state, programmatic shapes and cancellable interactive sessions,
-reviewed mean/histogram/outline integration, version-1 JSON replay and user/API
-documentation. Optional ROI extraction and general processing remain deferred;
-ImageFile.fit is the subsequent 0.12.0a8 milestone. Runtime dependencies are unchanged.
-
-Local Windows Conda py314 validation passed 1,867 offline tests, including all
-85 offline documentation examples, and the network example separately. The
-focused ROI/example tests were rerun after final documentation changes, and 108
-ROI/image-plotting tests passed after the final lifecycle fixes. New-code Ruff
-passes. Cached Sphinx passed with 62 baseline warnings, no unexpected warnings,
-missing dynamic Data methods or removed API objects. The rendered guide, calibrated
-figure and API link were checked over localhost. The installed-package validation script includes ROI probes;
-fresh wheel/sdist jobs must exercise these on the exact pushed release source.
-
-Live manual GUI/backend behaviour and physical instrument compatibility are
-not claimed. All 67 ROI tests also passed with the QtAgg/offscreen GUI canvas;
-simulated sessions intercept the actual canvas event loop, including backend overrides.
-Automated widget event tests cover acceptance, Escape/window close, errors,
-borrowed targets and cleanup. Release publication is authorised by the
-maintainer, conditional on the exact-source matrix, lower-dependency,
-installed-distribution and documentation gates passing. Record their run links
-and public PyPI/Conda, installed wheel, documentation and DOI evidence after release.
+  publication evidence recorded below. The ROI milestone is published as
+  0.12.0a7; image fitting remains the following feature milestone.
 - [ ] Follow [RELEASE_0_12_PLAN.md](RELEASE_0_12_PLAN.md): API lock before beta,
   allowing only small compatible additions, then full API freeze/bug fixes only
   for RC. Review cumulative 0.11 breakage, migration and the final version series
@@ -175,6 +148,50 @@ and public PyPI/Conda, installed wheel, documentation and DOI evidence after rel
   for evidence and the remaining migration decisions.
 
 ## Current release follow-up
+
+### Published 0.12.0a7
+
+[`0.12.0a7`](https://github.com/stonerlab/Stoner-PythonCode/releases/tag/v0.12.0a7)
+is published as a prerelease at `4174c208f40fc56c85e07f7e660ba7444f532ff5`.
+The mandatory ROI R1-R5 scope is complete: reusable immutable descriptions,
+ImageFile.roi state, programmatic shapes and cancellable interactive sessions,
+reviewed mean/histogram/outline integration, version-1 JSON replay and user/API
+documentation. Optional ROI extraction and general processing remain deferred.
+ImageFile.fit is the next feature milestone, provisionally 0.12.0a8; further
+implementation/publication requires maintainer instruction. Dependencies are unchanged.
+
+Every Linux Python 3.12-3.14/macOS Python 3.14 cell passed 1,872 tests in the
+[exact-source matrix](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41226981776).
+[Lower dependencies](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41226981779)
+passed 1,871 with one expected skip.
+[Fresh wheel/sdist checks](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41226981757)
+and [cached docs](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41226981057)
+passed before tagging. Coverage reporting passed; no gate was waived.
+
+[PyPI](https://pypi.org/project/Stoner/0.12.0a7/) wheel/sdist and the public
+`phygbu` noarch Conda index were verified. The downloaded public wheel passed
+installed-package numerical/resource/plotting/ROI probes outside the checkout.
+[Deployment](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41228084853)
+passed both registries, including Conda's installed import/version test.
+[Release docs CI](https://github.com/stonerlab/Stoner-PythonCode/actions/runs/41228084819)
+passed. Published Python/dependency/GPLv3/repository metadata were checked.
+Zenodo archived the immutable tag as
+[DOI 10.5281/zenodo.23841823](https://doi.org/10.5281/zenodo.23841823).
+
+Read the Docs version activation and [build 35548464](https://app.readthedocs.org/projects/stoner-pythoncode/builds/35548464/)
+completed successfully on the exact release SHA. The version is active/built;
+the [published guide](https://stoner-pythoncode.readthedocs.io/en/v0.12.0a7/UserGuide/image_roi.html),
+ROI API anchor, version badge and figure were checked. The published figure's
+SHA256 matches its retained cache asset.
+
+Local evidence: 1,867 offline tests (all 85 offline examples) and the network
+example passed; final focused coverage passed 108 ROI/plotting tests, plus all
+67 ROI tests on QtAgg/offscreen. Ruff passed. Cached Sphinx passed with 62 reviewed
+warnings and no unexpected warnings, missing dynamic Data methods or removed
+API targets; rendered HTML was checked over localhost before publication.
+Live manual GUI/backend behaviour and physical instrument compatibility remain
+unverified. Automated sessions cover acceptance, Escape/window close, errors,
+borrowed targets and cleanup. Logs are ignored under `maintenance/runs/image-roi`.
 
 ### Published 0.12.0a6
 

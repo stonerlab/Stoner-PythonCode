@@ -1,7 +1,11 @@
 # ImageFile.fit implementation and testing plan
 
-Date: 2026-10-30. Target checkout: `devel`.
+Date: 2026-10-31. Target checkout: `devel`.
 Status: design and implementation plan only; no image fitting accessor is implemented.
+
+The plotting and ROI prerequisites are published in 0.12.0a6 and 0.12.0a7.
+The next bounded feature batch is the fit contract/numerical-conditioning review,
+using `Stoner.ROI` and the ImageROI selection adapter, subject to maintainer instruction.
 
 Implementation sequence: [image plotting](IMAGE_PLOT_ACCESSOR_PLAN.md), then
 [image ROI management](IMAGE_ROI_ACCESSOR_PLAN.md), then image fitting. The

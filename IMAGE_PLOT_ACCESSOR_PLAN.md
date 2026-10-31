@@ -364,7 +364,9 @@ were verified; evidence and the remaining Read the Docs activation follow-up are
 in [MAINTENANCE_PLAN.md](MAINTENANCE_PLAN.md). This hosted evidence supersedes the
 local-only validation boundary above for automated tests and installed archives.
 
-Next bounded step: ImageROI R1 and its shared selection state/resolver. The
-plotting/ROI/fitting alpha order and beta/RC phase policy remain unchanged.
+The subsequent ImageROI R1-R5 minimum scope is now published in 0.12.0a7,
+with verified package/docs publication; see IMAGE_ROI_ACCESSOR_PLAN.md and
+MAINTENANCE_PLAN.md. Next feature work is ImageFitter using those shared services.
+The plotting/ROI/fitting alpha order and beta/RC phase policy remain unchanged.
 Manual live GUI/clipboard behaviour and physical instrument compatibility remain
 unverified. No compatibility wrappers were removed or new deprecation warnings added.

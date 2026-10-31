@@ -1,10 +1,10 @@
 # Next stable release: image accessors and API stability plan
 
-Date: 2026-10-30. Working release series: 0.12.
+Date: 2026-10-31. Working release series: 0.12.
 Status: agreed feature sequence and release-phase policy. The standalone
-ImagePlotter alpha is published as 0.12.0a6; ImageROI is implemented and the
-maintainer has authorised 0.12.0a7 publication after validation. ImageFitter remains
-future work. This plan does not authorise subsequent publication by itself.
+ImagePlotter and ImageROI alphas are published as 0.12.0a6 and 0.12.0a7.
+ImageFitter remains future work. This plan does not authorise subsequent
+implementation or publication by itself.
 
 See [maintenance guidance](MAINTENANCE_PLAN.md), the
 [accessor roadmap](DATA_ACCESSOR_PLAN.md), and the detailed
@@ -52,7 +52,7 @@ Published and planned alpha milestones, with future versions subject to release 
 | Milestone | Candidate version | Required evidence |
 | --- | --- | --- |
 | Plot accessor alpha | Published 0.12.0a6 | Standalone ImagePlotter; exact-source CI and publication evidence in MAINTENANCE_PLAN.md |
-| ROI accessor alpha | 0.12.0a7 | Current state/set/clear, reusable selectors, geometry and reviewed plotting/reduction integration |
+| ROI accessor alpha | Published 0.12.0a7 | Current state/set/clear, reusable selectors, geometry and reviewed plotting/reduction integration; publication evidence in MAINTENANCE_PLAN.md |
 | Fit accessor alpha | 0.12.0a8 | Plane/quadratic reference-region fitting, reports and full-grid floating-point correction |
 | API-lock review | Before the first beta | End-to-end workflows, compatibility inventory and unresolved contract decisions closed |
 | Beta series | b1 onwards in the selected series | Only compatible small additions and fixes; test each new convenience against the locked baseline |
@@ -151,7 +151,7 @@ beta/RC evidence in commits, releases/PRs and CI links rather than accumulating
 separate historical phase reports. A green suite alone does not establish a
 frozen or compatible API; the contract/migration review is a separate gate.
 
-Current work: validate and publish the authorised 0.12.0a7 ROI alpha against its
-exact committed source. Next feature work is ImageFitter, reusing the implemented
-ROI/coordinate services. A subsequent alpha publication requires its own
-authorisation and exact-source gates; this plan does not automatically create future tags.
+The 0.12.0a7 ROI alpha passed its exact-source gates and public package/docs
+verification. Next feature work is ImageFitter, reusing the published ROI and
+coordinate services. Further implementation/publication requires maintainer
+instruction and exact-source gates; this plan does not automatically create future tags.

@@ -1,7 +1,7 @@
 # ImageFile.roi implementation and testing plan
 
 Date: 2026-10-31. Target checkout: `devel`.
-Status: R1-R5 mandatory alpha scope implemented and locally validated; authorised 0.12.0a7 hosted gates pending.
+Status: R1-R5 mandatory alpha scope complete and published in 0.12.0a7, including hosted/publication verification.
 
 Implementation order: [ImageFile.plot](IMAGE_PLOT_ACCESSOR_PLAN.md), then
 `ImageFile.roi`, then [ImageFile.fit](IMAGE_FIT_ACCESSOR_PLAN.md). This order is
@@ -357,6 +357,14 @@ All 67 ROI tests additionally passed on the QtAgg/offscreen GUI canvas after
 correcting the event simulation to intercept backend-specific event-loop overrides.
 This is automated GUI-canvas coverage, not manual live interaction.
 
-Exact-source hosted release evidence will be recorded in MAINTENANCE_PLAN.md
-and the authorised release. ImageFitter must consume this
-shared resolver; the next feature milestone is the separate 0.12.0a8 alpha.
+The authorised [0.12.0a7 alpha](https://github.com/stonerlab/Stoner-PythonCode/releases/tag/v0.12.0a7)
+is published at `4174c208f40fc56c85e07f7e660ba7444f532ff5`. Every full matrix cell
+passed 1,872 tests; lower dependencies passed 1,871 with one expected skip.
+Fresh wheel/sdist and cached docs gates passed before publication. Public PyPI/
+Conda, installed public wheel probes, Conda import/version, release docs CI,
+Read the Docs activation/build/pages and DOI were verified. Run links are in
+MAINTENANCE_PLAN.md. No gate was waived; published tags remain immutable.
+
+ImageFitter must consume this shared resolver; the next feature milestone is the
+separate 0.12.0a8 alpha. Optional extraction and the documented manual GUI limits
+remain deferred, as described above.
