@@ -5,12 +5,11 @@ import re
 from pathlib import Path
 
 from Stoner import Data, DataFolder, __datapath__
-from Stoner.compat import Hyperspy_ok
 
+# This example processes tabular measurements, rather than optional EMD images.
 fldr = DataFolder(__datapath__)
 del fldr["bad_data"]
-if not Hyperspy_ok:
-    del fldr[".*emd$"]
+del fldr[".*emd$"]
 # .all() will recursely iterate all files and groups, depth first.
 for ix, (fname, data) in enumerate(fldr.all()):
     print(ix, fname)

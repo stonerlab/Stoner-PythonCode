@@ -1,269 +1,279 @@
-************************************************************
-Converting Scripts from Older Versions of the Stoner Package
-************************************************************
+Converting scripts from 0.10 or 0.11 to 0.12
+********************************************
 
 .. currentmodule:: Stoner
 
-The Stoner package has gradually undergone several changes as additional functions have been added to keep the codebase
-manageable. This document summarises the main changes from previous versions.
+Use this guide to update a script written for Stoner 0.10 or 0.11 to the
+0.12 API documented in this user guide. The changes are grouped by the work
+needed in your script. For the history of individual releases, see
+:doc:`../release-notes`.
 
-Fitting accessor
-================
+If you are starting from 0.10, first check the imports below, then work through
+the plotting, fitting and numerical-storage changes. Scripts written for 0.11
+will usually already use the current imports, but still need those API changes.
+You can update directly to 0.12 without installing each intervening release.
 
-Fitting now belongs to ``data.fit``. For example,
-``data.lmfit(Linear, xcol="Field", ycol="Signal")`` becomes
-``data.fit.lmfit(Linear, x="Field", y="Signal")`` or
-``data.fit.linear(x="Field", y="Signal")``. Calling ``data.fit(Linear, ...)``
-defaults to lmfit. The shortcuts select registered models; choose another
-algorithm explicitly through ``data.fit.curve_fit``, ``odr`` or
-``differential_evolution``. Polynomial fitting is ``data.fit.polyfit``.
+.. contents:: On this page
+   :local:
+   :depth: 1
 
-Bulk fitting follows the same pattern: ``folder.each.fit.linear(...)`` or
-``folder.each.fit.curve_fit(Linear, ...)``. Existing fit options and returns
-are retained. Direct fitting methods remain available without new deprecation
-warnings; a removal release has not been selected. See :doc:`fitting_registry`
-and :doc:`fitting_folders` for registration, outputs and bulk execution.
+Prepare the environment
+=======================
 
-Version 0.12.0a3: additional plotting contexts
-==============================================
+Stoner 0.12 requires Python 3.12 or newer. Use a new environment if your
+0.10 or 0.11 installation uses an older Python. Required dependencies now
+include NumPy 2.0 or newer, pandas 2.2 or newer, xarray 2024.10 or newer,
+and stonerplots 1.9.8 or newer. See :doc:`install` for installation instructions.
 
-The current accessor additionally exposes ``data.plot.OffsetPlots`` (also
-``Stoner.plot.OffsetPlots``), plus ``DoubleXAxis`` and ``DoubleXYAxis`` alongside
-``DoubleYAxis``. These direct exports now require stonerplots 1.9.8 or newer. See
-:ref:`plotting-offsets` and :ref:`plotting-double-axes` for executable examples.
-Existing drawing methods keep
-their Axes return values and scientific selection rules.
+Keep copies of your original measurements and scripts while converting them.
+Check numerical results, exclusions and metadata as well as whether the script
+runs successfully.
 
-``data.plot.style("stoner, aps", extra={"lines.linewidth": 2})`` now accepts
-SavedFigure-style names and overrides. Omitting the style uses
-``stonerplots.default.style``; pass an empty list for overrides alone.
+Check imports, especially in 0.10 scripts
+=========================================
 
-Version 0.12.0a2: plotting redesign
-===================================
+The public classes are available from the package root in both older series
+and in 0.12. If your script already uses these imports, keep them::
 
-The second alpha requires stonerplots 1.9.6 or newer and replaces the legacy
-plotting methods and templates with the callable ``Data.plot`` accessor.
-``ax = data.plot()`` still infers scientific column roles and uncertainties;
-``data.plot.line()``, ``surface()`` and other named methods choose the plot type.
-Drawing returns the primary Matplotlib Axes. Use native Axes methods for
-formatting and ``ax.figure.savefig(...)`` for saving. Display is explicit, for
-example with ``matplotlib.pyplot.show()``. Accessor contexts provide styles and
-figure layout.
+    from Stoner import Data, DataFolder, ImageFile, ImageFolder, ImageStack
 
-See :doc:`plot_migration` for the call-by-call plotting migration table and
-:doc:`plot_recipes` for translated layout/style examples. The :doc:`plotfile`
-starting page links to current guides for plots, statistics and folders.
-See :doc:`../release-notes` for removed APIs and the scan frame-access improvement.
-The pandas/xarray storage and numerical export contracts below remain in force.
+Some 0.10 scripts instead use compatibility modules with capitalised names.
+Replace those imports with the public classes or the corresponding packages:
 
-Version 0.12.0a1: storage migration
-===================================
+.. list-table::
+   :header-rows: 1
+   :widths: 45 55
 
-This alpha requires Python 3.12 or newer, pandas 2.2 or newer and xarray
-2024.10 or newer. Numerical tables now use pandas storage; images and stacks
-use xarray storage with explicit exclusions and preserved calibration.
+   * - Older import or approach
+     - Replacement for 0.12
+   * - ``from Stoner.Core import DataFile``
+     - ``from Stoner import Data``
+   * - ``from Stoner.Folders import DataFolder``
+     - ``from Stoner import DataFolder``
+   * - Importing ``Stoner.FileFormats`` to enable loaders
+     - Remove the import; ``Data`` selects registered loaders automatically.
 
-The legacy ``DataArray``, ``ImageArray`` and ``KerrArray`` classes have been
-removed. Use ``Data``, ``ImageFile`` and ``KerrImageFile`` respectively. Public
-numerical snapshots are ordinary NumPy masked arrays: inherited Stoner row or
-column annotations no longer propagate through NumPy slicing and arithmetic.
-Use owner methods for named selection and changes, or explicit ``edit_numpy()``,
-``edit_pandas()`` and ``edit_xarray()`` contexts where provided. Mutating a
-detached export does not update its source object.
+Use ``Data`` directly rather than building a class from numerical, analysis and
+plotting mixins. Imports from ``Stoner.analysis.fitting.models`` remain the way
+to select physical models; these subpackages organise models by their physics.
+See :doc:`fitting_models`.
 
-The :doc:`datafile` and :doc:`image` guides describe the current interfaces.
-``Data.data`` now returns the stored pandas DataFrame. ``ImageFile.image`` (also
-``ImageFile.data``) and ``ImageStack.stack`` return xarray Datasets containing
-``intensity`` and Boolean ``excluded`` variables; stacks also retain valid extents.
-These native computations do not automatically apply Stoner exclusions. Use
-``to_numpy()`` for a detached masked numerical export, ``Data.asarray()`` or
-``ImageFile.imarray`` for read-only numerical snapshots, and ``export_storage()``
-for lossless state with typed metadata.
+Format implementations now use registered loader functions rather than a
+subclass for each format. For ordinary loading, prefer
+``d = Data("measurement.txt")``. If automatic identification is insufficient,
+use ``Data.load(..., filetype=...)`` with the registered format name. See
+:doc:`data_loading` for file-loading examples and :doc:`developer` for custom
+loader registration.
 
-``Data.head(n=5)`` and ``Data.tail(n=5)`` return independent objects of the same
-class, preserving raw excluded measurements, masks, dtype, fill value, column
-headers/roles/IDs and typed metadata. Negative counts omit rows from the opposite
-end; zero returns an empty table. Standard previews copy only selected numerical
-rows, while custom clone/deepcopy hooks retain their established behaviour.
+Move plotting to the plotting accessor
+======================================
 
-``Data.sort`` continues to sort in place and return the same object. Compatible
-real numeric keys now delegate to pandas stable sorting, with exclusions moved
-by the same row permutation. Complex values, other float widths, non-native byte
-orders and custom comparators retain numerical paths. ``reverse=True`` reverses
-the complete ascending permutation, including ties and NaNs. ``Data.unique``
-retains NumPy's sorted masked results and optional index/inverse outputs because
-pandas distinct-value operations have different semantics.
+In 0.12, ``d.plot`` is a callable accessor. It still uses column roles and
+uncertainties, but drawing returns a Matplotlib Axes. Display and saving are
+explicit. For example, replace an older call such as
+``d.plot_xy(xcol="Field", ycol="Signal", fmt="r-")`` with::
 
-Direct native edits may change existing cells without changing dtype or geometry.
-Use Stoner methods for structural changes, and reacquire native references after
-owner mutations. Detectable schema drift raises ``ValueError``; same-shaped
-permutations cannot all be detected. Borrowed frame/crop Datasets have no direct
-write-back guarantee: edit through the frame/crop owner or its transaction.
-Do not write through saved native references during owner transactions.
+    ax = d.plot.line(x="Field", y="Signal", fmt="r-")
+    ax.set_xlabel("Magnetic field (T)")
+    ax.set_ylabel("Signal")
+    ax.figure.savefig("measurement.png")
+    d.plot.show()
 
-Search results now retain exclusions when returning multiple columns. Boolean
-lists and short Boolean arrays select rows positionally, and NumPy integer and
-floating scalars are accepted as numerical targets. Two-value numeric NumPy
-arrays consistently select discrete targets; this fixes NumPy-version-dependent
-interval dispatch. Use a tuple for an interval. Two-item numeric lists retain
-their legacy interval meaning.
+For an automatic choice of plot type, use ``ax = d.plot()`` or
+``ax = d.plot(x="Field", y="Signal")``. Keep ``d`` separately if your old
+script chained Data operations from the plot's return value.
 
-Operation selections through ``where`` are supported by ``Data.fit.curve_fit``,
-``ImageFile.mean`` and ``ImageStack.average``. Unsupported numerical transforms
-now reject this keyword before work or mutation, including methods whose legacy
-keyword dictionaries silently ignored it. For a row callback requiring its own
-argument named ``where``, use ``Data.apply(callback, _extra={"where": value})``
-to pass it explicitly to the callback. ``Data.select`` retains its separate column-query
-namespace, so ``data.select(where=value)`` still queries a column named ``where``.
+.. list-table::
+   :header-rows: 1
+   :widths: 45 55
 
-Historical Python Version Support
-=================================
+   * - Previous usage
+     - Replacement for 0.12
+   * - ``d.plot(xcol=0, ycol=1)``
+     - ``d.plot(x=0, y=1)``
+   * - ``d.plot_xyz(...)``
+     - ``d.plot.surface(...)``; use the named accessor method for other fields.
+   * - ``d.annotate_fit(model, ...)``
+     - ``d.plot.annotate_fit(model, ...)``
+   * - ``d.fig`` or ``d.figure``
+     - ``ax.figure`` from the returned Axes.
+   * - ``d.xlabel = "Field"``
+     - ``ax.set_xlabel("Field")`` or ``d.plot.xlabel = "Field"``.
+   * - Plot templates or ``template=...``
+     - stonerplots styles and layout contexts through ``d.plot``.
+   * - ``showfig``, ``show_plot`` or ``save_filename``
+     - Explicit display and saving as in the example above.
 
-The current development version requires Python 3.12 or newer. The following
-list records older releases; it is not the current support policy.
+The old top-level plotting methods and broad Axes/Figure properties on Data
+have been removed. The ordinary accessor rejects old plotting options such as
+``figure``, ``template``, ``plotter``, ``multiple`` and the ``*col`` keywords.
 
-    - Versions <= 0.5 supported Python 2.7 with some support for Python 3.x
-    - Version 0.7 and 0.8 supported Python 2.7, 3.5 and 3.6
-    - Version 0.9 supports Python 2.7, 3.5, 3.6 and 3.7. The final release of 0.9 also supports Python 3.8
-    - Version 0.10 does *not* support Python 2.7 or 3.5. The supported versions of Python are 3.6, 3.7 and 3.8
+Use styles around drawing rather than assigning a template::
 
-Data versus DataFile, AnalysisFile and PlotFile
-===============================================
+    with d.plot.style("stoner"):
+        ax = d.plot()
 
-Originally the package provided several subclasses of a **DataFile** class and the user was encouraged to make a superclass
-of all of them. Thus code would have::
+The former JTB template is not an alias for a stonerplots style. Layout helpers
+include ``d.plot.OffsetPlots``, ``DoubleXAxis``, ``DoubleYAxis`` and
+``DoubleXYAxis``. See :doc:`plot_migration` for the full call-by-call conversion
+table and :doc:`plot_recipes` for translated style and layout examples.
 
-    import Stoner.Analysis as SA
-    import Stoner.Plot as SP
-    import Stoner.Core as SC
+Use the fitting accessor
+========================
 
-    class Data(SC.AnalysisFile, SP.PlotFile, SC.DataFile):
-        pass
+Fitting in 0.12 belongs to ``d.fit``. Replace, for example,
+``d.lmfit(Linear, xcol="Field", ycol="Signal")`` with
+``d.fit.lmfit(Linear, x="Field", y="Signal")``. The registered shortcut
+``d.fit.linear(x="Field", y="Signal")`` selects the linear model for you.
 
-This should now simply be replaced with::
+Calling ``d.fit(model, ...)`` defaults to lmfit. Choose another algorithm
+explicitly through ``d.fit.curve_fit``, ``d.fit.odr`` or
+``d.fit.differential_evolution``. Polynomial fitting is ``d.fit.polyfit``.
+Accessor coordinate keywords are ``x`` and ``y``; other fit options and
+algorithm-specific return conventions are retained.
 
-    from Stoner import Data
+Direct fitting methods remain available without new deprecation warnings;
+their removal release has not been selected. Unlike the removed plotting
+methods, these calls do not have to be converted immediately. Use the accessor
+when updating a script so that it follows the current guide.
 
-Stoner.PlotFormats and Stoner.Plot modules removed
-==================================================
+For folder-wide fits, replace ``folder.each.curve_fit(Linear, ...)`` with
+``folder.each.fit.curve_fit(Linear, ...)``. See :doc:`curve_fitting`,
+:doc:`fitting_registry` and :doc:`fitting_folders` for examples, model registration
+and output choices.
 
-The **Stoner.Plot** and **Stoner.PlotFormats** modules were replaced with the :py:mod:`Stoner.plot` package. Code that did::
+Replace direct NumPy storage assumptions
+========================================
 
-    from Stoner.PlotFormats import JTBStyle, TexFormatter
+The main storage change from 0.10/0.11 is that Data tables now use pandas,
+while images and stacks use xarray. The ``DataArray``, ``ImageArray`` and
+``KerrArray`` subclasses have been removed. Work with ``Data``, ``ImageFile``
+and ``KerrImageFile`` as the owners of measurements, masks and metadata.
 
-should now do::
+.. list-table::
+   :header-rows: 1
+   :widths: 35 65
 
-    from Stoner import Data
-    from Stoner.plot import TexFormatter
+   * - Interface in 0.12
+     - Meaning
+   * - ``d.data``
+     - Stored pandas DataFrame of raw measurements.
+   * - ``im.image`` or ``im.data``
+     - Native xarray Dataset containing intensities, exclusions and coordinates.
+   * - ``stack.stack``
+     - Native xarray Dataset including frame coordinates and valid image extents.
+   * - ``obj.to_numpy()``
+     - Detached, writable NumPy masked array; edits do not update the owner.
+   * - ``d.asarray()`` or ``im.imarray``
+     - Detached, read-only numerical snapshot.
+   * - ``obj.export_storage()``
+     - Lossless state export including exclusions and typed metadata.
 
-Plot templates have now been replaced with stonerplots styles and explicit Axes
-formatting. Use ``with data.plot.style("stoner"):`` around drawing, and see
-:ref:`plotting-contexts` for journal styles and layout contexts. The removed JTB
-template's appearance is not an alias of a stonerplots style.
+For example, replace positional array access such as ``d.data[:, 1]`` with
+``d.column(1)`` or ``d.to_numpy()[:, 1]``. Native pandas indexing uses
+``d.data.iloc[:, 1]`` and follows pandas rules, including its handling of labels
+and alignment.
 
-Most of the functionality of the  **Stoner.Plot** module was in the **PlotFile** subclass and is now accessed via the :py:class:`~Stoner.core.data.Data`
-class. A few additional functions that used to be in **Stoner.Plot** are now in :py:mod:`Stoner.plot.utils`.
+Native pandas and xarray calculations do not automatically apply Stoner's
+exclusions. Use Stoner methods or masked NumPy exports when excluded values
+must be ignored. NumPy results are ordinary arrays and no longer carry Stoner
+row or column annotations through slicing and arithmetic.
 
-Stoner.Folders Module deprecated
-================================
+For a calculation that should update the original measurement, use an editing
+block rather than modifying an exported array::
 
-The code around :py:class:`~Stoner.folders.mixins.DataFolder` was extensively rewritten and cleaned up in versions 0.9 onwards. Firstly, the old
-**Stoner.Folders** module is replaced with the :py:mod:`Stoner.folders` package, and the :py:class:`~Stoner.folders.mixins.DataFolder` class is
-now directly importable from the root :py:mod:`Stoner` package. Thus::
+    with d.edit_numpy() as values:
+        values[:, 1] *= 2
 
-    from Stoner.Folders import DataFolder
+Changes are committed only when the block finishes successfully.
+``d.edit_pandas()`` and image/stack ``edit_xarray()`` provide corresponding
+native interfaces. Keep shape, data type, labels and ordering unchanged inside
+editing blocks; use Stoner methods for structural changes.
 
-becomes::
+Obtain native references again after changing an owner with Stoner methods.
+Saved DataFrames or Datasets may no longer represent its current storage.
+Do not edit the owner separately while an editing block is open, or rely on
+borrowed frame/crop Datasets writing back to the original image or stack.
+See :doc:`data_interchange` and :doc:`image_interchange` for the practical rules.
 
-    from Stoner import DataFolder
+``d.head(n)`` and ``d.tail(n)`` now return independent Data objects, retaining
+excluded measurements, masks, column roles and metadata. Zero gives an empty
+table; negative counts omit rows from the opposite end. ``d.sort(...)`` still
+sorts in place and returns ``d``; ``d.unique(...)`` retains NumPy's sorted masked
+results rather than pandas' distinct-value semantics.
 
-The :py:mod:`Stoner.folders` package contains many modules and subpackages to implement generic folder-like objects, but for end
-users of the package, the :py:class:`~Stoner.folders.mixins.DataFolder` class is probably all that is required to be imported.
+Check column and row selectors
+==============================
 
-Stoner.Fit Module deprecated
-============================
+Column names can now resolve to all matches rather than silently choosing one.
+This includes repeated exact names. Matching tries exact equality, then glob
+or literal substring matching, then regular expressions. Use a compiled regular
+expression when you specifically want regex matching.
 
-The **Stoner.Fit** module contained a mixed bag of assorted fitting functions and **lmfit.Model** classes. These have been
-reorganised into a series of sub-modules of the :py:mod:`Stoner.analysis` package. Although this makes the import lines
-rather long, it groups the functions more logically by physics theme. Thus::
+If your code needs exactly one column, use an unambiguous name or deliberately
+choose the first result with ``d.find_col(selector, first=True)``. Scalar
+consumers reject ambiguous selectors; methods supporting multiple columns use
+all matches. ``force_list=True`` always returns a list. See :doc:`data_columns`.
 
-    from Stoner.Fit import blochGrueneisen
+For row searches, Boolean lists and short Boolean arrays select positions.
+Two-value numeric NumPy arrays select two discrete targets. Use a tuple for an
+interval; two-item numeric lists retain their older interval meaning. Search
+results preserve exclusions when returning multiple columns.
 
-becomes::
+``where`` selects observations for ``d.fit.curve_fit``, ``im.mean`` and
+``stack.average`` without changing the persistent mask. True means include.
+Unsupported numerical transforms reject this keyword rather than silently
+ignoring it. To pass a callback's own argument named ``where``, use
+``d.apply(callback, _extra={"where": value})``. ``d.select(where=value)``
+continues to query a column named ``where``. See :doc:`data_selecting`,
+:doc:`fitting_simple` and :doc:`image_regions`.
 
-    from Stoner.analysis.fitting.models.e_transport import blochGrueneisen
-
-The **Stoner.Fit** module also contained various functions to make **lmfit.Model** classes from functions or from ini files -
-these functions are now in the :py:mod:`Stoner.analysis.fitting.models` package directly.
-
-Stoner.FileFormats Module deprecated
-====================================
-
-The former **Stoner.FileFormats** module collected the file-format implementations. It has
-now been superseded by the :py:mod:`Stoner.formats` package which groups the fileformats into different sub-modules.
-
-Current formats use registered loader functions rather than a subclass for each
-format. ``Data`` selects a loader automatically, so this old import is unnecessary::
-
-    import Stoner.FileFormats
-
-can simply be removed if the :py:class:`~Stoner.core.data.Data` is used.
-
-Stoner.Image changes
+Update image scripts
 ====================
 
-The former ``ImageArray`` and ``KerrArray`` NumPy subclasses have been removed.
-Use the owner classes instead::
+Replace direct construction of the removed array subclasses with owner classes::
 
     from Stoner import ImageFile
     from Stoner.Image.kerr import KerrImageFile
 
-Call image-processing methods on those objects. Their ``image`` property exposes
-a native Dataset; ``imarray`` returns a detached read-only masked array. NumPy arithmetic returns ordinary arrays;
-assign the result to ``image`` or use an editing context to publish changes.
-Metadata and coordinate-aware operations belong to the owner.
+Call processing methods on those objects. ``im.image`` now exposes a Dataset,
+so use ``im.to_numpy()`` for a writable numerical copy or ``im.edit_numpy()``
+to commit pixel and mask changes. Ordinary rectangular slicing returns an
+independent ImageFile. The ``crop`` method has separate copying controls;
+see :doc:`image_regions` before relying on shared pixels.
 
-Deprecated Image functions
---------------------------
+For scripts retaining older image-method names, replace ``box`` and
+``crop_image`` with ``crop``, ``convert_float`` with ``asfloat``, and
+``convert_int`` with ``asint``.
 
-The following ImageFile methods should be swapped:
+The new ``im.plot()`` accessor returns Axes, consistently with Data plotting.
+The separate legacy ``im.imshow()`` method retains its Figure return. See
+:doc:`image_plotting` before changing code that uses the return value.
 
--   ``.box()`` - use :py:meth:`Stoner.Image.core.ImageFile.crop` instead
--   ``.crop_image()`` - use :py:meth:`Stoner.Image.core.ImageFile.crop` instead
--   ``.convert_float()`` - use :py:meth:`Stoner.Image.core.ImageFile.asfloat` instead
--   ``.convert_int()`` - use :py:meth:`Stoner.Image.core.ImageFile.asint` instead
+ImageFolder retains the folder interface; ImageStack now stores pixels, masks
+and valid frame extents together in an xarray Dataset. Padding for differently
+sized frames stays excluded. See :doc:`image_collections` for stack editing.
+The optional ``im.roi`` and ``im.fit`` accessors add region selection and
+background fitting; see :doc:`image_roi` and :doc:`image_fitting` when adopting
+those workflows.
 
+Update folder operations
+========================
 
-Stoner.DataFolder/Stoner.ImageFolder changes
-============================================
+Use ``each`` to apply an operation to stored measurements. If an older script
+calls ``folder.curve_fit(Linear)``, replace it with
+``folder.each.fit.curve_fit(Linear)``. Operations that organise the collection,
+such as ``folder.group(...)`` and ``folder.sort(...)``, remain on the folder.
 
-:py:class:`~Stoner.folders.mixins.DataFolder` and :py:class:`~Stoner.Image.folders.ImageFolder` are essentially similar objects for managing collections
-of :py:class:`~Stoner.core.data.Data` and :py:class:`~Stoner.Image.core.ImageFile` respectively.
+Each bulk call returns a list of results, rather than a folder for chaining.
+A returned Data object replaces its corresponding member; other results are
+collected in the list. Failed calls leave an exception and traceback in that
+member's result entry. Check these results before using a batch summary.
 
-Earlier versions of the Stoner package exposed the ability to call methods of the stored :py:class:`~Stoner.core.data.Data`/
-:py:class:`~Stoner.Image.core.ImageFile` instances by calling a corresponding method directly on the folder object. The problem with this
-is that if there is a name collision with a method intended to work directly on the Folder, it's not clear what method is being
-called. To remove this problem, and to make it a little more explicit when accessing a method of the stored instances, the
-:py:attr:`~Stoner.folders.core.BaseFolder.each` attribute is now provided. Thus code like::
+Instead of manually looping to build a table of metadata, use::
 
-    fldr=DataFolder(".", pattern="*.txt", setas="xy")
-    fldr.curve_fit(Linear)
+    result = folder.metadata.slice(["Temperature", "Resistance"], output="Data")
 
-now becomes::
-
-    fldr=DataFolder(".", pattern="*.txt", setas="xy")
-    fldr.each.fit.curve_fit(Linear)
-
-One of the frequently required operations is to loop through all the files in a folder and extract some of their metadata
-and build that into a new table. This used to be done something like::
-
-    result=Data()
-    for data in fldr:
-        result+=[data["thing_1"], data["thing_2"]]
-
-The new :py:attr:`~Stoner.folders.core.BaseFolder.metadata` attribute and :py:meth:`Stoner.folders.metadata.MetadataProxy.slice` method
-allow this to be done directly::
-
-    result=fldr.metadata.slice(["thing_1","thing_2"], output="Data")
-
-
+This operates on direct members by default. Use ``recurse=True`` to include
+members throughout a grouped folder. See :doc:`folder_each`,
+:doc:`folder_metadata` and :doc:`folder_grouping` for the current workflows.

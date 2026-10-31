@@ -746,7 +746,7 @@ def outlier_detection(
 
     The outlier detection function has the signatrure::
 
-        def outlier(row,column,window,certainty,**kwargs)
+        def outlier(row, column, window, certainty, **kwargs):
             #code
             return True # or False
 

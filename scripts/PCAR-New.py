@@ -242,7 +242,7 @@ class working(Data):
 
         chi2 = self.p0.shape[0] > 1
 
-        method = getattr(self, self.method.replace("-", "_"))
+        method = getattr(self.fit, self.method.replace("-", "_"))
 
         if not chi2:  # Single fit mode, consider whether to plot and save etc
             fit = method(

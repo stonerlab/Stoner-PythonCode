@@ -61,10 +61,10 @@ profile.plot.title = "XMCD Cross Section"
 
 # Show the images as well
 structural_axes = figure.add_subplot(221)
-strctural.imshow(figure=figure, ax=structural_axes, title="Structural Image")
+strctural.plot(ax=structural_axes, title="Structural Image")
 
 xmcd_axes = figure.add_subplot(223)
-xmcd.imshow(figure=figure, ax=xmcd_axes, title="XMCD Image")
+xmcd.plot(ax=xmcd_axes, title="XMCD Image")
 
 # Make a histogram of the intensity values
 hist = xmcd.hist(bins=200)

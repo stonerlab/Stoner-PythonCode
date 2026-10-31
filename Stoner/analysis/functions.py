@@ -51,6 +51,7 @@ def apply(
         The callable *func* should have a signature::
 
             def func(row,**kwargs):
+                return row[0]
 
         and should return either a single float, in which case it will be used to replace the specified column,
         or an array, in which case it is used to completely replace the row of data.

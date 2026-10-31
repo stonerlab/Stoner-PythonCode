@@ -1,8 +1,40 @@
 """Categorise tests without changing the default collection."""
 
 from pathlib import Path
+from functools import wraps
+import sys
 
 import pytest
+
+
+@pytest.fixture(autouse=True)
+def current_example_api(monkeypatch, request):
+    """Reject direct compatibility calls from examples while allowing accessor internals."""
+    if request.path.name not in {"test_doc_samples.py", "test_scripts.py", "test_example_api.py"}:
+        return
+    from Stoner import Data, ImageFile
+    from Stoner.core.setas import Setas
+
+    root = Path(__file__).resolve().parents[1]
+    example_roots = tuple(str(root / directory).replace("\\", "/").casefold() + "/"
+                          for directory in ("doc/samples", "scripts"))
+
+    def guard(method):
+        @wraps(method)
+        def checked(*args, **kwargs):
+            caller = sys._getframe(1).f_code.co_filename.replace("\\", "/")
+            if caller.casefold().startswith(example_roots):
+                raise AssertionError(f"Example calls compatibility API {method.__qualname__}: {caller}")
+            return method(*args, **kwargs)
+        return checked
+
+    for owner, names in (
+        (Data, ("curve_fit", "lmfit", "odr", "differential_evolution", "polyfit")),
+        (ImageFile, ("imshow",)),
+        (Setas, ("_get_cols",)),
+    ):
+        for name in names:
+            monkeypatch.setattr(owner, name, guard(getattr(owner, name)))
 
 
 @pytest.fixture(autouse=True)

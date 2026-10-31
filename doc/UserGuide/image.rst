@@ -1,483 +1,54 @@
-*******************
 Working with Images
 *******************
 
-.. py:currentmodule:: Stoner.Image
+An ImageFile keeps a two-dimensional picture together with information about
+the measurement (metadata) and flags for pixels to exclude (a mask). These
+short guides introduce one task at a time.
 
-Introduction
-============
+Try a small image
+=================
 
-The :mod:`Stoner.Image` package provides image-processing functions in a similar way to the :class:`Stoner.core.data.Data` and
-:class:`Stoner.folders.mixins.DataFolder` classes used to manipulate numerical data.
-
-:class:`ImageFile`
-------------------
-
-:class:`ImageFile` holds one image together with information about the
-measurement, such as its filename and instrument settings. This additional
-information is called *metadata* and is available through
-:attr:`ImageFile.metadata` as named values in a dictionary.
-
-A *mask* marks pixels to ignore in calculations without deleting their values.
-Use it to exclude unwanted parts of an image, such as a border or damaged area.
-``ImageFile()`` creates an empty object. Load a filename or supply an array
-before using image-processing methods.
-
-As with :class:`Stoner.core.data.Data`, :class:`ImageFile` has a rich array of methods that can carry out different image analysis tasks -
-many of these methods change the image *in place* and return the modified :class:`ImageFile`
-allowing a sequence of operations to be completed by chaining the method calls together.
-
-The array of methods available to a :class:`ImageFile` is particularly rich as the class automatically wraps functions from the
-popular scikit-image package (:py:mod:`skimage`) as well as the :py:mod:`scipy.ndimage` module. In general such functions take an image as their first argument
-and :class:`ImageFile` passes its own image data as that argument to whatever function is being wrapped. If the function Returns
-image data of the same size that the original image, then the wrapper replaces the :class:`ImageFile`'s image data with the new
-image data.
-
-As well as the wrapped scikit-image and scipy.ndimage functions, :class:`ImageFile` provides a set of its own functions for
-carrying out some common image processing operations.
-
-By default :class:`ImageFile` can load and save both .tiff and .png files and will embed its metadata into custom tags in those
-formats.
-
-Subclasses of the :class:`ImageFile` are provided for reading the .png files produced by the CM group's Evico Kerr Microscopes as well as
-the :func:`Stoner.formats.image.hdf5.load_stxm_image` loader, which reads STXM images from the SLS Pollux beamline.
-
-Loading an Image
-----------------
-
-The :class:`ImageFile` constructor supports taking a string argument which is interpreted as a filename of an image format recognised by PIL. The resulting
-image data is used to form the contents of the :attr:`ImageFile.image` which holds the image data::
-
-   from Stoner import ImageFile
-   im = ImageFile("kermit.png")
-
-.. image:: ../../sample-data/kermit.png
-
-Like :class:`Stoner.core.data.Data`, :class:`ImageFile` supports image metadata. Where this can be stored in the file, e.g. in PNG and TIFF images, this is read in
-automatically. This metadata is stored as a :class:`Stoner.core.base.TypeHintedDict` dictionary. This metadata can be set directly in the
-construction of the :class:`ImageFile`::
-
-   import numpy as np
-   im = ImageFile(np.arange(10000).reshape(100,100), metadata={'myarray':1})
-
-Examining and manipulating the ImageFile
-----------------------------------------
-
-IF you are using an ipython console or Jupyter Notebook, then the :class:`ImageFile` supports rich format outputs and
-it will show you a picture of the image data as its default representation.
-
-ImageFile Attributes and Properties
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The key attributes and properties of the :class:`ImageFile` are:
-
-    - :py:attr:`ImageFile.image`:
-        This is the native Dataset. Use ``imarray`` for a read-only NumPy copy of the pixels, with their mask.
-    - :attr:`ImageFile.metadata`:
-        This is the dictionary that contains the metadata associated with the image. This is normally parameters and
-        information about the measurement or data that is encoded within the the measurement file, but can be supplemented
-        by information added by the user directly or by methods and functions. Each item of metadata is normally referred to by a string *key*.
-    - :attr:`ImageFile.filename`:
-        This is the name of the file from which the image was loaded (as a string). It is also used as a default title when
-        displaying the image.
-    - :attr:`ImageFile.mask`:
-        This represents the mask data for an image file. By default it is entirely False, meaning all parts of the image
-        are visible. It supports a variety of different ways of manipulating which parts of the image are masked - see the section
-        below.
-    - :attr:`ImageFile.draw`:
-        This is a special attribute that lets you draw simple geometric shapes on the image.
-
-:class:`ImageFile` objects use the appropriate data type for the underlying image format - integers for PNG and either integers or
-floating point numbers for tiffs (STXM files are always floating point).
-
-The :meth:`ImageFile.convert` method can be used to convert the data to a more appropriate format::
-
-    im.convert(float)
-    im.asfloat()
-    im.asint()
-
-It also has simpler :meth:`ImageFile.asfloat` and :meth:`ImageFile.asint` methods for converting to floating point or integer
-formats as required.
-
-There are a number of other attributes that can tell you information about the :class:`ImageFile` such as:
-
-    - :attr:`ImageFile.centre`:
-        the coordinates of the centre of the image
-    - :attr:`ImageFile.aspect`:
-        the image aspect ratio
-    - :attr:`ImageFile.shape`:
-        the image height and width in pixels, in that order.
-
-To make it easier to quickly get a rotated image, the attributes :attr:`ImageFile.CW` and :attr:`ImageFile.CCW` return
-copies of the :class:`ImageFile` that are rotated 90 degrees clockwise and anticlockwise, respectively.
-
-In many cases the default behaviour of modifying the image data in place may not be desired - to get a copy of the
-:class:`ImageFile` you use the :attr:`ImageFile.clone` attribute::
-
-    new_im = im.clone.gaussian(4.0) # create a copy of im and then apply a gaussian blur
-
-.. image:: figures/kermit-blurred.png
-
-Rectangular array slices return an independent :class:`ImageFile` containing
-that part of the image. Editing the result does not change the original::
-
-    section = im[:, 10:50]  # A vertical section of the image.
-
-.. image:: figures/kermit_vslice.png
-
-::
-
-	im[::-1,:] # Flip the image vertically
-
-.. image:: figures/kermit_flipped.png
-
-Indexing an :class:`ImageFile` with a string will instead access the metadata stored with the object::
-
-    im["Loaded as"]
-    >>> 'KermitPNGFile'
-
-The :class:`ImageFile` inherits from a dictionary like class - so all the usual Python dictionary methods work on the
-metadata of the image::
-
-    for metadata_key in im:
-        print(f"{metadata_key} -> {im[metadata_key]}")
-
-    averages = im.pop("Averages",1)
-    if "Message" in im:
-        print(f"Message = {im['Message']}")
-
-Like the :class:`Stoner.core.data.Data` class, the metadata dictionary will fall back to matching keys with regular expressions
-if not exact match is found. In this case, if multiple metadata items match then the result of indexing with a string
-may return a dictionary with all the matching keys.
-
-The metadata associated with an image will always be stored in the best Python type that can be found - where possible
-metadata is stored in files with a hint as to the native type of that data and this type hint is used to map to an
-appropriate Python type. Unmappable types are retained as a string representation.
-
-Common Functions
-----------------
-
-It is not possible to provide an exhaustive guide to all the functions made available from scikit-image, scipy.ndimage and
-opencv2, but this section will cover some of the commonly used functionality.
-
-
-Measuring part of an image
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Use ``where`` for a calculation on selected pixels without changing the image
-or its mask. ``True`` means include that pixel. The selection must have exactly
-the image's shape::
+Run this example in a Python console or notebook. It creates a small intensity
+image without downloading a file::
 
     import numpy as np
+    from Stoner import ImageFile
 
-    region = np.zeros(im.shape, dtype=bool)
-    region[:, :2] = True  # The first two columns.
-    background = im.mean(where=region)
-    corrected = im.to_numpy() - background
+    pixels = np.arange(12, dtype=float).reshape(3, 4)
+    im = ImageFile(pixels)
+    im["Sample"] = "Example film"
 
-The mean ignores masked pixels and non-finite values. An empty selection returns
-NaN. This calculation leaves the persistent mask unchanged; clearing an existing
-mask later reveals the original measurement.
+    print(im.shape)        # Three rows and four columns: (3, 4).
+    print(im["Sample"])    # Metadata describes the measurement.
+    print(im.mean())       # Mean intensity: 5.5.
+    section = im[:, 1:3]   # An independent image of the middle two columns.
+    ax = im.plot(cmap="viridis")
+    im.plot.show()
 
-For a stack, ``imst.average(where=region)`` similarly needs a Boolean selection
-with shape ``(number_of_frames, height, width)``. Repeat a spatial selection across
-frames explicitly when needed. Padding outside each image's valid size is always
-ignored, and output pixels with no usable observations are masked NaNs.
+Keep using this object as ``im``, or replace it with
+``im = ImageFile("my_image.png")`` to load your own image.
 
-Experienced xarray users can supply a Boolean DataArray instead, with exactly
-matching dimensions and coordinates. Implicit expansion and mismatched
-coordinates are rejected. Direct xarray calculations do not automatically apply
-Stoner's mask.
+Choose your next task
+=====================
 
-``where`` is supported by these reductions, not by neighbourhood filters such as
-a Gaussian blur. To filter a rectangular region, make a crop first. Filtering a
-crop treats its edges as image boundaries, so it can differ from filtering the
-whole image and then selecting a region.
-
-Specify a box
-^^^^^^^^^^^^^
-
-Many of the functions can be used with a *_box* parameter to limit their operation to a specified region of the image.
-Additionally the :meth:`ImageFile.crop` method will discard the image outside a region specified in a similar way. The
-working box can be given as follows:
-
-    - A single integer:
-        This is interpreted to exclude a region of n pixels from all sides of the image.
-    - A single floating point number between 0.0 and 0.5:
-        This is interpreted to exclude this corresponding fraction of the width and height from each side of the image
-    - A tuple of 4 numbers, or 4 arguments:
-        This is interpreted as a sequence of pixel coordinates for (left-x, right-x, top-y, bottom-y). If any of the
-        numbers are None, then this is take as the minimum or maximum extents of the width or height (depending on whether
-        the None value substitutes for the left, right top or bottom coordinate).
-    - A single string:
-        The argument is interpreted as the name of a metadata item that will define the box to be used.
-    - A single value False:
-        This is equivalent to the whole image (i.e. to not specify a box)
-    - A single None value:
-        In this case a copy of the image is shown to the user and they are invited to draw the box with the mouse and
-        then press the <Enter> key to confirm their selection.
-
-.. image:: figures/kermit-crop.png
-
-Aligning Two Images
-^^^^^^^^^^^^^^^^^^^
-
-The :func:`Stoner.Image.imagefuncs.align` function, exposed as the ``ImageFile.align`` method, can be used to align an image to a reference image. It offers a variety of different
-algorithms which may be better or worse depending on the nature of the image. The options are:
-
-    - chi2_shift:
-        this uses the image-registration module to carry out a chi-squared analysis of shifting the two images
-        relative to each other.
-    - imreg_dft:
-        this uses the imreg_dft module to carry out the image registration. In essence it takes a Fourier transform
-        of the two images and then compares the phases within the Fourier transforms to calculate the necessary shift.
-    - scharr:
-        this is the default method used. It first of all applies a Scharr edge detection filter and uses the
-        imreg_dft method to find the translation vector.
-    - cv2:
-        this method uses the opencv2 package's alignment algorithm.
-
-Align also takes a *_box* keyword parameter to confine the section of the image used for the alignment to a specific region
-(this can make the operation more efficient  if much of the images are featureless), and a *scale* parameter that will upscale
-the image before attempting to do the alignment. This may improve sub-pixel alignment corrections.
-
-As well as returning the shifted image, :meth:`ImageFile.align` will record the translation vector used in the metadata item *tvec*::
-
-    im.align(ref,method="imreg_dft", scale=4)
-    print(f"Translation Vector={im['tvec']}")
-
-Align also calculates a *translation_limits* metadata item that represents the maximum extent of the image where the pixels
-have not been added to accommodate the translation for the alignment.
-
-Cropping an Image
-^^^^^^^^^^^^^^^^^
-
-The :meth:`ImageFile.crop` method selects a rectangular region. By default it
-changes ``im`` to refer to that region and returns ``im``. To keep the original
-image unchanged and obtain an independent cropped image, use::
-
-    cropped = im.crop(10, 50, 20, 80, copy=True, _=None)
-
-Here ``_=None`` requests a separate ImageFile and ``copy=True`` makes its pixels
-independent. Without ``copy=True``, the region shares pixels and masks with the
-original, so editing it can change the original. Ordinary rectangular slicing,
-such as ``im[20:80, 10:50]``, is a simpler way to make an independent crop.
-
-With no box arguments, ``crop`` displays the image so that you can draw a region;
-press Enter to accept it. The same copying options apply.
-
-The combination of the *translation_limits* metadata item from the :meth:`ImageFile.align` method and the specification of the box
-for cropping allows images to be aligned and then cropped to match::
-
-    im.align(ref,method="imreg_dft", scale=4)
-    # Crop the image according to the translation limits worked out be align.
-    cropped = im.crop("translation_limits", copy=True, _=None)
-
-    # Now crop the reference image, using the reversed translation limits
-    cropped_ref = ref.crop(im.translation_limits("tvec", reverse=True), copy=True, _=None)
-
-Contrast Normalisation
-^^^^^^^^^^^^^^^^^^^^^^
-
-If the absolute value of the image data is not important, then normalising the image can improve the contrast. The
-:meth:`ImageFile.normalise` will do this.By default it will remap the image intensity values to the range -1 to +1. This
-can be changed with the *scale* keyword parameter. The area of the image used to calculate the mapping between the old and
-new intensity values can be set with the *sample*  parameter. If there are a few pixels with extreme values in the image then
-this can reduce the contrast for the bulk of the image. By using the *limits* parameter you can restrict the portion
-of the input range to be rescaled over. For example, *limits=(0.1,0.9)* will map the first 10% and the last 10% of the
-pixels to -1 or +1 and the middle 80% between the two extremes::
-
-    im.normalise(limits=(0.01,0.99))
-
-Image Filtering
-^^^^^^^^^^^^^^^
-
-Filtering is frequently used to remove noise and other artefacts from images. Most of the filters that can be applied are
-functions within the scikit-image.filters module. A good general purpose option is to use a gaussian filter - this will
-convolute the image with a 2-D gaussian function with a user-definable width. This is effective for removing high frequency
-noise and speckle::
-
-    im.gaussian(1.0)
-
-For band-pass filtering the scikit-image.filters method *difference_of_gaussians* can be used. This filters the image with two
-different gaussian blurs and then takes the difference between them - the smaller gaussian blur removes high frequency noise
-whilst the large gaussian removes low spatial frequency variations::
-
-    im.difference_of_gaussians(1.0,2.0)
-
-.. image:: figures/kermit-bandpass.png
-
-Another filtering approach is to use a Savitzky-Golay filter - this fits a polynomial surface locally over the data to smooth
-or differentiate the data. This sort of filtering is good for preserving feature sizes in the original data set::
-
-    im.sgolay2d(points=5)
-
-Fourier transforms
-^^^^^^^^^^^^^^^^^^
-
-Fast Fourier transforms are often used when we need to examine the frequency spectra of image data. The :meth:`ImageFile.fft`
-method provides a convenient one-stop method for generating the FFT that can also take care of some of the artefacts that
-can result::
-
-    fft=im.clone.fft(remove_dc=True, window="hamming")
-
-.. image:: figures/kermit-fft.png
-
-In this example, a copy of the image is transformed to the magnitude of its Fourier transform. The Fourier transform is shifted
-so that the central pixels are the zero-frequency components. The optional keyword *remove_dc* replaces the 0 frequency data with the
-mean value of the FFT to avoid a large spike in the FFT from the mean value of the image. The *window* parameter tells the method
-to multiply the image by the corresponding window function (from scikit-image.filters.window) before calculating the FFT. This
-avoids artefacts caused by the discontinuities at the edges of the image.
-
-The shifting of the FFT to align the dc components to the centre of the image can be controlled with the *shift* keyword
-parameter, whilst the output is controlled by the *phase* parameter - False gives the magnitude, True returns the phase angle in radians
-and None returns the full complex FFT.
-
-To aid with analysing radial distributions in FFTs (or images), the :meth:`ImageFile.radial_profile` method can be used.
-This will compute a profile from a given centre outwards - either integrating over all angles, or restricting to specific angles.
-At its simplest one can just do::
-
-    profile=fft.radial_profile()
-
-This returns a :class:`Stoner.core.data.Data` object with columns for the lower, central and upper
-radial bin positions, mean pixel value, standard deviation and number of pixels counted.
-Angles are in radians. The optional *angle* keyword parameter will select either one angle (float) or a
-range of angles (a tuple of two floats). This can be easily plotted since the :class:`Stoner.core.data.Data` object is created with the
-appropriate columns setup as x and y data columns::
-
-    ax = fft.radial_profile(angle=(-0.04, 0.04)).plot()
-    ax.set_yscale("log")
-
-.. image:: figures/kermit-fft-profile.png
-
-
-Further functions
-^^^^^^^^^^^^^^^^^
-
-Further functions that could be useful:
-
-  - im.threshold_minmax(0.2,0.8)
-      Returns a binary image
-  - im.plot_histogram()
-      Plot a histogram of the pixel intensities
-  - im.level_image()
-      Flatten a skewed image background
-  - im.subtract_image(otherim)
-      Subtract another image and enhance contrast
-  - im.align(otherim)
-      Translate image to line up with other im
-
-Scikit-Image & scipy.ndimage Functions
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-While many local analysis functions have been added to ImageFile one of the big benefits is that function proxy methods have been added to make the entire
-scikit-image library and scipy routines available. Function requests will first search local image functions and secondly look up any function from the external
-libraries. The wrapper supplies numerical image pixels to the external function; you do not
-need to pass the native Dataset yourself. The return value for such
-calls is handled a bit carefully:
-
-    #. If the return value is a 2d numpy.ndarray like type that has the same size as the original, or if the *_* keyword argument is set to **True** then the original
-        :attr:`ImageFile.image` is replaced with the returned result.
-    #. If the return value is anything else then it is simply passed back to the calling program.
-
-In this way, many operations can be carried out 'in-place' on a :class:`ImageFile`.
-
-ImageFile Representation
-------------------------
-
-By default, the representation of an ImageFile is just a short textual description. However, if the *short_repr* and *short_img_repr* options
-are both set to False and a graphical console is in use with an IPython kernel, then the special ``_repr_png_`` method will show a picture of the
-contents of the ImageFile instead::
-
-    i = Stoner.Image.ImageFile("kermit.png")
-    i
-    >>> kermit.png(<class 'Stoner.Image.core.ImageFile'>) of shape (479, 359) (uint16) and 53 items of metadata
-    from Stoner import Options
-    Options.short_repr=False
-    Options.short_img_repr=False
-    i
-    >>>
-
-.. image:: ../../sample-data/kermit.png
-
-Use :doc:`image_plotting` for the callable ``image.plot`` accessor, shared styles
-and properties, calibrated image/contour/mesh display and intensity histograms.
-It returns Matplotlib Axes consistently with ``Data.plot``.
-The legacy :meth:`ImageFile.imshow` retains its Figure return.
+Read the first two pages to get started, then choose a guide for your task.
 
 .. toctree::
    :maxdepth: 1
 
-   image_plotting
-   image_roi
-   image_fitting
+   Load and save images <image_loading>
+   Inspect images, pixels and metadata <image_inspecting>
+   Plot images and histograms <image_plotting>
+   Select image regions <image_roi>
+   Measure, crop and align images <image_regions>
+   Filter images and analyse spatial frequencies <image_processing>
+   Fit image backgrounds <image_fitting>
+   Work with NumPy and xarray images <image_interchange>
+   Work with image folders and stacks <image_collections>
 
-Using image data with NumPy
-===========================
+Many processing methods change ``im`` itself. Use ``working = im.clone`` to
+keep an independent copy. A mask excludes pixels from calculations without
+deleting their values; see :doc:`image_roi` for how masks and regions interact.
 
-``ImageFile`` owns an xarray Dataset containing intensities, exclusions and
-coordinates. ``image`` and ``data`` return the native Dataset; ``imarray`` returns
-a detached read-only masked array and ``to_numpy()`` a writable detached export. Use NumPy routines
-directly with an image when only its values are needed. Use ``to_numpy()`` when
-the exclusion mask is needed, and ``export_storage()`` to preserve calibration
-and typed metadata as well.
-
-The old ``ImageArray`` and ``KerrArray`` subclasses have been removed. Construct
-``ImageFile`` or ``KerrImageFile`` and call scientific methods on those objects.
-NumPy calculations on these copies do not carry Stoner metadata into their
-results and do not update the original image.
-Write through image indexing, replace ``image`` as a whole, or use an editing
-block to apply numerical results::
-
-    with im.edit_numpy() as pixels:
-        pixels[0, 0] = 12
-        pixels.mask[1, 2] = True
-
-The changes are applied only when the block finishes successfully. Keep its
-shape and data type unchanged. ``edit_xarray()`` provides a similar block for
-experienced xarray users and also preserves coordinates. Do not edit the
-original image separately while one of these blocks is open.
-
-Working with Lots of Images: :class:`ImageFolder` and :class:`ImageStack`
-=========================================================================
-
-Just as :class:`Stoner.folders.mixins.DataFolder` allows you to efficiently process lots of separate :class:`Stoner.core.data.Data` files, :class:`ImageFolder` does the same for lots
-of :class:`ImageFile` objects. It is based on the same parent :class:`Stoner.folders.core.BaseFolder` class, so has similar abilities to iterate, form
-subfolders and so on. In addition, an :class:`ImageFolder` has attributes and methods for working with multiple images.
-
-Due to the potentially large amount of data involved in processing images it is good to take advantage of native numpy's speed wherever possible. To this end
-:class:`Stoner.Image.ImageStack` is now available. This works very similarly to ImageFolder but owns an xarray Dataset with frame, y and x dimensions and valid image extents.
-For example::
-
-    from Stoner import ImageStack
-
-    imst = ImageStack('pathtomyfolder', pattern='*.tif')
-    imst = imst['subfolder']  # Take advantage of folder grouping
-    imst.each.translate((5, 3))  # Translate all images
-
-The ``imarray`` property returns an independent, read-only array indexed as
-``[frame, row, column]``. Use edit_numpy() for committed edits, or call functions on each ImageFile
-(including the scikit-image and scipy library).
-
-``imst.stack`` is the stored xarray Dataset. Its ``intensity`` and ``excluded``
-variables hold pixel values and masks. ``valid_height`` and ``valid_width`` give
-each frame's actual size; padding outside that size must stay masked. Frame
-coordinates identify the stored images.
-
-For everyday edits, use the ImageFile for a frame, or an editing block::
-
-    with imst.edit_numpy() as pixels:
-        pixels[0, 0, 0] = 12  # First frame, first row, first column.
-
-Direct xarray cell edits are available for experienced users, but must retain
-the dimensions, coordinates, data type, variables and valid sizes. Assigning a
-whole Dataset requires the same structure and copies its input. Use storage
-imports for a different structure; see :doc:`developer`.
-
-Obtain the Dataset again after changing an image or stack with Stoner methods:
-an old reference may no longer contain the current data. To edit a frame or
-crop, assign through that ImageFile or its editing block. Do not rely on edits
-to a saved frame/crop Dataset reaching the original.
-
-
-
+For collection operations shared with numerical data, continue with
+:doc:`datafolder`. For storage and extension details, see :doc:`developer`.

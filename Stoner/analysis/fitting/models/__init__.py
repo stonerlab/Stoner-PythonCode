@@ -99,7 +99,7 @@ def make_model(model_func=None, *, name=None, replace=False, independent_vars=No
         The function being wrapped into the model should have the form::
 
             def model_func(x_data,*parameters):
-                ....
+                ...
 
         (i.e. similar to what :py:func:`scipy.optimize.curve_fit` expects). The resulting
         class is a sub-class of :py:class:`lmfit.Model` but also adds a class method
@@ -115,7 +115,7 @@ def make_model(model_func=None, *, name=None, replace=False, independent_vars=No
         take the form::
 
             def hinter(**kwargs):
-                return {"param_1":{"max":max_val,"min":min_value,"value":start_value},"param_2":{.....}}
+                return {"param_1": {"max": max_val, "min": min_value, "value": start_value}}
 
         The generated class can be instantiated or passed to
         :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.lmfit` through ``data.fit``.

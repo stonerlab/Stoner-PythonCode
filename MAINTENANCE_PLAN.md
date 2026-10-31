@@ -85,6 +85,8 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
   differ only in capitalisation. Do not rename those APIs to work around Windows
   filename collisions.
 - Run the documentation example tests when examples or their underlying APIs change.
+  Run `maintenance/check-example-api.py` and `tests/test_example_api.py` too, to
+  catch compatibility calls in maintained documentation, samples and scripts.
   Non-cached builds deliberately execute plotting examples and refresh the cache;
   review those generated changes before committing.
 - Serve generated HTML alone over localhost for visual checks. Inspect changed

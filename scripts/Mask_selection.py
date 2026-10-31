@@ -17,10 +17,10 @@ def demonstrate(filename=DEFAULT_FILE, select=True):
     if select:
         image.mask.select()
     image.normalise(limits=(0.01, 0.99), scale_masked=True)
-    image.imshow()
+    image.plot()
     binary = image.clone
     binary.quantize(output=[-1, 1], levels=[image.threshold_otsu()])
-    binary.imshow()
+    binary.plot()
     return image, binary
 
 

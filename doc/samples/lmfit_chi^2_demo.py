@@ -14,7 +14,7 @@ model, p0 = cfg_model_from_ini(config, data=d)
 
 fit = d.fit.lmfit(model, p0=p0, result=True, header="Fit", output="data")
 with fit.plot.style("stoner"):
-    columns = fit.setas._get_cols().ycol
+    columns = fit.setas.y
     with fit.plot.StackVertical(len(columns)) as panels:
         for column, ax in zip(columns, panels):
             fit.plot.errorbar(y=column, ax=ax, capsize=3, title=None)

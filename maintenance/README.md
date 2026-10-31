@@ -47,6 +47,25 @@ It is a diagnostic report, not a pytest substitute or an automatic pass/fail gat
 
 ## Documentation
 
+Check the current API used by documentation examples and repository scripts:
+
+```powershell
+python maintenance/check-example-api.py
+python -m pytest tests/test_example_api.py tests/Stoner/test_doc_samples.py tests/Stoner/test_scripts.py
+```
+
+The checker inventories RST literal/inline examples, Markdown fences, LaTeX
+listings, package docstring examples, notebooks, `doc/samples` and `scripts`.
+It writes `maintenance/runs/example-api.json`, including fragments that need an
+illustrative context and explicitly labelled historical migration references.
+Non-Python commands and configuration snippets are retained in the inventory.
+This static check rejects known retired names and compatibility helpers; it does
+not claim to execute fragments with unspecified data or certify external GUIs.
+The sample and script tests additionally reject direct compatibility fitting,
+legacy image display and private role-helper calls made by example code,
+including dynamically selected calls. Current accessors can still use shared
+numerical implementation functions internally.
+
 ```powershell
 New-Item -ItemType Directory -Force maintenance/runs/docs | Out-Null
 $env:READTHEDOCS = 'True'

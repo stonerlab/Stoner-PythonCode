@@ -550,7 +550,7 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
         tuple or array. If callable, it should take the form::
 
             def p0_func(ydata,x=xdata):
-                ....
+                ...
 
         and return a list of parameter values that is in the same order as the model function. If p0 is not
         given and a :py:class:`lmfit_mod.Model` or :py:class:`scipy.odr.Model` is supplied as the model function,
