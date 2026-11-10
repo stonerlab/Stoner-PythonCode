@@ -156,14 +156,18 @@ commands in [the developer guide](../doc/UserGuide/developer.rst).
 
 ## Current release follow-up
 
-### First beta: 0.12.0b1
+### Published 0.12.0b1
 
-The maintainer authorised the first 0.12 beta on 10 November 2026, conditional on
-successful CI and a documentation build. The release plan records the current
-API lock, retained compatibility interfaces and deferred feature work. Complete
-the exact-source matrix, lower-dependency, installed-distribution and cached
-documentation gates before tagging and publishing. Record publication evidence
-in the release; keep raw local reports under ignored `maintenance/runs`.
+The [first beta](https://github.com/stonerlab/Stoner-PythonCode/releases/tag/v0.12.0b1)
+is published at `7ac9d6fdefd32d963cd3492e1a365ad134fcb0d6`. Its release record
+links the successful exact-source matrix, lower dependencies, installed packages,
+cached documentation, registry publication and archived DOI. Codacy reported zero
+active findings on that revision. Keep raw local reports ignored.
+
+The documented API is locked. Preserve the release plan's retained compatibility
+interfaces, cumulative migration guide and deferred feature scope. During beta,
+review only fixes, documentation and small compatible additions. Before rc1,
+freeze additions and repeat the full verification gates.
 
 ### Published 0.12.0a8
 

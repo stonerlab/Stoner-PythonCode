@@ -1,10 +1,10 @@
 # Next stable release: image accessors and API stability plan
 
 Date: 2026-11-10. Selected release series: 0.12.
-Status: preparing the authorised first beta, 0.12.0b1. The image-accessor alphas
-are published through 0.12.0a8. The cumulative migration guide and current public
-contracts define the beta API lock below; exact-source hosted release gates must
-pass before publication.
+Status: 0.12.0b1 is published. The image-accessor alphas are complete, and the
+cumulative migration guide and current public contracts define the beta API lock
+below. Exact-source hosted tests, installed-package checks and cached
+documentation passed before publication.
 
 See [maintenance guidance](../../../maintenance/MAINTENANCE_PLAN.md), the
 [accessor roadmap](DATA_ACCESSOR_PLAN.md), and the maintained
@@ -103,7 +103,7 @@ changes must be necessary fixes and revalidated, not a route to new features.
 
 ## 4. API-lock checklist: alpha to beta
 
-- [ ] Each accessor alpha's minimum deliverable and focused/full/hosted gates pass.
+- [x] Each accessor alpha's minimum deliverable and focused/full/hosted gates pass.
 - [x] Real user workflows cover display, ROI create/edit/clear/reuse, reduction/
   histogram, fit, whole-image correction and inspection with common Data conventions.
 - [x] Review the three accessors' names/defaults/return/reference/selection/
@@ -185,7 +185,7 @@ families are deferred feature work. Preserve the guides' explicit scientific and
 backend limits. Simulated GUI tests do not establish manual GUI/backend coverage;
 physical facility extensions still require real exports and specifications.
 
-Next: finish exact-source CI, cached documentation and installed-package gates,
-then publish the authorised beta. Record results in the release and CI links.
-During beta, review compatible additions against this baseline. Before rc1,
-freeze additions and repeat the full verification gates.
+The [first beta release](https://github.com/stonerlab/Stoner-PythonCode/releases/tag/v0.12.0b1)
+records exact-source validation and publication evidence. During beta, review
+compatible additions against this baseline. Before rc1, freeze additions and
+repeat the full verification gates.
