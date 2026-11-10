@@ -1,6 +1,38 @@
 Release notes
 =============
 
+0.12.0b1 (2026-11-10)
+---------------------
+
+The first 0.12 beta locks the documented API established by the eight alpha
+releases. The series remains 0.12. Bug fixes, documentation and small compatible
+additions may follow during beta; breaking API changes are excluded. Release
+candidates will freeze additions too. See :doc:`UserGuide/upgrade` for the
+cumulative migration from 0.10/0.11, including native pandas/xarray storage,
+column-selection rules and the plotting/fitting accessors.
+
+Direct Data fitting methods and their existing coordinate keywords, legacy
+``ImageFile.imshow`` with its Figure return, and the separate ``level_image``
+algorithm remain supported throughout 0.12 beta and RC. This release introduces
+no new deprecation warnings or removal deadline for those interfaces. Accessor
+plotting continues to return Axes. ROI and image-fit records retain version 1.
+
+Since 0.12.0a8, the user guide has been reorganised around practical workflows
+and its examples audited against the current API. Developer documentation now
+lives under ``doc/development``; reusable maintenance guidance remains under
+``maintenance``. Completed implementation reports have been removed.
+
+Scientific loaders, metadata lookups, selection, fitting, plotting and maintenance
+utilities have been refactored to resolve the Codacy backlog. Regression coverage
+preserves their scientific contracts. Sparse Rigaku header construction and
+interactive cursor callback cleanup are corrected. GenX now reports expected
+column-selection errors while allowing unexpected internal failures to propagate.
+
+Existing limits remain: headless tests do not establish live GUI/backend coverage;
+ROI does not imply folder/stack-wide selection; image fitting does not add in-place
+or folder-wide correction. Facility-specific multi-region MAXIMUS and alternative
+SPC layouts still require representative exports and authoritative specifications.
+
 0.12.0a8 (2026-10-31)
 ---------------------
 

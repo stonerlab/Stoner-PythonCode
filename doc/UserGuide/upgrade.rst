@@ -13,6 +13,18 @@ the plotting, fitting and numerical-storage changes. Scripts written for 0.11
 will usually already use the current imports, but still need those API changes.
 You can update directly to 0.12 without installing each intervening release.
 
+Beta compatibility policy
+=========================
+
+The documented API is locked from 0.12.0b1. Beta releases permit bug fixes,
+documentation and small compatible additions. Release candidates also freeze
+additions. Existing direct Data fitting methods and their ``xcol``/``ycol``
+keywords, legacy ``ImageFile.imshow`` with its Figure return, and ``level_image``
+remain supported throughout the 0.12 beta and RC series. No new deprecation
+warnings or removal deadline are introduced for those interfaces. The migration
+tables below distinguish interfaces already removed during alpha development
+from compatibility calls that remain supported.
+
 .. contents:: On this page
    :local:
    :depth: 1

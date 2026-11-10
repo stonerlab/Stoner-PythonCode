@@ -130,10 +130,9 @@ commands in [the developer guide](../doc/UserGuide/developer.rst).
 
 - [ ] Follow
   [RELEASE_0_12_PLAN.md](../doc/development/plans/RELEASE_0_12_PLAN.md): API
-  lock before beta,
-  allowing only small compatible additions, then full API freeze/bug fixes only
-  for RC. Review cumulative 0.11 breakage, migration and the final version series
-  before the lock. Existing alpha tags remain immutable.
+  beta API lock at 0.12.0b1, allowing only small compatible additions, then full
+  API freeze/bug fixes only for RC. Preserve the documented compatibility policy
+  and cumulative migration guide. Existing published tags remain immutable.
 - [ ] Follow [STRING_ENUM_PLAN.md](../doc/development/plans/STRING_ENUM_PLAN.md)
   for public string-valued
   choice arguments. Start with fitting outputs, retain supported string calls,
@@ -156,6 +155,15 @@ commands in [the developer guide](../doc/UserGuide/developer.rst).
   for evidence and the remaining migration decisions.
 
 ## Current release follow-up
+
+### First beta: 0.12.0b1
+
+The maintainer authorised the first 0.12 beta on 10 November 2026, conditional on
+successful CI and a documentation build. The release plan records the current
+API lock, retained compatibility interfaces and deferred feature work. Complete
+the exact-source matrix, lower-dependency, installed-distribution and cached
+documentation gates before tagging and publishing. Record publication evidence
+in the release; keep raw local reports under ignored `maintenance/runs`.
 
 ### Published 0.12.0a8
 

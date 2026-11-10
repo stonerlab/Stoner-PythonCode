@@ -1,11 +1,10 @@
 # Next stable release: image accessors and API stability plan
 
-Date: 2026-10-31. Working release series: 0.12.
-Status: agreed feature sequence and release-phase policy. The standalone
-ImagePlotter and ImageROI alphas are published as 0.12.0a6 and 0.12.0a7.
-ImageFitter is published in the final planned feature alpha, 0.12.0a8. All three
-image feature milestones have passed their release gates. API lock/migration
-review remains separate.
+Date: 2026-11-10. Selected release series: 0.12.
+Status: preparing the authorised first beta, 0.12.0b1. The image-accessor alphas
+are published through 0.12.0a8. The cumulative migration guide and current public
+contracts define the beta API lock below; exact-source hosted release gates must
+pass before publication.
 
 See [maintenance guidance](../../../maintenance/MAINTENANCE_PLAN.md), the
 [accessor roadmap](DATA_ACCESSOR_PLAN.md), and the maintained
@@ -105,24 +104,24 @@ changes must be necessary fixes and revalidated, not a route to new features.
 ## 4. API-lock checklist: alpha to beta
 
 - [ ] Each accessor alpha's minimum deliverable and focused/full/hosted gates pass.
-- [ ] Real user workflows cover display, ROI create/edit/clear/reuse, reduction/
+- [x] Real user workflows cover display, ROI create/edit/clear/reuse, reduction/
   histogram, fit, whole-image correction and inspection with common Data conventions.
-- [ ] Review the three accessors' names/defaults/return/reference/selection/
+- [x] Review the three accessors' names/defaults/return/reference/selection/
   coordinate/ownership contracts in the maintained guides and executable examples.
-- [ ] Review cumulative 0.11 -> candidate breaking changes with a migration table:
+- [x] Review cumulative 0.11 -> candidate breaking changes with a migration table:
   old call, replacement, changed semantics, retained compatibility and remaining
   limits.
-- [ ] Decide the stable version series, compatibility/deprecation policy and the
+- [x] Decide the stable version series, compatibility/deprecation policy and the
   status of direct Data fitting, legacy image.imshow and level_image. Do not allow
   a beta/RC removal merely because an older planning document mentioned it.
-- [ ] Audit all supported consumers, including folder/stack adapters, image selectors,
+- [x] Audit all supported consumers, including folder/stack adapters, image selectors,
   repr hooks, notebooks if tracked, examples and scripts; record
   excluded/deferred work.
-- [ ] Freeze a reviewed public signature/inventory and behavioural baseline;
+- [x] Freeze a reviewed public signature/inventory and behavioural baseline;
   explicitly classify internal versus public names and versioned stored records.
-- [ ] Document supported image calibration/ROI/frame/uncertainty limits and manual
+- [x] Document supported image calibration/ROI/frame/uncertainty limits and manual
   GUI/backend evidence. Unsupported behaviour is rejected explicitly.
-- [ ] Update compatibility/release notes and user migration guides. No essential
+- [x] Update compatibility/release notes and user migration guides. No essential
   feature or scientific-contract decision remains deferred into beta.
 
 ## 5. Beta and RC gates
@@ -156,7 +155,37 @@ beta/RC evidence in commits, releases/PRs and CI links rather than accumulating
 separate historical phase reports. A green suite alone does not establish a
 frozen or compatible API; the contract/migration review is a separate gate.
 
-The plotting/ROI/fitting alphas are published through 0.12.0a8. Next, review the
-cumulative migration/compatibility inventory and settle API lock before beta.
-Do not infer that feature completion itself locks the API, selects a larger stable
-version or authorises beta publication.
+## 7. First beta API lock
+
+The maintainer selected 0.12.0b1 on 10 November 2026. Retain the 0.12 series and
+lock the currently documented API; the cumulative changes do not trigger a new
+renumbering. The immutable `v0.12.0b1` source, its maintained API documentation
+and regression tests define the baseline once the exact-source gates pass.
+
+The public baseline includes the five primary owner classes, their documented
+dynamic methods, Data plotting/fitting and ImageFile plotting/ROI/fitting
+accessors, fitting model imports and registry, supported enums/string values,
+and version-1 ROI/image-fit records. Undocumented underscore-prefixed helpers
+are internal; public compatibility interfaces are not reclassified as internal.
+
+The [upgrade guide](../../UserGuide/upgrade.rst) is the cumulative 0.10/0.11
+migration inventory, including call replacements, storage ownership, masks,
+selector cardinality and return changes. The plotting, ROI and fitting guides
+specify coordinates, precedence, return types, uncertainty and replay contracts.
+The executable guide examples and regression suite cover their integration.
+
+Retain direct Data fitting and existing coordinate keywords, legacy image
+`imshow` Figure returns and `level_image` throughout 0.12 beta and RC. Introduce
+no new deprecation warnings or removal deadline for them. Further removal needs
+an explicit future release decision and migration policy. Existing alpha plotting
+removals remain documented removals, not pending beta changes.
+
+Folder/stack-wide ROI, in-place/folder-wide image correction and further accessor
+families are deferred feature work. Preserve the guides' explicit scientific and
+backend limits. Simulated GUI tests do not establish manual GUI/backend coverage;
+physical facility extensions still require real exports and specifications.
+
+Next: finish exact-source CI, cached documentation and installed-package gates,
+then publish the authorised beta. Record results in the release and CI links.
+During beta, review compatible additions against this baseline. Before rc1,
+freeze additions and repeat the full verification gates.
