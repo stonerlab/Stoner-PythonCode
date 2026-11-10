@@ -72,6 +72,10 @@ commands in [the developer guide](../doc/UserGuide/developer.rst).
   complexity refactoring separate from release preparation. Store local exports
   under ignored `maintenance/runs` and verify hosted reanalysis after pushing.
 
+- When exporting Codacy reports, verify that analysis has completed for the exact
+  pushed revision and collect every results page. Run Markdownlint on the local
+  Markdown reports as well as maintained developer documentation before committing.
+
 ## When documentation changes, and before a release
 
 - Build cached HTML with `READTHEDOCS=True`, retaining the warning log. Run
@@ -583,14 +587,6 @@ reviewed inference/test-utility advisories did not block the alpha.
   See [the storage handover](../doc/development/plans/STORAGE_MIGRATION_PLAN.md#post-migration-scan-frame-access-2026-10-18)
   for the bounded contract, exact-revision hosted links and documentation-warning
   review. This optimisation is validated independently of the earlier plotting gates.
-
-- [ ] **Code complexity remediation (non-blocking for the alpha releases):** the
-  complete 2026-10-17 `devel` Codacy snapshot contains 85 complexity-category findings.
-  Review and address these in bounded maintenance batches after alpha release
-  preparation, favouring cohesive helpers and meaningful regression coverage.
-  Do not require complexity cleanup or a zero-finding quality report to publish
-  the alpha. Review any independently identified correctness or security defect
-  on its actual release impact rather than its complexity score.
 
 - [x] **Native storage wrappers on `devel` (Stages 1-9 complete):** see
   [STORAGE_MIGRATION_PLAN.md](../doc/development/plans/STORAGE_MIGRATION_PLAN.md)
