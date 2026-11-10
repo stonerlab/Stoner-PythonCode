@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-import subprocess
+import subprocess  # nosec B404  # run fixed local Git checks without a shell.
 from pathlib import Path
+from shutil import which
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,8 +29,11 @@ REMOVED_FILES = {
 
 def git_lines(*args: str) -> list[str]:
     """Return non-empty output lines from a Git command."""
-    result = subprocess.run(
-        ["git", *args], cwd=ROOT, capture_output=True, check=True, encoding="utf-8"
+    executable = which("git")
+    if executable is None:
+        raise RuntimeError("Git executable was not found on PATH")
+    result = subprocess.run(  # nosec B603  # fixed internal Git subcommands; no shell.
+        [executable, *args], cwd=ROOT, capture_output=True, check=True, encoding="utf-8"
     )
     return [line for line in result.stdout.splitlines() if line]
 

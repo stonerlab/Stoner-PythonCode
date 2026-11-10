@@ -5,25 +5,27 @@ __all__ = ["AttocubeScan"]
 import importlib
 import pathlib
 import re
-from copy import deepcopy
 from glob import glob
+from functools import partial
 from os import path
 
-import h5py
-from numpy import array, genfromtxt, linspace, meshgrid, prod
+from numpy import genfromtxt, linspace, meshgrid
 from scipy.interpolate import griddata
 from scipy.optimize import curve_fit
 
 from ..compat import bytes2str, string_types
-from ..core.base import TypeHintedDict
 from ..core.exceptions import StonerLoadError
 from ..Image import ImageFile
-from ..Image.numerical import numerical_image
 from ..Image.stack import ImageStack
-from ..Image.scan_metadata import ScanMetadataMixin, read_exclusions, write_exclusions
+from ..Image.scan_metadata import ScanMetadataMixin
 from ..tools.file import FileManager, HDFFileManager, file_dialog, get_filename
+from .utils.scan import (
+    parse_scan_args, raise_scan_error as _raise_error, write_scan_frame,
+    initialise_scan_metadata, read_scan_frame, write_common_metadata, read_common_metadata, read_scan_groups,
+)
 
 PARAM_RE = re.compile(r"^([\d\\.eE\+\-]+)\s*([\%A-Za-z]\S*)?$")
+
 SCAN_NO = re.compile(r"SC_(\d+)")
 
 
@@ -39,42 +41,12 @@ def plane(X, a, b, c):
     return a * x + b * y + c
 
 
-def _raise_error(openfile, message=""):
-    """Raise a StonerLoadError after trying to close file."""
-    try:
-        raise StonerLoadError(message)
-    finally:
-        try:
-            openfile.close()
-        except (AttributeError, TypeError, ValueError, IOError):
-            pass
-
-
 def _read_signal(scandata, g):
     """Read a signal array and return a member of the image stack."""
     if "signal" not in g:
         raise StonerLoadError(f"{g.name} does not have a signal dataset !")
     tmp = scandata.type()  # pylint: disable=E1102
-    data = g["signal"]
-    if prod(array(data.shape)) > 0:
-        tmp.image = data[...]
-    else:
-        tmp.image = [[]]
-    metadata = g.require_group("metadata")
-    typehints = g.get("typehints", None)
-    if not isinstance(typehints, h5py.Group):
-        typehints = {}
-    else:
-        typehints = typehints.attrs
-    for i in sorted(metadata.attrs):
-        v = metadata.attrs[i]
-        t = typehints.get(i, "Detect")
-        if isinstance(v, string_types) and t != "Detect":  # We have typehints and this looks like it got exported
-            tmp.metadata[f"{i}{{{t}}}".strip()] = f"{v}".strip()
-        else:
-            tmp[i] = metadata.attrs[i]
-    tmp.filename = path.basename(g.name)
-    return read_exclusions(g, tmp)
+    return read_scan_frame(g, tmp, "signal")
 
 
 def _load_files(scandata, root_name, regrid):
@@ -177,35 +149,17 @@ class AttocubeScan(ScanMetadataMixin, ImageStack):
             The lelbel of compression to use (depends on compression algorithm)
     """
 
+    scan_no: int
+
     def __init__(self, *args, **kwargs):
         """Construct the attocube subclass of ImageStack."""
-        args = list(args)
-        if len(args) > 0:
-            for ix, arg in enumerate(args):
-                if isinstance(arg, pathlib.PurePath):
-                    args[ix] = str(arg)
-        if len(args) > 0 and isinstance(args[0], string_types):
-            root_name = args.pop(0)
-            scan = SCAN_NO.search(root_name)
-            if scan:
-                scan = int(scan.groups()[0])
-            else:
-                scan = -1
-        elif len(args) > 0 and isinstance(args[0], int):
-            scan = args.pop(0)
-            root_name = f"SC_{scan:03d}"
-        else:
-            root_name = kwargs.pop("root", None)
-            scan = kwargs.pop("scan", -1)
+        args, root_name, scan = parse_scan_args(args, kwargs, SCAN_NO, "SC_{:03d}")
 
         regrid = kwargs.pop("regrid", False)
 
         super().__init__(*args, **kwargs)
 
-        self._common_metadata = TypeHintedDict()
-
-        self.scan_no = scan
-        self._common_metadata["Scan #"] = scan
+        initialise_scan_metadata(self, scan)
 
         if root_name:
             _load_files(self, root_name, regrid)
@@ -276,10 +230,6 @@ class AttocubeScan(ScanMetadataMixin, ImageStack):
                 raise StonerLoadError("Could not et loader for {bytes2str(f.attrs['module'])}.{typ}")
 
         return loader(f, *args, **kwargs)
-
-    def _instantiate(self, idx):
-        """Return a stable frame with live common-header defaults."""
-        return super()._instantiate(idx)
 
     def _load_asc(self, filename):
         """Load a single scan file from ascii data."""
@@ -398,20 +348,7 @@ class AttocubeScan(ScanMetadataMixin, ImageStack):
             f.attrs["scan_no"] = self.scan_no
             f.attrs["groups"] = list(self.groups.keys())
             f.attrs["channels"] = list(self.channels)
-            if "common_metadata" in f.parent and "common_metadata" not in f:
-                f["common_metadata"] = h5py.SoftLink(f.parent["common_metadata"].name)
-                f["common_typehints"] = h5py.SoftLink(f.parent["common_typehints"].name)
-            else:
-                metadata = f.require_group("common_metadata")
-                typehints = f.require_group("common_typehints")
-                for k in self._common_metadata:
-                    try:
-                        typehints.attrs[k] = self._common_metadata._typehints[k]
-                        metadata.attrs[k] = self._common_metadata[k]
-                    except TypeError:
-                        # We get this for trying to store a bad data type - fallback to metadata export to string
-                        parts = self._common_metadata.export(k).split("=")
-                        metadata.attrs[k] = "=".join(parts[1:])
+            write_common_metadata(f, self._common_metadata)
 
             for g, grp_item in self.groups.items():  # Recurse to save groups
                 grp = f.require_group(g)
@@ -420,26 +357,8 @@ class AttocubeScan(ScanMetadataMixin, ImageStack):
             for ch in self.channels:
                 signal = f.require_group(ch)
                 data = self[ch]
-                signal.require_dataset(
-                    "signal",
-                    data=data.to_numpy(),
-                    shape=data.shape,
-                    dtype=data.dtype,
-                    compression=self.compression,
-                    compression_opts=self.compression_opts,
-                )
-                metadata = signal.require_group("metadata")
-                typehints = signal.require_group("typehints")
-                signal["signal"][...] = data.to_numpy(masked=False)
-                write_exclusions(signal, data)
-                for k in data.metadata:
-                    try:
-                        typehints.attrs[k] = data.metadata._typehints[k]
-                        metadata.attrs[k] = data.metadata[k]
-                    except TypeError:
-                        # We get this for trying to store a bad data type - fallback to metadata export to string
-                        parts = data.metadata.export(k).split("=")
-                        metadata.attrs[k] = "=".join(parts[1:])
+                write_scan_frame(signal, data, "signal", compression=self.compression,
+                                 compression_opts=self.compression_opts)
         return self
 
     @classmethod
@@ -453,38 +372,17 @@ class AttocubeScan(ScanMetadataMixin, ImageStack):
             self.filename = filename
         with HDFFileManager(filename, "r") as f:
             self.scan_no = f.attrs["scan_no"]
-            if "groups" in f.attrs:
-                sub_grps = f.attrs["groups"]
-            else:
-                sub_grps = None
+            sub_grps = f.attrs.get("groups")
             if "channels" in f.attrs:
                 channels = f.attrs["channels"]
             else:
                 channels = []
-            grps = list(f.keys())
-            if "common_metadata" not in grps or "common_typehints" not in grps:
-                _raise_error(f, message="Couldn't find common metadata groups, something is not right here!")
-            metadata = f["common_metadata"].attrs
-            typehints = f["common_typehints"].attrs
-            for i in sorted(metadata):
-                v = metadata[i]
-                t = typehints.get(i, "Detect")
-                if (
-                    isinstance(v, string_types) and t != "Detect"
-                ):  # We have typehints and this looks like it got exported
-                    self._common_metadata[f"{i}{{{t}}}".strip()] = f"{v}".strip()
-                else:
-                    self._common_metadata[i] = metadata[i]
-            grps.remove("common_metadata")
-            grps.remove("common_typehints")
+            grps = read_common_metadata(self._common_metadata, f)
             if sub_grps is None:
                 sub_grps = grps
-            for grp in sub_grps:
-                if "type" in f[grp].attrs:
-                    self.groups[grp] = cls.read_hdf5(f[grp], *args, **kwargs)
-                    continue
-                g = f[grp]
-                self.append(_read_signal(self, g))
+            read_scan_groups(
+                self, f, sub_grps, partial(_read_signal, self), cls.read_hdf5, args, kwargs
+            )
             for grp in channels:
                 g = f[grp]
                 self.append(_read_signal(self, g))

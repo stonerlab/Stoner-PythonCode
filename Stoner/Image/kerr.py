@@ -11,7 +11,7 @@ __all__ = ["KerrImageFile", "KerrStack", "MaskStack"]
 
 import os
 from shutil import which
-from typing import Optional, Self, Tuple, Union
+from typing import TYPE_CHECKING, Callable, Optional, Self, Tuple, Union
 
 import numpy as np
 from numpy.typing import NDArray
@@ -25,6 +25,8 @@ from .numerical import numerical_image
 from .stack import ImageStack
 
 try:
+    # Preserve lazy image adapters and avoid owner/accessor import cycles.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     import pytesseract  # pylint: disable=unused-import
 
     _tesseractable = True
@@ -41,6 +43,12 @@ pattern_file = os.path.join(os.path.dirname(__file__), "kerr_patterns.txt")
 @class_modifier(kerrfuncs, adaptor=image_file_adaptor)
 class KerrImageFile(ImageFile):
     """Own Kerr image storage and dispatch specialised numerical functions."""
+
+    if TYPE_CHECKING:
+        # Supplied by the kerrfuncs class_modifier decorator above.
+        crop_text: Callable
+        reduce_metadata: Callable
+        ocr_metadata: Callable
 
     tesseractable = property(lambda self: _tesseractable and which("tesseract") is not None)
     priority = 16
@@ -340,7 +348,7 @@ class MaskStackMixin:
                 stack of masks showing when each pixel saturates
 
         """
-        if not len(self):
+        if len(self) == 0:
             raise ValueError("Switching analysis requires at least one frame")
         values = self.to_numpy()
         if not saturation_end:

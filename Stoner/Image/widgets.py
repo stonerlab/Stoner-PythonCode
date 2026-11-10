@@ -314,14 +314,13 @@ class ShapeSelect:
             + "c: circle/ellipse, r:rectangle, p:polygon"
         )
         plt.pause(0.1)
-        bp_ev = self.crs.connect_event("button_press_event", self.on_click)
-        kp_ev = self.crs.connect_event("motion_notify_event", self.draw)
+        self.crs.connect_event("button_press_event", self.on_click)
+        self.crs.connect_event("motion_notify_event", self.draw)
         mm_ev = self.fig.canvas.mpl_connect("key_press_event", self.keypress)
         while not self.finished:
             plt.pause(0.01)
         delattr(image, "_select")  # cleanup
-        plt.disconnect(bp_ev)
-        plt.disconnect(kp_ev)
+        self.crs.disconnect_events()
         plt.disconnect(mm_ev)
         plt.close(self.fig.number)
         return self.get_mask()

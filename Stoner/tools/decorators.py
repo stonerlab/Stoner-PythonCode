@@ -4,7 +4,6 @@
 import inspect
 import re
 from collections.abc import Iterable
-from copy import copy
 from functools import wraps
 from importlib import import_module
 from os import environ
@@ -38,6 +37,8 @@ def image_file_adaptor(workingfunc):
     @wraps(workingfunc)
     def gen_func(self, *args, **kwargs):
         """Wrap a called method to capture the result back into the calling object."""
+        # Defer owner/factory dependencies until the package has initialised.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from ..Image.storage_bridge import call_method
 
         if "_image_owner" not in self.__dict__:
@@ -69,6 +70,8 @@ def image_file_raw_adaptor(workingfunc):
     @wraps(workingfunc)
     def gen_func(self, *args, **kwargs):
         """Wrap a called method to capture the result back into the calling object."""
+        # Defer owner/factory dependencies until the package has initialised.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from ..Image.storage_bridge import call_method
 
         if "_image_owner" not in self.__dict__:
@@ -97,6 +100,8 @@ def array_file_property(workingfunc):
     @wraps(workingfunc)
     def gen_func(self, *args, **kwargs):
         """Wrap magic proxy function call."""
+        # Defer owner/factory dependencies until the package has initialised.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from ..Image.storage_bridge import call_method
 
         if "_image_owner" not in self.__dict__:
@@ -122,6 +127,8 @@ def array_file_attr(name):
 
     def setter(self, value):
         if "_image_owner" in self.__dict__:
+            # Defer owner/factory dependencies until the package has initialised.
+            # pylint: disable-next=import-outside-toplevel,cyclic-import
             from ..Image.storage_bridge import snapshot, replace_image
 
             if name in {"filename", "debug", "_title", "_mask_color", "_mask_alpha"}:
@@ -131,7 +138,7 @@ def array_file_attr(name):
             setattr(draft, name, value)
             replace_image(self, draft)
             return
-        return setattr(self._image, name, value)
+        setattr(self._image, name, value)
 
     def deleter(self):
         return delattr(self._image, name)

@@ -55,7 +55,6 @@ class Setas(MutableMapping):
     # Role views and compatibility descriptors
     # ==========================================================================
 
-
     @property
     def _size(self):
         """Calculate a size of the setas attribute."""

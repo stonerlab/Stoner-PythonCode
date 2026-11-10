@@ -24,7 +24,7 @@ from scipy.constants import e, electron_mass, hbar, k, mu_0
 from scipy.signal import savgol_filter
 from scipy.special import gamma, zeta
 
-mu_B = cnst.physical_constants["Bohr magneton"][0]
+mu_B = cnst.physical_constants["Bohr magneton"][0]  # noqa: N816 - conventional Bohr magneton symbol.
 
 
 def blochLaw(T, Ms, Tc):

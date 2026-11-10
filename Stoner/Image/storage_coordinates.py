@@ -45,40 +45,50 @@ def pack_coordinates(dataset, images):
     for name in ("intensity", "excluded"):
         dataset[name].attrs = _common_attrs([source[name] for source in sources], name)
     for axis in ("y", "x"):
-        coordinates = [source[axis] for source in sources]
-        attrs = _common_attrs(coordinates, axis)
-        if not attrs and all(np.array_equal(coord.values, np.arange(coord.size)) for coord in coordinates):
-            continue
-        dtype = np.result_type(float, *[coord.dtype for coord in coordinates])
-        values = np.full((len(images), dataset.sizes[axis]), np.nan, dtype=dtype)
-        for i, coordinate in enumerate(coordinates):
-            raw = coordinate.values
-            converted = raw.astype(dtype)
-            if raw.dtype.kind in "iu" and not np.array_equal(raw.astype(object), converted.astype(object)):
-                raise ValueError("Physical coordinate packing would lose integer precision")
-            values[i, : raw.size] = converted
-        name = f"index_{axis}" if f"physical_{axis}" in extras else f"physical_{axis}"
-        dataset.coords[name] = (("frame", axis), values, attrs)
+        _pack_axis(dataset, sources, axis, extras)
     for name in sorted(extras):
-        coordinates = [source[name] for source in sources]
-        attrs = _common_attrs(coordinates, name)
-        if any(coord.dims != coordinates[0].dims for coord in coordinates):
-            raise ValueError("Coordinate representations must match before packing")
-        if coordinates[0].dims:
-            if name in dataset.coords:
-                raise ValueError("Coordinate map collides with a packed physical axis")
-            values = np.full(dataset.intensity.shape, np.nan)
-            for i, coord in enumerate(coordinates):
-                if coord.dtype.kind not in "iuf":
-                    raise ValueError("Coordinate maps must be real numeric values")
-                converted = coord.values.astype(float)
-                if coord.dtype.kind in "iu" and not np.array_equal(
-                    coord.values.astype(object), converted.astype(object)
-                ):
-                    raise ValueError("Coordinate map packing would lose integer precision")
-                values[i, : coord.shape[0], : coord.shape[1]] = converted
-            dataset.coords[name] = (("frame", "y", "x"), values, attrs)
-            continue
-        if any(coord.dtype != coordinates[0].dtype for coord in coordinates[1:]):
-            raise ValueError(f"Scalar coordinate {name} must use a common dtype before packing")
-        dataset.coords[name] = ("frame", np.stack([coord.values for coord in coordinates]), attrs)
+        _pack_extra(dataset, sources, name)
+
+
+def _pack_axis(dataset, sources, axis, extras):
+    """Pack a calibrated physical axis without losing exact integer coordinates."""
+    coordinates = [source[axis] for source in sources]
+    attrs = _common_attrs(coordinates, axis)
+    if not attrs and all(np.array_equal(coord.values, np.arange(coord.size)) for coord in coordinates):
+        return
+    dtype = np.result_type(float, *[coord.dtype for coord in coordinates])
+    values = np.full((len(sources), dataset.sizes[axis]), np.nan, dtype=dtype)
+    for i, coordinate in enumerate(coordinates):
+        raw = coordinate.values
+        converted = raw.astype(dtype)
+        if raw.dtype.kind in "iu" and not np.array_equal(raw.astype(object), converted.astype(object)):
+            raise ValueError("Physical coordinate packing would lose integer precision")
+        values[i, : raw.size] = converted
+    name = f"index_{axis}" if f"physical_{axis}" in extras else f"physical_{axis}"
+    dataset.coords[name] = (("frame", axis), values, attrs)
+
+
+def _pack_extra(dataset, sources, name):
+    """Pack one common scalar or two-dimensional coordinate map."""
+    coordinates = [source[name] for source in sources]
+    attrs = _common_attrs(coordinates, name)
+    if any(coord.dims != coordinates[0].dims for coord in coordinates):
+        raise ValueError("Coordinate representations must match before packing")
+    if coordinates[0].dims:
+        if name in dataset.coords:
+            raise ValueError("Coordinate map collides with a packed physical axis")
+        values = np.full(dataset.intensity.shape, np.nan)
+        for i, coord in enumerate(coordinates):
+            if coord.dtype.kind not in "iuf":
+                raise ValueError("Coordinate maps must be real numeric values")
+            converted = coord.values.astype(float)
+            if coord.dtype.kind in "iu" and not np.array_equal(
+                coord.values.astype(object), converted.astype(object)
+            ):
+                raise ValueError("Coordinate map packing would lose integer precision")
+            values[i, : coord.shape[0], : coord.shape[1]] = converted
+        dataset.coords[name] = (("frame", "y", "x"), values, attrs)
+        return
+    if any(coord.dtype != coordinates[0].dtype for coord in coordinates[1:]):
+        raise ValueError(f"Scalar coordinate {name} must use a common dtype before packing")
+    dataset.coords[name] = ("frame", np.stack([coord.values for coord in coordinates]), attrs)

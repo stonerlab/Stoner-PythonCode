@@ -18,6 +18,19 @@ from Stoner.tools import copy_into
 class working(Data):
     """Utility class to manipulate data and plot it."""
 
+    # load_config populates these fields from the per-measurement settings.
+    vcol: int
+    gcol: int
+    config: ConfigParser.ConfigParser
+    show_plot: bool
+    save_fit: bool
+    report: bool
+    fancyresults: bool
+    diagnostics: bool
+    method: str
+    model: object
+    p0: object
+
     def load_config(self, inifile=None, filename=None):
         """Load data and fitting options from the accompanying INI file."""
         inifile = str(inifile or pathlib.Path(__file__).with_suffix(".ini"))

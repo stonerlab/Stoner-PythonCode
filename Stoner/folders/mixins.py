@@ -273,27 +273,19 @@ class DiskBasedFolderMixin:
 
     def __add__(self, other):
         """Implement the addition operator for BaseFolder and metadataObjects."""
-        result = deepcopy(self)
-        result = _add_core_(result, other)
-        return result
+        return _add_core_(deepcopy(self), other)
 
     def __iadd__(self, other):
         """Implement the addition operator for BaseFolder and metadataObjects."""
-        result = self
-        result = _add_core_(result, other)
-        return result
+        return _add_core_(self, other)
 
     def __sub__(self, other):
         """Implement the addition operator for BaseFolder and metadataObjects."""
-        result = deepcopy(self)
-        result = _sub_core_(result, other)
-        return result
+        return _sub_core_(deepcopy(self), other)
 
     def __isub__(self, other):
         """Implement the addition operator for BaseFolder and metadataObjects."""
-        result = self
-        result = _sub_core_(result, other)
-        return result
+        return _sub_core_(self, other)
 
     @property
     def basenames(self):
@@ -512,6 +504,9 @@ class PlotFolder(DataFolder):
     """
 
     _defaults: ClassVar[dict] = {"plots_per_page": 12, "fig_defaults": {"figsize": (8, 6)}}
+    # DataFolder initialises these instance fields from _defaults.
+    plots_per_page: int
+    fig_defaults: dict
 
     def __init__(self, *args, **kwargs):
         """Initialise page configuration without creating a figure."""
@@ -601,36 +596,52 @@ class PlotFolder(DataFolder):
         result = []
         for start in range(0, len(members), int(count)):
             page = members[start : start + int(count)]
-            fig = figure(**figure_options)
-            self._plot_pages.append(PlotState(fig))
-            width, height = fig.get_size_inches()
-            columns = min(len(page), max(1, ceil(sqrt(len(page) * width / height))))
-            rows = ceil(len(page) / columns)
-            previous = [(data, data.__dict__.get("_plot_state")) for data, _ in page]
-            try:
-                with MultiPanel(
-                    (rows, columns), figure=fig, adjust_figsize=False, label_panels=False, same_aspect=False
-                ) as panels:
-                    axes = asarray(panels.axes, dtype=object).reshape(-1)
-                    for slot, (data, projection) in enumerate(page):
-                        ax = axes[slot]
-                        if ax.name != projection:
-                            spec = ax.get_subplotspec()
-                            ax.remove()
-                            ax = fig.add_subplot(spec, projection=projection)
-                            axes[slot] = ax
-                        result.append(data.plot(*args, ax=ax, **kwargs))
-                        if plot_extra is not None:
-                            plot_extra(start + slot, slot, data)
-                    for ax in axes[len(page) :]:
-                        ax.remove()
-            except BaseException:
-                # Release this page even when a user callback interrupts drawing.
-                close(fig)
-                self._plot_pages.pop()
-                for data, state in previous:
-                    data.__dict__.pop("_plot_state", None)
-                    if state is not None:
-                        data.__dict__["_plot_state"] = state
-                raise
+            result.extend(self._plot_page(page, start, args, kwargs, plot_extra, figure_options))
         return result
+
+    def _plot_page(self, page, start, args, kwargs, plot_extra, figure_options):
+        """Render one page atomically, restoring member targets on any drawing failure."""
+        result = []
+        fig = figure(**figure_options)
+        self._plot_pages.append(PlotState(fig))
+        rows, columns = _page_shape(fig, len(page))
+        previous = [(data, data.__dict__.get("_plot_state")) for data, _ in page]
+        try:
+            with MultiPanel(
+                (rows, columns), figure=fig, adjust_figsize=False, label_panels=False, same_aspect=False
+            ) as panels:
+                axes = asarray(panels.axes, dtype=object).reshape(-1)
+                for slot, (data, projection) in enumerate(page):
+                    ax = _page_target(fig, axes[slot], projection)
+                    axes[slot] = ax
+                    result.append(data.plot(*args, ax=ax, **kwargs))
+                    if plot_extra is not None:
+                        plot_extra(start + slot, slot, data)
+                for ax in axes[len(page) :]:
+                    ax.remove()
+        except BaseException:
+            # Release this page even when a user callback interrupts drawing.
+            close(fig)
+            self._plot_pages.pop()
+            for data, state in previous:
+                data.__dict__.pop("_plot_state", None)
+                if state is not None:
+                    data.__dict__["_plot_state"] = state
+            raise
+        return result
+
+
+def _page_shape(fig, count):
+    """Choose the existing aspect-aware subplot grid for a nonempty page."""
+    width, height = fig.get_size_inches()
+    columns = min(count, max(1, ceil(sqrt(count * width / height))))
+    return ceil(count / columns), columns
+
+
+def _page_target(fig, axes, projection):
+    """Replace a page slot only when its required projection differs."""
+    if axes.name == projection:
+        return axes
+    spec = axes.get_subplotspec()
+    axes.remove()
+    return fig.add_subplot(spec, projection=projection)

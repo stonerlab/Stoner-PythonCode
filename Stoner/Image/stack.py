@@ -23,6 +23,8 @@ def _load_numerical_image(f, **kwargs):
 
 
 class StackAnalysisMixin:
+    """Apply image analysis operations efficiently across stack frames."""
+
     def asfloat(self, normalise=True, clip=False, clip_negative=False, **kwargs):
         """Convert stack to floating point type.
 
@@ -122,12 +124,6 @@ class StackAnalysisMixin:
         """Pass through to :py:meth:`Stoner.Image.ImageFolder.view`."""
         warnings.warn("show() is deprecated in favour of ImageFolder.view()")
         return self.view()
-
-    """Add some analysis capability to ImageStack.
-
-    These functions may override :py:class:`Stoner,Image.ImageFile` functions but do them efficiently for a numpy
-    stack of images.
-    """
 
 
 class ImageStack(OwnedStackMixin, StackAnalysisMixin, ImageFolderMixin, DiskBasedFolderMixin, BaseFolder):

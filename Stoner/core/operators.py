@@ -269,6 +269,8 @@ class DataFileOperatorsMixin:
             raise NotImplementedError
         row = readline().split("\t")
         if row[0].strip() == "TDI Format 2.0":
+            # Defer owner/factory dependencies until the package has initialised.
+            # pylint: disable-next=import-outside-toplevel,cyclic-import
             from ..formats.data.tdi2 import _read_tdi2
 
             _read_tdi2(self, reader, [x.strip() for x in row[1:]])
@@ -290,16 +292,7 @@ class DataFileOperatorsMixin:
             row = r.rstrip().split("\t")
             cols = max(cols, len(row) - 1)
             if row[0].strip() != "":
-                md = row[0].split("=")
-                if len(md) >= 2:
-                    md[1] = "=".join(md[1:])
-                elif len(md) <= 1:
-                    md.extend(["", ""])
-
-                if fmt == 1.5:
-                    self.metadata[md[0].strip()] = md[1].strip()
-                elif fmt == 1.0:
-                    self.metadata[md[0].strip()] = self.metadata.string_to_type(md[1].strip())
+                self._read_tdi_metadata(row[0], fmt)
             if len(row) < 2:
                 continue
             values.extend(self._conv_float(row[1:]))
@@ -308,6 +301,19 @@ class DataFileOperatorsMixin:
         for i, head_temp in enumerate(col_headers_tmp):
             self.column_headers[i] = head_temp
         self["TDI Format"] = fmt
+
+    def _read_tdi_metadata(self, text, fmt):
+        """Parse one metadata cell according to its recorded TDI text version."""
+        md = text.split("=")
+        if len(md) >= 2:
+            md[1] = "=".join(md[1:])
+        elif len(md) <= 1:
+            md.extend(["", ""])
+
+        if fmt == 1.5:
+            self.metadata[md[0].strip()] = md[1].strip()
+        elif fmt == 1.0:
+            self.metadata[md[0].strip()] = self.metadata.string_to_type(md[1].strip())
 
     def __xor__(self, other):
         """Implement an XOR operator for Data objects."""

@@ -8,8 +8,9 @@ from scipy.signal import get_window
 from scipy.stats import sem
 
 from ..tools import format_error, make_Class, make_Data
-from .fitting.models.generic import linear
+from .fitting.models.generic import Linear, linear
 from ..core.selection import _reject_where
+from ..core.column_selection import _single_column
 
 __all__ = [
     "outlier",
@@ -147,6 +148,52 @@ def threshold(threshold, data, rising=True, falling=False):
     return np.array(roots)
 
 
+def _affine_mapping(xmode, ymode):
+    """Resolve variable matrix entries for the requested affine degrees of freedom."""
+    xvarp = {
+        "affine": [[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2]],
+        "linear": [[0, 0], [0, 2]],
+        "scale": [[0, 0]],
+        "offset": [[0, 2]],
+        "fixed": [[]],
+    }
+    yvarp = {"linear": [[1, 1], [1, 2]], "scale": [[1, 1]], "offset": [[1, 2]], "fixed": [[]]}
+
+    if xmode not in xvarp or ymode not in yvarp:
+        raise RuntimeError(f"xmode and ymode must be one of 'linear','scale','offset','fixed' not {xmode} and {ymode}")
+
+    if xmode == "affine":
+        ymode = "fixed"
+
+    xunknowns = len(xvarp[xmode])
+    yunknowns = len(yvarp[ymode])
+    if xunknowns + yunknowns == 0:  # shortcircuit for the trivial case
+        return None, xmode, ymode
+
+    mapping = xvarp[xmode] + yvarp[ymode]
+    mapping = [m for m in mapping if m]  # remove empty mappings
+    return mapping, xmode, ymode
+
+
+def _affine_start(mapping, xmode, ymode, m0):
+    """Prepare fitted matrix entries and the initial affine coefficient vector."""
+    if isinstance(m0, list):
+        m0 = np.array(m0)
+
+    if m0 is None:
+        p0s = {"affine": [1, 0, 0, 0, 1, 0], "linear": [1, 0], "scale": [1], "offset": [0], "fixed": []}
+        p0 = p0s[xmode] + p0s[ymode]
+        default = np.array([[1.00, 0.0, 0.0], [0.0, 1.0, 0.0]])
+    elif isinstance(m0, np.ndarray) and m0.shape == (2, 3):
+        p0 = [0] * len(mapping)
+        for i, [u, v] in enumerate(mapping):
+            p0[i] = m0[u, v]
+            default = m0
+    else:
+        raise RuntimeError(f"m0 starting matrix should be a numpy array of size (2,3) not {m0}")
+    return p0, default
+
+
 def _twoD_fit(xy1, xy2, xmode="linear", ymode="linear", m0=None):
     r"""Calculae an optimal transformation of points :math:`(x_1,y_1)\rightarrow(x_2,y_2)`.
 
@@ -181,44 +228,12 @@ def _twoD_fit(xy1, xy2, xmode="linear", ymode="linear", m0=None):
     """
     if xy1.shape != xy2.shape or xy1.shape[1] != 2:
         raise RuntimeError(f"coordinate arrays must be equal length with two columns, not {xy1.shape} and {xy2.shape}")
-    xvarp = {
-        "affine": [[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2]],
-        "linear": [[0, 0], [0, 2]],
-        "scale": [[0, 0]],
-        "offset": [[0, 2]],
-        "fixed": [[]],
-    }
-    yvarp = {"linear": [[1, 1], [1, 2]], "scale": [[1, 1]], "offset": [[1, 2]], "fixed": [[]]}
-
-    if xmode not in xvarp or ymode not in yvarp:
-        raise RuntimeError(f"xmode and ymode must be one of 'linear','scale','offset','fixed' not {xmode} and {ymode}")
-
-    if xmode == "affine":
-        ymode = "fixed"
-
-    xunknowns = len(xvarp[xmode])
-    yunknowns = len(yvarp[ymode])
-    if xunknowns + yunknowns == 0:  # shortcircuit for the trivial case
+    mapping, xmode, ymode = _affine_mapping(xmode, ymode)
+    if mapping is None:
         return np.array([[1, 0], [1, 0]]), np.zeros((2, 2)), lambda x: x
-
-    mapping = xvarp[xmode] + yvarp[ymode]
-    mapping = [m for m in mapping if m]  # remove empty mappings
     data = np.column_stack((xy1, xy2)).T
 
-    if isinstance(m0, list):
-        m0 = np.array(m0)
-
-    if m0 is None:
-        p0s = {"affine": [1, 0, 0, 0, 1, 0], "linear": [1, 0], "scale": [1], "offset": [0], "fixed": []}
-        p0 = p0s[xmode] + p0s[ymode]
-        default = np.array([[1.00, 0.0, 0.0], [0.0, 1.0, 0.0]])
-    elif isinstance(m0, np.ndarray) and m0.shape == (2, 3):
-        p0 = [0] * len(mapping)
-        for i, [u, v] in enumerate(mapping):
-            p0[i] = m0[u, v]
-            default = m0
-    else:
-        raise RuntimeError(f"m0 starting matrix should be a numpy array of size (2,3) not {m0}")
+    p0, default = _affine_start(mapping, xmode, ymode, m0)
 
     result = np.zeros(len(xy1))
 
@@ -317,10 +332,6 @@ def _h_sat_linear(d, i, Ms_vals, Hsat_vals, h_sat_fraction):
 
     This method uses the intercept of the saturated state with zero field portions of the loop.
     """
-    from Stoner.analysis.fitting.models.generic import (
-        Linear,  # pylint: disable=import-outside-toplevel
-    )
-
     Ms, Ms_err, _ = Ms_vals
     Hsat, Hsat_err = Hsat_vals
 
@@ -466,7 +477,6 @@ def split_up_down(data, col=None, folder=None):
     if col is None:
         _ = a._col_args()
         col = _.xcol
-    from ..core.column_selection import _single_column
     col = _single_column(a, col, "col")
     width = int(len(a) / 10)
     if width % 2 == 0:  # Ensure the window for Satvisky Golay filter is odd
@@ -510,6 +520,112 @@ def split_up_down(data, col=None, folder=None):
 
 
 Hickeyify = format_error
+
+
+def _saturation_method(h_sat_method):
+    """Resolve a supported saturation-field method or preserve a custom callable."""
+    hsat_methods = {
+        "linear_intercept": _h_sat_linear,
+        "susceptibility": _h_sat_susceptibility,
+        "delta_M": _h_sat_delta_M,
+    }
+    if callable(h_sat_method) or h_sat_method in hsat_methods:
+        h_sat_method = hsat_methods.get(h_sat_method, h_sat_method)
+    else:
+        raise ValueError("Saturation field method not recognised!")
+    return h_sat_method
+
+
+def _hysteresis_columns(data, kwargs):
+    """Apply requested loop attributes and resolve the scientific coordinate columns."""
+    for k, val in kwargs.items():
+        try:
+            setattr(data, k, val)
+        except AttributeError:
+            if data.debug:
+                print("Error setting attribute from keyword {k}={val}")
+    if "setas" in kwargs:  # Allow us to override the setas variable
+        data.setas = kwargs.pop("setas")
+
+    xcol = kwargs.pop("xcol", data.setas.xcol)
+    ycol = kwargs.pop("ycol", data.setas.ycol)
+    # Get xcol and ycols from kwargs if specified
+    _ = data._col_args(xcol=xcol, ycol=ycol, single=("xcol", "ycol"))
+    data.setas(x=_.xcol, y=_.ycol, reset=False)
+    return _
+
+
+def _hysteresis_background(data, up, down, correct_bg, saturation_f):
+    """Fit saturated tails, record their uncertainties and remove the requested background."""
+    mid = (data.x.max() + data.x.min()) / 2.0
+    span = data.x.max() - data.x.min()
+    low = mid - span * (1 - saturation_f) / 2
+    high = mid + span * (1 - saturation_f) / 2
+
+    popt, pcov = data.fit.curve_fit(_step, bounds=lambda x, r: not low < x < high)
+
+    perr = np.sqrt(np.diag(pcov))
+
+    Ms = popt[2]
+    Ms_err = perr[2]
+
+    data["Ms"] = Ms  # mean(Ms)
+    data["Ms Error"] = Ms_err
+    data["Offset Moment"] = popt[1]
+    data["Offset Moment Error"] = perr[1]
+    data["Background susceptibility"] = popt[0]
+    data["Background Susceptibility Error"] = perr[0]
+
+    if correct_bg:
+        fixes = [data, up, down]
+    else:
+        fixes = [up, down]
+    m = popt[0]
+    c = popt[1] - m * mid
+
+    for d in fixes:
+        d.y = d.y - linear(d.x, c, m)
+    return Ms, Ms_err
+
+
+def _hysteresis_crossings(up, down, columns, Ms, Ms_err, h_sat_method, h_sat_fraction):
+    """Measure branch coercivity, saturation and remanence without changing loop offsets."""
+    Hc = [None, None]
+    Hc_err = [None, None]
+    Hsat = [None, None]
+    Hsat_err = [None, None]
+    Mr = [None, None]
+    Mr_err = [None, None]
+
+    m_sat = [Ms - h_sat_fraction * Ms_err, -Ms + h_sat_fraction * Ms_err]
+    single_side = False
+
+    for i, d in enumerate([up, down]):
+        if len(d) < 2:
+            single_side = True
+            continue
+        hc = d.threshold(0.0, all_vals=True, rising=i == 0, falling=i != 0)  # Get the Hc value
+        Hc[i] = np.mean(hc)
+        if hc.size > 1:
+            Hc_err[i] = sem(hc)
+
+        Hsat, Hsat_err = h_sat_method(d, i, (Ms, Ms_err, m_sat), (Hsat, Hsat_err), h_sat_fraction)
+
+        mr = d.threshold(0.0, col=columns.xcol, xcol=columns.ycol, all_vals=True, rising=True, falling=True)
+        Mr[i] = np.mean(mr)
+        if mr.size > 1:
+            Mr_err[i] = sem(mr)
+    return Hc, Hsat, Hsat_err, Mr, single_side
+
+
+def _record_loop_energy(data):
+    """Record the maximum energy product and integrated loop area."""
+    bh = (-data.x) * data.y
+    i = np.argmax(bh)
+    data["BH_Max"] = max(bh)
+    data["BH_Max_H"] = data.x[i]
+
+    data["Area"] = data.integrate(output="result")
 
 
 def hysteresis_correct(data, **kwargs):
@@ -568,88 +684,18 @@ def hysteresis_correct(data, **kwargs):
 
     h_sat_method = kwargs.pop("h_sat_method", "linear_intercept")
     h_sat_fraction = kwargs.pop("h_sat_fraction", 0.5 if h_sat_method == "linear_intercept" else 2.0)
-    hsat_methods = {
-        "linear_intercept": _h_sat_linear,
-        "susceptibility": _h_sat_susceptibility,
-        "delta_M": _h_sat_delta_M,
-    }
-    if callable(h_sat_method) or h_sat_method in hsat_methods:
-        h_sat_method = hsat_methods.get(h_sat_method, h_sat_method)
-    else:
-        raise ValueError("Saturation field method not recognised!")
+    h_sat_method = _saturation_method(h_sat_method)
 
-    for k, val in kwargs.items():
-        try:
-            setattr(data, k, val)
-        except AttributeError:
-            if data.debug:
-                print("Error setting attribute from keyword {k}={val}")
-    if "setas" in kwargs:  # Allow us to override the setas variable
-        data.setas = kwargs.pop("setas")
-
-    xcol = kwargs.pop("xcol", data.setas.xcol)
-    ycol = kwargs.pop("ycol", data.setas.ycol)
-    # Get xcol and ycols from kwargs if specified
-    _ = data._col_args(xcol=xcol, ycol=ycol, single=("xcol", "ycol"))
-    data.setas(x=_.xcol, y=_.ycol, reset=False)
+    _ = _hysteresis_columns(data, kwargs)
     # Split into two sets of data:
 
     up, down = _up_down(data)
 
-    mid = (data.x.max() + data.x.min()) / 2.0
-    span = data.x.max() - data.x.min()
-    low = mid - span * (1 - saturation_f) / 2
-    high = mid + span * (1 - saturation_f) / 2
+    Ms, Ms_err = _hysteresis_background(data, up, down, correct_bg, saturation_f)
 
-    popt, pcov = data.fit.curve_fit(_step, bounds=lambda x, r: not low < x < high)
-
-    perr = np.sqrt(np.diag(pcov))
-
-    Ms = popt[2]
-    Ms_err = perr[2]
-
-    data["Ms"] = Ms  # mean(Ms)
-    data["Ms Error"] = Ms_err
-    data["Offset Moment"] = popt[1]
-    data["Offset Moment Error"] = perr[1]
-    data["Background susceptibility"] = popt[0]
-    data["Background Susceptibility Error"] = perr[0]
-
-    if correct_bg:
-        fixes = [data, up, down]
-    else:
-        fixes = [up, down]
-    m = popt[0]
-    c = popt[1] - m * mid
-
-    for d in fixes:
-        d.y = d.y - linear(d.x, c, m)
-
-    Hc = [None, None]
-    Hc_err = [None, None]
-    Hsat = [None, None]
-    Hsat_err = [None, None]
-    Mr = [None, None]
-    Mr_err = [None, None]
-
-    m_sat = [Ms - h_sat_fraction * Ms_err, -Ms + h_sat_fraction * Ms_err]
-    single_side = False
-
-    for i, d in enumerate([up, down]):
-        if len(d) < 2:
-            single_side = True
-            continue
-        hc = d.threshold(0.0, all_vals=True, rising=i == 0, falling=i != 0)  # Get the Hc value
-        Hc[i] = np.mean(hc)
-        if hc.size > 1:
-            Hc_err[i] = sem(hc)
-
-        Hsat, Hsat_err = h_sat_method(d, i, (Ms, Ms_err, m_sat), (Hsat, Hsat_err), h_sat_fraction)
-
-        mr = d.threshold(0.0, col=_.xcol, xcol=_.ycol, all_vals=True, rising=True, falling=True)
-        Mr[i] = np.mean(mr)
-        if mr.size > 1:
-            Mr_err[i] = sem(mr)
+    Hc, Hsat, Hsat_err, Mr, single_side = _hysteresis_crossings(
+        up, down, _, Ms, Ms_err, h_sat_method, h_sat_fraction
+    )
 
     if correct_H and not single_side:
         Hc_mean = np.mean(Hc)
@@ -675,10 +721,5 @@ def hysteresis_correct(data, **kwargs):
         data["Hsat_mean Error"] = abs(data["Hsat Error"][0])
     data["Remenance"] = Mr
 
-    bh = (-data.x) * data.y
-    i = np.argmax(bh)
-    data["BH_Max"] = max(bh)
-    data["BH_Max_H"] = data.x[i]
-
-    data["Area"] = data.integrate(output="result")
+    _record_loop_energy(data)
     return cls(data)

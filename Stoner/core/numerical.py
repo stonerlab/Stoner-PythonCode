@@ -49,7 +49,7 @@ def column_arguments(
     yerr=None,
     zerr=None,
     **kwargs,
-):  # pylint: disable=unused-argument
+):  # pylint: disable=unused-argument,too-many-positional-arguments
     """Resolve explicit selectors over assigned/default scientific role groups.
 
     Scalar mode deliberately retains the first channel. Internal callers can
@@ -75,6 +75,16 @@ def column_arguments(
         no_guess = kwargs.get("no_guess", False)
     ret = AttributeStore(self.setas._get_cols(no_guess=no_guess, startx=kwargs.get("startx", 0)))
     force_list = kwargs.get("force_list", not scalar)
+    _resolve_explicit_columns(self, cols, ret, force_list, kwargs.get("single", ()))
+    ret.update(cols)
+    _normalise_column_arguments(ret, scalar)
+    for n in ["xcol", "xerr", "ycol", "yerr", "zcol", "zerr", "ucol", "vcol", "wcol", "axes"]:
+        ret[f"has_{n}"] = n in ret and not (ret[n] is None or (isinstance(ret[n], list) and not ret[n]))
+
+    return ret
+
+def _resolve_explicit_columns(datafile, cols, ret, force_list, single):
+    """Resolve explicit choices while preserving external arrays and disabled roles."""
     for c in list(cols.keys()):
         if isnone(cols[c]):  # Not defined, fallback on setas
             del cols[c]
@@ -85,15 +95,18 @@ def column_arguments(
                 del ret[c]
             continue
         if c in ret and isinstance(ret[c], list):
-            if isinstance(cols[c], float) or (isinstance(cols[c], np.ndarray) and cols[c].size == len(self)):
+            if isinstance(cols[c], float) or (isinstance(cols[c], np.ndarray) and cols[c].size == len(datafile)):
                 continue
         if isinstance(cols[c], float):
             continue
-        if c in kwargs.get("single", ()):
-            cols[c] = _single_column(self, cols[c], c)
+        if c in single:
+            cols[c] = _single_column(datafile, cols[c], c)
         else:
-            cols[c] = self.setas.find_col(cols[c], force_list=force_list)
-    ret.update(cols)
+            cols[c] = datafile.setas.find_col(cols[c], force_list=force_list)
+
+
+def _normalise_column_arguments(ret, scalar):
+    """Apply the established scalar and multi-channel cardinality conventions."""
     if scalar:
         for c in ret:
             if isinstance(ret[c], list):
@@ -109,7 +122,3 @@ def column_arguments(
                 ret[c] = list([ret[c]])
             elif ret[c] is None:
                 ret[c] = []
-    for n in ["xcol", "xerr", "ycol", "yerr", "zcol", "zerr", "ucol", "vcol", "wcol", "axes"]:
-        ret[f"has_{n}"] = n in ret and not (ret[n] is None or (isinstance(ret[n], list) and not ret[n]))
-
-    return ret

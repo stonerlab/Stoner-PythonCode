@@ -138,6 +138,29 @@ def _finish(plot, ax, defaults, annotations, xscale=None, yscale=None):
     return ax
 
 
+def _histogram(ax, series, labels, weights, orientation, options):
+    """Draw jointly labelled histogram series and return the frequency-axis title."""
+    samples = [sample.values for sample in series]
+    row_weights = None if weights is None else [sample.weights for sample in series]
+    ax.hist(
+        samples[0] if len(series) == 1 else samples,
+        weights=None if row_weights is None else row_weights[0] if len(series) == 1 else row_weights,
+        label=labels[0] if len(series) == 1 else labels,
+        orientation=orientation,
+        **options,
+    )
+    frequency = "Density" if options.get("density", False) else "Count" if weights is None else "Weighted count"
+    if options.get("cumulative", False):
+        frequency = "Cumulative probability" if options.get("density", False) else "Cumulative " + frequency.lower()
+    return frequency
+
+
+def _draw_density(ax, curves, labels, options):
+    """Draw previously validated density curves with their corresponding labels."""
+    for (points, density), name in zip(curves, labels):
+        ax.plot(points, density, label=name, **options)
+
+
 def draw_distribution(
     plot,
     kind,
@@ -156,9 +179,9 @@ def draw_distribution(
 ):
     """Draw independently selected distributions without a pandas plotting intermediate."""
     series = prepare_series(plot._data, y, startx=startx, no_guess=no_guess, weights=weights)
-    count = len(series)
     labels = (
-        [plot._label(sample.column) for sample in series] if label is _AUTO else plot._per_trace(label, count, "label")
+        [plot._label(sample.column) for sample in series]
+        if label is _AUTO else plot._per_trace(label, len(series), "label")
     )
     if any(value is not None and not isinstance(value, str) for value in labels):
         raise TypeError("label must contain strings or None.")
@@ -174,32 +197,18 @@ def draw_distribution(
             orientation if "orientation" in _BOX_PARAMETERS else orientation == "vertical"
         )
         options["tick_labels" if "tick_labels" in _BOX_PARAMETERS else "labels"] = [value or "" for value in labels]
+    curves = ()
     if kind == "kde":
         curves = _density_curves(series, options.pop("bw_method", None), options.pop("ind", None))
     ax = plot._target(ax)
     names = ", ".join(plot._label(sample.column) for sample in series)
     if kind == "hist":
-        samples = [sample.values for sample in series]
-        row_weights = None if weights is None else [sample.weights for sample in series]
-        ax.hist(
-            samples[0] if count == 1 else samples,
-            weights=None if row_weights is None else row_weights[0] if count == 1 else row_weights,
-            label=labels[0] if count == 1 else labels,
-            orientation=orientation,
-            **options,
-        )
-        frequency = "Density" if options.get("density", False) else "Count" if weights is None else "Weighted count"
-        if options.get("cumulative", False):
-            frequency = (
-                "Cumulative probability" if options.get("density", False) else "Cumulative " + frequency.lower()
-            )
-        defaults = (names, frequency)
+        defaults = (names, _histogram(ax, series, labels, weights, orientation, options))
     elif kind == "box":
         ax.boxplot([sample.values for sample in series], **options)
         defaults = ("", names)
     else:
-        for (points, density), name in zip(curves, labels):
-            ax.plot(points, density, label=name, **options)
+        _draw_density(ax, curves, labels, options)
         defaults = (names, "Density")
     if orientation == "horizontal":
         defaults = defaults[::-1]

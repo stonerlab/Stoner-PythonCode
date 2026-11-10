@@ -31,7 +31,7 @@ def fit(
     source = Data(filename)
     result = Data()
     for ramp in source.split(iterator):
-        if not len(ramp):
+        if len(ramp) == 0:
             continue
         row = [ramp.mean(iterator)]
         figure = ramp.plot.new_figure(figsize=(8, 4))

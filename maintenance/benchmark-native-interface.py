@@ -15,11 +15,19 @@ import pandas as pd
 import xarray as xr
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-import Stoner
+# Checkout path must be configured before importing the measured source.
+# pylint: disable-next=wrong-import-position
+import Stoner  # noqa: E402
 
-from Stoner import Data, ImageFile, ImageStack
-from Stoner.core.selection import selected_image_values
-from Stoner.formats.attocube import AttocubeScan
+# Checkout path must be configured before importing the measured source.
+# pylint: disable-next=wrong-import-position
+from Stoner import Data, ImageFile, ImageStack  # noqa: E402
+# Checkout path must be configured before importing the measured source.
+# pylint: disable-next=wrong-import-position
+from Stoner.core.selection import selected_image_values  # noqa: E402
+# Checkout path must be configured before importing the measured source.
+# pylint: disable-next=wrong-import-position
+from Stoner.formats.attocube import AttocubeScan  # noqa: E402
 
 
 def measure(function, repeats=5):
@@ -66,7 +74,7 @@ def main():
         scan = AttocubeScan()
         scan.append(ImageFile(np.ones((side, side))))
         scan._common_metadata['run{String}'] = '001'
-        results[f'attocube_metadata_{side}'] = measure(lambda: scan[0].metadata['run'])
+        results[f'attocube_metadata_{side}'] = measure(lambda scan=scan: scan[0].metadata['run'])
     digest = hashlib.sha256()
     for path in sorted((root / 'Stoner').rglob('*.py')):
         digest.update(path.relative_to(root).as_posix().encode() + b'\0')

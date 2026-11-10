@@ -16,7 +16,6 @@ from PIL.TiffImagePlugin import ImageFileDirectory_v2
 from ..compat import int_types, string_types
 from ..folders.core import BaseFolder
 from ..folders.mixins import DiskBasedFolderMixin
-from . import ImageFile
 from .numerical import numerical_image
 from .core import ImageFile
 

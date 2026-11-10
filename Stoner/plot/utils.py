@@ -54,6 +54,8 @@ ONE_THIRD = 1 / 3
 TWO_THIRD = 2 / 3
 
 
+# Keep the positional parameters accepted by the historical mpltools-compatible API.
+# pylint: disable-next=too-many-arguments,too-many-positional-arguments
 def errorfill(
     x,
     y,
@@ -117,11 +119,15 @@ def errorfill(
     line = ax.plot(x, y, *args, **options)[0]
     color = line.get_color()
 
+    _draw_error_region(ax, x, y, yerr, xerr, {"color": color, "alpha": alpha_fill, "label": label_fill})
+
+
+def _draw_error_region(ax, x, y, yerr, xerr, kwargs_fill):
+    """Draw uncertainty shading around an already plotted central line."""
     if yerr is not None and xerr is not None:
         msg = "Setting both `yerr` and `xerr` is not supported. Ignore `xerr`."
         warnings.warn(msg)
 
-    kwargs_fill = {"color": color, "alpha": alpha_fill, "label": label_fill}
     if yerr is not None:
         ymin, ymax = extrema_from_error_input(y, yerr)
         if x.size > 1:

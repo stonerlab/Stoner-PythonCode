@@ -5,10 +5,10 @@
 __all__ = ["DrawProxy", "MaskProxy"]
 
 from functools import wraps
-from io import BytesIO as StreamIO
 
-import matplotlib.pyplot as plt
 import numpy as np
+
+from .util import _figure_png
 from skimage import draw
 
 from ..tools import fix_signature
@@ -35,6 +35,8 @@ def _draw_apaptor(func):
             im += coords[0][:, :, 1].astype("uint32") * 256
             im += coords[0][:, :, 2].astype("uint32") * 256**2
             im[im == 16777215] = 0
+            # Preserve lazy image adapters and avoid owner/accessor import cycles.
+            # pylint: disable-next=import-outside-toplevel,cyclic-import
             from .imagefuncs import convert
 
             im = convert(im, self._img.dtype)
@@ -281,6 +283,8 @@ class MaskProxy:
     def draw(self):
         """Access the draw proxy object."""
         if "_image_owner" in self._imagefolder.__dict__:
+            # Preserve lazy image adapters and avoid owner/accessor import cycles.
+            # pylint: disable-next=import-outside-toplevel,cyclic-import
             from .storage_bridge import OwnerDraw
 
             return OwnerDraw(self._imagefolder, mask=True)
@@ -319,6 +323,8 @@ class MaskProxy:
             return mutate
         if hasattr(self._imagearray.mask, name):
             return getattr(self._imagearray.mask, name)
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .numerical import numerical_image
 
         working = numerical_image(self._mask.astype(float) * 1000)
@@ -366,16 +372,12 @@ class MaskProxy:
 
     def _repr_png_(self):
         """Provide a display function for iPython/Jupyter."""
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .numerical import numerical_image
 
         fig = imshow(numerical_image(self._mask.astype(int)))
-        data = StreamIO()
-        fig.savefig(data, format="png")
-        plt.close(fig)
-        data.seek(0)
-        ret = data.read()
-        data.close()
-        return ret
+        return _figure_png(fig)
 
     def clear(self):
         """Clear a mask."""

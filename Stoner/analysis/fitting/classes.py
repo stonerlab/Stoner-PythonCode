@@ -450,6 +450,24 @@ def _prep_lmfit_model(model, kwargs):
     return model, prefix
 
 
+def _guess_lmfit_parameters(model, ydata, xdata, kwargs):
+    """Use model estimates or parameter hints to prepare the initial fit values."""
+    if isinstance(model, odrModel):
+        return model.estimate
+    for p_name in model.param_names:
+        if p_name in kwargs:
+            model.set_param_hint(p_name, value=kwargs.get(p_name))
+    try:
+        return model.guess(ydata[0], x=xdata)
+    except Exception:  # pylint: disable=broad-exception-caught
+        # Existing models may fail to guess with any optimiser-specific error.
+        params = lmfit_mod.Parameters()
+        for p_name in model.param_names:
+            if p_name in kwargs:
+                params[p_name] = lmfit_mod.Parameter(name=p_name, value=kwargs.get(p_name))
+        return params
+
+
 def _prep_lmfit_p0(model, ydata, xdata, p0, kwargs):
     """Prepare the initial start vector for an lmfit.
 
@@ -464,22 +482,8 @@ def _prep_lmfit_p0(model, ydata, xdata, p0, kwargs):
         fit operation.
     """
     single_fit = True
-    if p0 is None:  # First guess the p0 values using the model
-        if isinstance(model, odrModel):
-            p0 = model.estimate
-        else:
-            for p_name in model.param_names:
-                if p_name in kwargs:
-                    model.set_param_hint(p_name, value=kwargs.get(p_name))
-            try:
-                p0 = model.guess(ydata[0], x=xdata)
-            except Exception:  # pylint: disable=W0703
-                # Don't be fussy here about the potential exceptions
-                p0 = lmfit_mod.Parameters()
-                for p_name in model.param_names:
-                    if p_name in kwargs:
-                        p0[p_name] = lmfit_mod.Parameter(name=p_name, value=kwargs.get(p_name))
-        single_fit = True
+    if p0 is None:
+        p0 = _guess_lmfit_parameters(model, ydata, xdata, kwargs)
 
     if callable(p0):
         p0 = p0(ydata, xdata)

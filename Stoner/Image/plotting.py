@@ -1,6 +1,7 @@
 """Draw ImageFile values using the same target and property conventions as Data.plot."""
 
 from numbers import Real
+from typing import NamedTuple
 
 import numpy as np
 from matplotlib.colors import ListedColormap, to_rgba
@@ -64,6 +65,8 @@ class ImagePlotter(PlotAccessor):
         """
         return self.image(x, y, ax=ax, cmap=cmap, coordinates=coordinates, **kwargs)
 
+    # Public coordinate, selection and display options remain independently configurable.
+    # pylint: disable-next=too-many-arguments
     def image(self, x=None, y=None, *, ax=None, cmap="gray", coordinates=CoordinateMode.NATIVE,
               origin="upper", aspect="equal", where=None, mask_color=None, mask_alpha=0.5,
               xlabel=None, ylabel=None, title=None, **kwargs):
@@ -108,8 +111,9 @@ class ImagePlotter(PlotAccessor):
             TypeError:
                 If legacy plotting keywords or wrong-domain enums are supplied.
         """
-        return self._field("image", x, y, ax, cmap, coordinates, origin, aspect, where,
-                           mask_color, mask_alpha, xlabel, ylabel, title, kwargs)
+        settings = _FieldOptions(ax, cmap, coordinates, origin, aspect, where,
+                                 mask_color, mask_alpha, xlabel, ylabel, title)
+        return self._field("image", x, y, settings, kwargs)
 
     def imshow(self, x=None, y=None, **kwargs):
         """Draw a uniformly spaced image with image options, returning Axes.
@@ -172,7 +176,7 @@ class ImagePlotter(PlotAccessor):
                     "aspect": "equal", "where": None, "mask_color": None, "mask_alpha": 0.5,
                     "xlabel": None, "ylabel": None, "title": None}
         values = [options.pop(name, default) for name, default in defaults.items()]
-        return self._field(kind, x, y, *values, options)
+        return self._field(kind, x, y, _FieldOptions(*values), options)
 
     @staticmethod
     def _reject_legacy(options):
@@ -182,17 +186,18 @@ class ImagePlotter(PlotAccessor):
         if found:
             raise TypeError(f"ImageFile.plot does not accept {', '.join(found)}; use ax and x/y coordinates.")
 
-    def _field(self, kind, x, y, ax, cmap, coordinates, origin, aspect, where,
-               mask_color, mask_alpha, xlabel, ylabel, title, options):
+    def _field(self, kind, x, y, settings, options):
         """Prepare a detached masked field before choosing a rendering target."""
         self._reject_legacy(options)
-        if origin not in ("upper", "lower"):
+        if settings.origin not in ("upper", "lower"):
             raise ValueError("origin must be 'upper' or 'lower'.")
-        grid = resolve_grid(self._data, x, y, coordinates)
+        grid = resolve_grid(self._data, x, y, settings.coordinates)
         dataset = owner_of(self._data)._state.dataset
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .roi import image_selection
 
-        values = selected_image_values(dataset, image_selection(self._data, where, current=False))
+        values = selected_image_values(dataset, image_selection(self._data, settings.where, current=False))
         if kind == "imshow" and not grid.uniform:
             raise ValueError("imshow requires uniform coordinates; use image or pcolormesh.")
         mesh = kind == "pcolormesh" or (kind == "image" and not grid.uniform)
@@ -200,35 +205,31 @@ class ImagePlotter(PlotAccessor):
             raise ValueError("extent is only supported by uniform image rendering.")
         if kind == "contour" and (min(values.shape) < 2 or not values.count()):
             raise ValueError("Contours require at least two rows/columns and some eligible pixels.")
-        if not isinstance(mask_alpha, Real) or not np.isfinite(mask_alpha) or not 0 <= mask_alpha <= 1:
+        if (not isinstance(settings.mask_alpha, Real) or not np.isfinite(settings.mask_alpha)
+                or not 0 <= settings.mask_alpha <= 1):
             raise ValueError("mask_alpha must lie between zero and one.")
-        overlay_map = ListedColormap([to_rgba(mask_color, mask_alpha)]) if mask_color is not None else None
+        overlay_map = (ListedColormap([to_rgba(settings.mask_color, settings.mask_alpha)])
+                       if settings.mask_color is not None else None)
         extent = options.pop("extent", (grid.x_edges[0], grid.x_edges[-1],
-                                      grid.y_edges[-1] if origin == "upper" else grid.y_edges[0],
-                                      grid.y_edges[0] if origin == "upper" else grid.y_edges[-1]))
-        ax = self._target(ax)
+                                      grid.y_edges[-1] if settings.origin == "upper" else grid.y_edges[0],
+                                      grid.y_edges[0] if settings.origin == "upper" else grid.y_edges[-1]))
+        ax = self._target(settings.ax)
         if mesh:
             options.setdefault("shading", "flat")
-            artist = ax.pcolormesh(grid.x_edges, grid.y_edges, values, cmap=cmap, **options)
+            artist = ax.pcolormesh(grid.x_edges, grid.y_edges, values, cmap=settings.cmap, **options)
         elif kind == "contour":
-            artist = ax.contour(grid.x, grid.y, values, cmap=cmap, **options)
+            artist = ax.contour(grid.x, grid.y, values, cmap=settings.cmap, **options)
         else:
-            artist = ax.imshow(values, cmap=cmap, origin=origin, extent=extent, aspect=aspect, **options)
-        if overlay_map is not None and np.ma.getmaskarray(values).any():
-            overlay = np.ma.array(np.ones(values.shape), mask=~np.ma.getmaskarray(values))
-            overlay_options = {"transform": artist.get_transform(), "zorder": artist.get_zorder() + 0.1}
-            if mesh or kind == "contour":
-                ax.pcolormesh(grid.x_edges, grid.y_edges, overlay, cmap=overlay_map, vmin=0, vmax=1,
-                              shading="flat", **overlay_options)
-            else:
-                ax.imshow(overlay, cmap=overlay_map, vmin=0, vmax=1, origin=origin,
-                          extent=extent, aspect=aspect, interpolation="nearest", **overlay_options)
+            artist = ax.imshow(values, cmap=settings.cmap, origin=settings.origin, extent=extent,
+                               aspect=settings.aspect, **options)
+        _mask_overlay(ax, artist, values, grid, mesh, kind, settings, overlay_map, extent)
         if mesh or kind == "contour":
             ax.set_xlim(grid.x_edges[0], grid.x_edges[-1])
-            ax.set_ylim((grid.y_edges[-1], grid.y_edges[0]) if origin == "upper"
+            ax.set_ylim((grid.y_edges[-1], grid.y_edges[0]) if settings.origin == "upper"
                         else (grid.y_edges[0], grid.y_edges[-1]))
-            ax.set_aspect(aspect)
-        self._decorate(ax, grid.xlabel if xlabel is None else xlabel, grid.ylabel if ylabel is None else ylabel, title)
+            ax.set_aspect(settings.aspect)
+        self._decorate(ax, grid.xlabel if settings.xlabel is None else settings.xlabel,
+                       grid.ylabel if settings.ylabel is None else settings.ylabel, settings.title)
         return ax
 
     def _decorate(self, ax, xlabel, ylabel, title):
@@ -274,6 +275,8 @@ class ImagePlotter(PlotAccessor):
         if owner is None:
             raise ValueError("Image plotting requires a populated ImageFile owner.")
         dataset = owner._state.dataset
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .roi import image_selection
 
         values = selected_image_values(dataset, image_selection(self._data, where))
@@ -323,7 +326,11 @@ class ImagePlotter(PlotAccessor):
             Membership includes excluded/non-finite pixels. Does not draw an
             intensity image or change existing limits, orientation or labels.
         """
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from matplotlib.collections import LineCollection
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .roi import image_selection
 
         grid = resolve_grid(self._data, coordinates=coordinates)
@@ -348,3 +355,31 @@ class ImagePlotter(PlotAccessor):
         ax.add_collection(artist, autolim=False)
         self._record(ax.figure, ax)
         return ax
+
+
+class _FieldOptions(NamedTuple):
+    """Keep image presentation choices separate from Matplotlib artist options."""
+    ax: object
+    cmap: object
+    coordinates: object
+    origin: str
+    aspect: object
+    where: object
+    mask_color: object
+    mask_alpha: float
+    xlabel: object
+    ylabel: object
+    title: object
+
+
+def _mask_overlay(ax, artist, values, grid, mesh, kind, settings, overlay_map, extent):
+    """Render excluded pixels in the same coordinate geometry as the primary artist."""
+    if overlay_map is not None and np.ma.getmaskarray(values).any():
+        overlay = np.ma.array(np.ones(values.shape), mask=~np.ma.getmaskarray(values))
+        overlay_options = {"transform": artist.get_transform(), "zorder": artist.get_zorder() + 0.1}
+        if mesh or kind == "contour":
+            ax.pcolormesh(grid.x_edges, grid.y_edges, overlay, cmap=overlay_map, vmin=0, vmax=1,
+                          shading="flat", **overlay_options)
+        else:
+            ax.imshow(overlay, cmap=overlay_map, vmin=0, vmax=1, origin=settings.origin,
+                      extent=extent, aspect=settings.aspect, interpolation="nearest", **overlay_options)

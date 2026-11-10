@@ -64,6 +64,17 @@ def _has_glob(pattern):
     return False
 
 
+def _string_matches(schema, selector):
+    """Apply exact, glob-or-literal and regular-expression matching in order."""
+    matches = [i for i, column in enumerate(schema) if column.header == selector]
+    if not matches:
+        if _has_glob(selector):
+            matches = [i for i, column in enumerate(schema) if fnmatchcase(column.header, selector)]
+        else:
+            matches = [i for i, column in enumerate(schema) if selector in column.header]
+    return matches if matches else resolve_columns(schema, re.compile(selector))
+
+
 def resolve_columns(schema, selector, *, force_list=False, first=False):
     """Resolve a Stoner selector against an ordered column schema.
 
@@ -107,14 +118,7 @@ def resolve_columns(schema, selector, *, force_list=False, first=False):
     elif isinstance(selector, slice):
         result = list(range(count))[selector]
     elif isinstance(selector, str):
-        matches = [i for i, column in enumerate(schema) if column.header == selector]
-        if not matches:
-            if _has_glob(selector):
-                matches = [i for i, column in enumerate(schema) if fnmatchcase(column.header, selector)]
-            else:
-                matches = [i for i, column in enumerate(schema) if selector in column.header]
-        if not matches:
-            matches = resolve_columns(schema, re.compile(selector))
+        matches = _string_matches(schema, selector)
         result = matches[0] if len(matches) == 1 else matches
     elif isinstance(selector, re.Pattern):
         result = [i for i, column in enumerate(schema) if selector.search(column.header)]
@@ -167,6 +171,23 @@ def _validate_table(state, *, native=False):
     if not isinstance(state.values, pd.DataFrame):
         raise TypeError("Storage values must be a DataFrame")
     _numeric_dtype(state.dtype)
+    _validate_table_schema(state, native=native)
+    for dtype in state.values.dtypes:
+        if _numeric_dtype(dtype) != state.dtype:
+            raise ValueError("Frame columns must share the declared dtype")
+    if not isinstance(state.excluded, np.ndarray) or state.excluded.dtype != np.dtype(bool):
+        raise TypeError("Exclusions must be a Boolean ndarray")
+    if state.excluded.shape != state.values.shape:
+        raise ValueError("Exclusion shape differs from values")
+    if not isinstance(state.metadata, TypeHintedDict):
+        raise TypeError("Storage metadata must be a TypeHintedDict")
+    _validate_fill_value(state)
+
+
+def _validate_table_schema(state, *, native):
+    """Check schema records, identities and native versus interchange axes."""
+    # ColumnSchema imports Column; defer this dependency until validation.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from .column_schema import ColumnSchema
 
     schema_types = (list, tuple, ColumnSchema) if native else (list, tuple)
@@ -185,15 +206,10 @@ def _validate_table(state, *, native=False):
         raise ValueError("Storage rows must use RangeIndex(0, nrows)")
     if native and isinstance(state.values.columns, pd.MultiIndex):
         raise ValueError("Native columns must use flat headers")
-    for dtype in state.values.dtypes:
-        if _numeric_dtype(dtype) != state.dtype:
-            raise ValueError("Frame columns must share the declared dtype")
-    if not isinstance(state.excluded, np.ndarray) or state.excluded.dtype != np.dtype(bool):
-        raise TypeError("Exclusions must be a Boolean ndarray")
-    if state.excluded.shape != state.values.shape:
-        raise ValueError("Exclusion shape differs from values")
-    if not isinstance(state.metadata, TypeHintedDict):
-        raise TypeError("Storage metadata must be a TypeHintedDict")
+
+
+def _validate_fill_value(state):
+    """Require a numeric scalar fill exactly representable in the stored dtype."""
     if np.ndim(state.fill_value) != 0:
         raise ValueError("Fill value must be scalar")
     if np.asarray(state.fill_value).dtype.kind not in "biufc":
@@ -204,6 +220,13 @@ def _validate_table(state, *, native=False):
             raise ValueError("Fill value cannot be represented exactly")
     except (TypeError, ValueError, OverflowError) as error:
         raise ValueError("Fill value is incompatible with the dtype") from error
+
+def _validated_record_copy(source, memo):
+    """Validate a production interchange record, then register its empty deep copy."""
+    source.validate()
+    result = type(source).__new__(type(source))
+    memo[id(source)] = result
+    return result
 
 
 @dataclass
@@ -249,7 +272,8 @@ class DataStorage:
             ValueError:
                 If version, shape, schema, axes or fill value is inconsistent.
         """
-        if type(self.version) is not int or self.version != 1:
+        # Wire versions exclude Boolean and NumPy integer subclasses.
+        if type(self.version) is not int or self.version != 1:  # pylint: disable=unidiomatic-typecheck
             raise ValueError("Unsupported storage version")
         _validate_table(self)
 
@@ -299,14 +323,17 @@ class DataStorage:
 
     def copy(self):
         """Validate and deep-copy all state, retaining IDs and metadata type hints."""
+        # Copy hooks remain rank-specific; this two-line validation prelude is shared.
+        # pylint: disable-next=duplicate-code
         self.validate()
+        # pylint: disable-next=duplicate-code
         return deepcopy(self)
 
     def __deepcopy__(self, memo):
         """Preserve aliases within metadata while detaching it from the source."""
-        self.validate()
-        result = type(self).__new__(type(self))
-        memo[id(self)] = result
+        # Registration is shared; the remaining field copies are rank-specific.
+        # pylint: disable-next=duplicate-code
+        result = _validated_record_copy(self, memo)
         result.values = self.values.copy(deep=True)
         result.excluded = self.excluded.copy()
         result.schema = list(self.schema)
@@ -384,7 +411,8 @@ class DataStorage:
         values = np.ma.array(frame.to_numpy(dtype=target, copy=True), mask=False if mask is None else mask)
         return cls.from_numpy(values, headers=headers, roles=setas if setas is not None else roles, metadata=metadata)
 
-    def to_pandas(self, *, format="legacy", masked="nan"):
+    # The published keyword is format; retain it for caller compatibility.
+    def to_pandas(self, *, format="legacy", masked="nan"):  # pylint: disable=redefined-builtin
         """Export a lossy detached native frame, warning about exclusions/metadata.
 
         Keyword Arguments:

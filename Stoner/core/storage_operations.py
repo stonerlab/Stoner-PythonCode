@@ -170,56 +170,12 @@ def append(datafile, other):
     if np.isscalar(other):
         return NotImplemented
     if isinstance(other, list):
-        # Work on an independent object so a late invalid row cannot partly append.
-        draft = datafile.clone
-        for item in other:
-            append(draft, np.asarray(item) if isinstance(item, list) else item)
-        draft._require_storage_owner()._state.metadata = _copy_metadata(
-            draft._require_storage_owner()._state.metadata, {id(draft): datafile}
-        )
-        owner._state = draft._require_storage_owner()._state
-        return datafile
+        return _append_list(datafile, owner, other)
     if isinstance(other, Mapping) and not hasattr(other, "export_storage"):
-        draft = datafile.clone
-        order = {}
-        for header in other:
-            try:
-                order[header] = draft.find_col(header, force_list=True)
-            except (KeyError, re.error):
-                draft.add_column(np.ma.array(np.full(len(draft), np.nan), mask=True), header=header)
-                order[header] = draft.shape[1] - 1
-        row = np.ma.array(np.full(draft.shape[1], np.nan), mask=True)
-        for header, position in order.items():
-            row[position] = other[header]
-        draft._require_storage_owner().insert_rows(len(draft), row)
-        draft._require_storage_owner()._state.metadata = _copy_metadata(
-            draft._require_storage_owner()._state.metadata, {id(draft): datafile}
-        )
-        owner._state = draft._require_storage_owner()._state
-        return datafile
+        return _append_mapping(datafile, owner, other)
     if hasattr(other, "export_storage"):
         package = other.export_storage()
-        available = {}
-        for i, column in enumerate(package.schema):
-            available.setdefault(column.header, []).append(i)
-        positions = []
-        for header in owner.headers:
-            if not available.get(header):
-                positions.append(None)
-            else:
-                positions.append(available[header].pop(0))
-        if not owner.column_ids:
-            values = package.to_numpy()
-        elif None in positions:
-            dtype = np.result_type(package.dtype, np.float64)
-            owner._check_integer_precision(dtype, package.to_numpy())
-            values = np.ma.array(np.full((len(package.values), len(positions)), np.nan, dtype=dtype), mask=False)
-            source = package.to_numpy()
-            for i, position in enumerate(positions):
-                if position is not None:
-                    values[:, i] = source[:, position]
-        else:
-            values = package.to_numpy()[:, positions]
+        values = _aligned_append_values(owner, package)
         metadata = _merge_metadata(owner._state.metadata, package.metadata)
     else:
         values = np.ma.atleast_2d(other)
@@ -233,6 +189,66 @@ def append(datafile, other):
         owner.insert_rows(len(datafile), values)
     owner._state.metadata = metadata
     return datafile
+
+
+def _append_list(datafile, owner, other):
+    """Stage every list item before publishing the complete append atomically."""
+    # Work on an independent object so a late invalid row cannot partly append.
+    draft = datafile.clone
+    for item in other:
+        append(draft, np.asarray(item) if isinstance(item, list) else item)
+    draft._require_storage_owner()._state.metadata = _copy_metadata(
+        draft._require_storage_owner()._state.metadata, {id(draft): datafile}
+    )
+    owner._state = draft._require_storage_owner()._state
+    return datafile
+
+
+def _append_mapping(datafile, owner, other):
+    """Prepare mapping columns and a masked row before publishing the draft."""
+    draft = datafile.clone
+    order = {}
+    for header in other:
+        try:
+            order[header] = draft.find_col(header, force_list=True)
+        except (KeyError, re.error):
+            draft.add_column(np.ma.array(np.full(len(draft), np.nan), mask=True), header=header)
+            order[header] = draft.shape[1] - 1
+    row = np.ma.array(np.full(draft.shape[1], np.nan), mask=True)
+    for header, position in order.items():
+        row[position] = other[header]
+    draft._require_storage_owner().insert_rows(len(draft), row)
+    draft._require_storage_owner()._state.metadata = _copy_metadata(
+        draft._require_storage_owner()._state.metadata, {id(draft): datafile}
+    )
+    owner._state = draft._require_storage_owner()._state
+    return datafile
+
+
+def _aligned_append_values(owner, package):
+    """Align source columns by header occurrence and preserve missing channels."""
+    available = {}
+    for i, column in enumerate(package.schema):
+        available.setdefault(column.header, []).append(i)
+    positions = []
+    for header in owner.headers:
+        if not available.get(header):
+            positions.append(None)
+        else:
+            positions.append(available[header].pop(0))
+    if not owner.column_ids:
+        values = package.to_numpy()
+    elif None in positions:
+        dtype = np.result_type(package.dtype, np.float64)
+        owner._check_integer_precision(dtype, package.to_numpy())
+        values = np.ma.array(np.full((len(package.values), len(positions)), np.nan, dtype=dtype), mask=False)
+        source = package.to_numpy()
+        for i, position in enumerate(positions):
+            if position is not None:
+                values[:, i] = source[:, position]
+    else:
+        values = package.to_numpy()[:, positions]
+    return values
 
 
 def concatenate_columns(datafile, other):

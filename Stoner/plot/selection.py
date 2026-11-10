@@ -104,7 +104,9 @@ def _uncertainty(data, specification):
     if isinstance(specification, (Integral, str, Pattern)):
         position = data.find_col(specification, force_list=True)
         if len(position) != 1:
-            raise ValueError(f"Each uncertainty must select exactly one column; {specification!r} matched {position!r}.")
+            raise ValueError(
+                f"Each uncertainty must select exactly one column; {specification!r} matched {position!r}."
+            )
         values = data.column(position[0])
     elif isinstance(specification, Real):
         values = np.full(len(data), specification)

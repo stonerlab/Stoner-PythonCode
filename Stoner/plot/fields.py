@@ -192,36 +192,39 @@ def _voxel_data(samples, shape, limits, method, visible, filled):
     return mesh, corners, values, occupied
 
 
-def draw_field(
-    plot,
-    kind,
-    columns,
-    *,
-    ax=None,
-    shape=None,
-    method="linear",
-    xlim=None,
-    ylim=None,
-    zlim=None,
-    colorbar=True,
-    annotations=None,
-    **kwargs,
-):
-    """Validate and draw one explicit field request, returning its primary axes."""
+@dataclass
+class _PreparedField:
+    """Carry independently prepared geometry and rendering values for one field."""
+
+    samples: FieldSamples
+    options: dict
+    axes: tuple = ()
+    mesh: tuple = ()
+    values: object = None
+    image: object = None
+    arrows: bool = False
+    quiver_options: object = None
+    corners: tuple = ()
+    occupied: object = None
+    mapper: ScalarMappable | None = None
+    face: object = None
+    edge: object = None
+
+
+def _field_samples(plot, kind, columns):
+    """Select the scientific coordinate and component roles for a field kind."""
     dimensions, components = {
-        "surface": ("xy", "z"),
-        "contour": ("xy", "z"),
-        "pcolormesh": ("xy", "z"),
-        "image": ("xy", "z"),
-        "scatter3d": ("xyz", ""),
-        "waterfall": ("xy", "z"),
-        "vector": ("xy", "uvw" if columns.w else "uv"),
-        "quiver": ("xy", "uv"),
-        "vector3d": ("xyz", "uvw"),
-        "voxels": ("xyz", "u"),
+        "surface": ("xy", "z"), "contour": ("xy", "z"),
+        "pcolormesh": ("xy", "z"), "image": ("xy", "z"),
+        "scatter3d": ("xyz", ""), "waterfall": ("xy", "z"),
+        "vector": ("xy", "uvw" if columns.w else "uv"), "quiver": ("xy", "uv"),
+        "vector3d": ("xyz", "uvw"), "voxels": ("xyz", "u"),
     }[kind]
-    samples = prepare_samples(plot._data, columns, dimensions, components)
-    options = {key: plot._text(value) for key, value in kwargs.items()}
+    return prepare_samples(plot._data, columns, dimensions, components)
+
+
+def _field_projection(kind, shape, method, zlim, options):
+    """Validate grid options before creating any rendering target."""
     if kind == "vector" and {"cmap", "norm", "vmin", "vmax"}.intersection(options):
         raise ValueError("vector uses directional RGB colours; scalar colour maps belong to image/pcolormesh.")
     if kind in ("image", "vector") and "extent" in options:
@@ -231,80 +234,112 @@ def draw_field(
         raise ValueError(f"{kind} uses ungridded samples; omit shape and method.")
     if zlim is not None and projection != "3d":
         raise ValueError("zlim requires a 3D plotting method.")
-    if kind in ("surface", "contour", "pcolormesh", "image"):
-        axes, mesh, values = grid_samples(samples, shape=shape, limits=(xlim, ylim), method=method)
-        if kind in ("surface", "contour") and any(len(axis) < 2 for axis in axes):
-            raise ValueError(f"{kind} requires at least two grid centres along X and Y.")
+    return projection
+
+
+def _vector_field(samples, options, shape, limits, method):
+    """Prepare matched RGB pixels and arrows from the first valid vector at a site."""
+    _, first = np.unique(samples.points[samples.valid], axis=0, return_index=True)
+    unique_valid = np.zeros_like(samples.valid)
+    unique_valid[np.flatnonzero(samples.valid)[first]] = True
+    samples = FieldSamples(samples.points, samples.values, samples.coordinate_valid, unique_valid)
+    prepared = _PreparedField(samples, options)
+    prepared.arrows = options.pop("arrows", True)
+    prepared.quiver_options = _row_options(options.pop("quiver_kwargs", {}), samples.valid)
+    rgb = np.zeros((len(samples.valid), 3))
+    rgb[samples.valid] = vector_colours(samples.values[samples.valid])
+    rgb_samples = FieldSamples(samples.points, rgb, samples.coordinate_valid, samples.valid)
+    prepared.axes, prepared.mesh, image = grid_samples(rgb_samples, shape=shape, limits=limits[:2], method=method)
+    prepared.image = np.ma.clip(image, 0, 1)
+    return prepared
+
+
+def _voxel_field(samples, options, shape, limits, method):
+    """Prepare voxel occupancy and independently scaled face and edge colours."""
+    prepared = _PreparedField(samples, options)
+    _, prepared.corners, values, prepared.occupied = _voxel_data(
+        samples, shape, limits, method, options.pop("visible", None), options.pop("filled", None)
+    )
+    cmap = colormaps.get_cmap(options.pop("cmap", None))
+    norm = options.pop("norm", None)
+    vmin, vmax = options.pop("vmin", None), options.pop("vmax", None)
+    if norm is not None and (vmin is not None or vmax is not None):
+        raise ValueError("Supply norm or vmin/vmax, not both.")
+    prepared.mapper = ScalarMappable(norm=norm or colors.Normalize(vmin, vmax), cmap=cmap)
+    rgba = prepared.mapper.to_rgba(values.ravel()).reshape(values.shape + (4,))
+    face_alpha, edge_alpha = options.pop("face_alpha", 0.5), options.pop("edge_alpha", 0.9)
+    prepared.face, prepared.edge = rgba.copy(), rgba.copy()
+    prepared.face[..., 3] *= face_alpha
+    prepared.edge[..., 3] *= edge_alpha
+    return prepared
+
+
+def _prepare_field(kind, samples, options, shape, limits, method):
+    """Prepare kind-specific arrays without creating axes or changing source data."""
     if kind == "vector":
-        # A 2D pixel and its overlay must use the same first valid vector at a site.
-        _, first = np.unique(samples.points[samples.valid], axis=0, return_index=True)
-        unique_valid = np.zeros_like(samples.valid)
-        unique_valid[np.flatnonzero(samples.valid)[first]] = True
-        samples = FieldSamples(samples.points, samples.values, samples.coordinate_valid, unique_valid)
-        arrows = options.pop("arrows", True)
-        quiver_kwargs = _row_options(options.pop("quiver_kwargs", {}), samples.valid)
-        # Interpolate the same directional RGB samples as the existing vector image.
-        rgb = np.zeros((len(samples.valid), 3))
-        rgb[samples.valid] = vector_colours(samples.values[samples.valid])
-        rgb_samples = FieldSamples(samples.points, rgb, samples.coordinate_valid, samples.valid)
-        axes, mesh, rgb_grid = grid_samples(rgb_samples, shape=shape, limits=(xlim, ylim), method=method)
-        rgb_grid = np.ma.clip(rgb_grid, 0, 1)
-    if kind in ("quiver", "vector3d", "scatter3d"):
-        options = _row_options(options, samples.valid)
+        return _vector_field(samples, options, shape, limits, method)
     if kind == "voxels":
-        _, corners, values, occupied = _voxel_data(
-            samples, shape, (xlim, ylim, zlim), method, options.pop("visible", None), options.pop("filled", None)
+        return _voxel_field(samples, options, shape, limits, method)
+    prepared = _PreparedField(samples, options)
+    if kind in ("surface", "contour", "pcolormesh", "image"):
+        prepared.axes, prepared.mesh, prepared.values = grid_samples(
+            samples, shape=shape, limits=limits[:2], method=method
         )
-        cmap = colormaps.get_cmap(options.pop("cmap", None))
-        norm = options.pop("norm", None)
-        vmin, vmax = options.pop("vmin", None), options.pop("vmax", None)
-        if norm is not None and (vmin is not None or vmax is not None):
-            raise ValueError("Supply norm or vmin/vmax, not both.")
-        mapper = ScalarMappable(norm=norm or colors.Normalize(vmin, vmax), cmap=cmap)
-        rgba = mapper.to_rgba(values.ravel()).reshape(values.shape + (4,))
-        face_alpha, edge_alpha = options.pop("face_alpha", 0.5), options.pop("edge_alpha", 0.9)
-        face = rgba.copy()
-        face[..., 3] *= face_alpha
-        edge = rgba.copy()
-        edge[..., 3] *= edge_alpha
-    ax = plot._target(ax, projection)
-    artist = None
+        if kind in ("surface", "contour") and any(len(axis) < 2 for axis in prepared.axes):
+            raise ValueError(f"{kind} requires at least two grid centres along X and Y.")
+    if kind in ("quiver", "vector3d", "scatter3d"):
+        prepared.options = _row_options(options, samples.valid)
+    return prepared
+
+
+def _render_image_field(ax, kind, prepared):
+    """Render a scalar or directional image with its matching optional arrows."""
+    options = prepared.options
+    extent = tuple(edge for axis in prepared.axes for edge in cell_edges(axis)[[0, -1]])
+    options.setdefault("origin", "lower")
+    options.setdefault("aspect", "auto")
+    if kind == "vector":
+        options.setdefault("alpha", 0.75)
+    values = prepared.values[..., 0] if kind == "image" else prepared.image
+    artist = ax.imshow(values, extent=extent, **options)
+    if kind == "vector" and prepared.arrows:
+        _quiver(ax, prepared.samples, prepared.quiver_options)
+    return artist
+
+
+def _render_field(ax, kind, prepared):
+    """Draw validated field arrays using the requested Matplotlib primitive."""
+    options, samples = prepared.options, prepared.samples
     if kind == "surface":
         if "color" not in options and "facecolors" not in options:
             options.setdefault("cmap", rcParams["image.cmap"])
-        artist = ax.plot_surface(*mesh, values[..., 0].filled(np.nan), **options)
-    elif kind == "contour":
+        return ax.plot_surface(*prepared.mesh, prepared.values[..., 0].filled(np.nan), **options)
+    if kind == "contour":
         filled = options.pop("filled", False)
-        artist = (ax.contourf if filled else ax.contour)(*mesh, values[..., 0], **options)
-    elif kind == "pcolormesh":
-        artist = ax.pcolormesh(*mesh, values[..., 0], **options)
-    elif kind in ("image", "vector"):
-        extent = tuple(edge for axis in axes for edge in cell_edges(axis)[[0, -1]])
-        options.setdefault("origin", "lower")
-        options.setdefault("aspect", "auto")
-        if kind == "vector":
-            options.setdefault("alpha", 0.75)
-        artist = ax.imshow(values[..., 0] if kind == "image" else rgb_grid, extent=extent, **options)
-        if kind == "vector" and arrows:
-            _quiver(ax, samples, quiver_kwargs)
-    elif kind == "scatter3d":
-        artist = ax.scatter(*samples.points[samples.valid].T, **options)
-    elif kind == "quiver":
-        artist = _quiver(ax, samples, options)
-    elif kind == "vector3d":
+        return (ax.contourf if filled else ax.contour)(*prepared.mesh, prepared.values[..., 0], **options)
+    if kind == "pcolormesh":
+        return ax.pcolormesh(*prepared.mesh, prepared.values[..., 0], **options)
+    if kind in ("image", "vector"):
+        return _render_image_field(ax, kind, prepared)
+    if kind == "scatter3d":
+        return ax.scatter(*samples.points[samples.valid].T, **options)
+    if kind == "quiver":
+        return _quiver(ax, samples, options)
+    if kind == "vector3d":
         if "color" not in options and "colors" not in options:
             options["colors"] = vector_colours(samples.values[samples.valid])
-        artist = ax.quiver(*samples.points[samples.valid].T, *samples.values[samples.valid].T, **options)
-    elif kind == "voxels":
-        ax.voxels(*corners, occupied, facecolors=face, edgecolors=edge, **options)
-        artist = mapper
-    elif kind == "waterfall":
-        joy_division(*samples.points[samples.valid].T, samples.values[samples.valid, 0], ax=ax, **options)
-    if (
-        colorbar
-        and kind in ("surface", "contour", "pcolormesh", "image", "voxels")
-        and (kind != "surface" or artist.get_array() is not None)
-    ):
+        return ax.quiver(*samples.points[samples.valid].T, *samples.values[samples.valid].T, **options)
+    if kind == "voxels":
+        ax.voxels(*prepared.corners, prepared.occupied, facecolors=prepared.face, edgecolors=prepared.edge, **options)
+        return prepared.mapper
+    joy_division(*samples.points[samples.valid].T, samples.values[samples.valid, 0], ax=ax, **options)
+    return None
+
+
+def _finish_field(plot, ax, kind, columns, artist, colorbar, annotations, limits, projection):
+    """Apply field colour bars, source labels and the explicitly requested limits."""
+    if (colorbar and kind in ("surface", "contour", "pcolormesh", "image", "voxels")
+            and (kind != "surface" or artist.get_array() is not None)):
         label = plot._label(columns.u[0] if kind == "voxels" else columns.z[0])
         ax.figure.colorbar(artist, ax=ax, label=plot._text(label))
     defaults = [plot._label(columns.x), plot._label(columns.y[0])]
@@ -314,14 +349,28 @@ def draw_field(
         defaults.append(plot._label(columns.z[0]))
     _finish(plot, ax, defaults, annotations)
     if kind in ("scatter3d", "quiver", "vector3d", "waterfall"):
-        if xlim is not None:
-            ax.set_xlim(xlim)
-        if ylim is not None:
-            ax.set_ylim(ylim)
-    if projection == "3d" and zlim is not None and kind != "voxels":
-        ax.set_zlim(zlim)
+        if limits[0] is not None:
+            ax.set_xlim(limits[0])
+        if limits[1] is not None:
+            ax.set_ylim(limits[1])
+    if projection == "3d" and limits[2] is not None and kind != "voxels":
+        ax.set_zlim(limits[2])
     plot._record(ax.figure, ax)
     return ax
+
+
+def draw_field(
+    plot, kind, columns, *, ax=None, shape=None, method="linear", xlim=None, ylim=None,
+    zlim=None, colorbar=True, annotations=None, **kwargs,
+):
+    """Validate and draw one explicit field request, returning its primary axes."""
+    samples = _field_samples(plot, kind, columns)
+    options = {key: plot._text(value) for key, value in kwargs.items()}
+    projection = _field_projection(kind, shape, method, zlim, options)
+    prepared = _prepare_field(kind, samples, options, shape, (xlim, ylim, zlim), method)
+    ax = plot._target(ax, projection)
+    artist = _render_field(ax, kind, prepared)
+    return _finish_field(plot, ax, kind, columns, artist, colorbar, annotations, (xlim, ylim, zlim), projection)
 
 
 def _quiver(ax, samples, options):
@@ -341,9 +390,8 @@ def _finish(plot, ax, defaults, annotations):
         ax.set_title(plot._text(annotations.get("title", plot._data.basename) or ""))
 
 
-def draw_matrix(plot, x=None, y=None, *, rect=None, ax=None, colorbar=True, annotations=None, **kwargs):
-    """Render a matrix whose data rows represent X and data columns represent Y."""
-    data = plot._data
+def _matrix_block(data, x, y, rect):
+    """Resolve a valid rectangular matrix and the source coordinate locations."""
     if isinstance(x, bool) or isinstance(y, bool):
         raise TypeError("Matrix coordinates must be selectors or vectors, not Booleans.")
     xcolumn = 0 if x is None else None
@@ -369,6 +417,12 @@ def draw_matrix(plot, x=None, y=None, *, rect=None, ax=None, colorbar=True, anno
     if matrix.dtype.kind not in "biuf":
         raise TypeError("Matrix plotting requires real numerical values.")
     matrix = matrix.astype(float)
+    return matrix, (row, column, rows, cols, xcolumn)
+
+
+def _matrix_coordinates(data, x, y, block):
+    """Resolve finite unexcluded coordinate vectors matching a matrix block."""
+    row, column, rows, cols, xcolumn = block
     xvalues = data.column(xcolumn)[row : row + rows] if xcolumn is not None else np.ma.asarray(x)
     if xcolumn is None and len(xvalues) == len(data):
         xvalues = xvalues[row : row + rows]
@@ -383,6 +437,13 @@ def draw_matrix(plot, x=None, y=None, *, rect=None, ax=None, colorbar=True, anno
     for values, count in ((xvalues, rows), (yvalues, cols)):
         if values.shape != (count,) or np.ma.getmaskarray(values).any() or not np.isfinite(values).all():
             raise ValueError("Matrix coordinates must be finite unexcluded vectors matching the selected block.")
+    return xvalues, yvalues
+
+
+def draw_matrix(plot, x=None, y=None, *, rect=None, ax=None, colorbar=True, annotations=None, **kwargs):
+    """Render a matrix whose data rows represent X and data columns represent Y."""
+    matrix, block = _matrix_block(plot._data, x, y, rect)
+    xvalues, yvalues = _matrix_coordinates(plot._data, x, y, block)
     matrix = np.ma.masked_invalid(matrix)
     if matrix.count() == 0:
         raise ValueError("No finite, unexcluded matrix samples remain.")
@@ -395,6 +456,6 @@ def draw_matrix(plot, x=None, y=None, *, rect=None, ax=None, colorbar=True, anno
     )
     if colorbar and artist.get_array() is not None:
         ax.figure.colorbar(artist, ax=ax)
-    _finish(plot, ax, [plot._label(xcolumn) if xcolumn is not None else "X", "Y", "Value"], annotations)
+    _finish(plot, ax, [plot._label(block[4]) if block[4] is not None else "X", "Y", "Value"], annotations)
     plot._record(ax.figure, ax)
     return ax

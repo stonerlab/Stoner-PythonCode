@@ -11,6 +11,7 @@ from lmfit import Model
 from ..compat import string_types
 from ..core import TypeHintedDict, metadataObject
 from ..tools import isiterable, islistlike, make_Data
+from pandas.api.types import is_numeric_dtype
 
 
 def _fmt_as_list(results):
@@ -44,7 +45,6 @@ def _fmt_as_dataframe(results):
 
 def _fmt_as_Data(results):
     """Convert numeric metadata to Data; keep general metadata in frame/array output."""
-    from pandas.api.types import is_numeric_dtype
 
     frame = _fmt_as_dataframe(results)
     if not all(is_numeric_dtype(dtype) for dtype in frame.dtypes):

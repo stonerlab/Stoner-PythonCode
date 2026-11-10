@@ -1,6 +1,10 @@
 """Provide explicit, callable scientific plotting for a Data instance."""
 
+from inspect import isclass
+
 import numpy as np
+from lmfit.model import Model
+from scipy.odr import Model as odrModel
 
 from .base import PlotAccessor
 from .fields import draw_field, draw_matrix
@@ -41,6 +45,75 @@ _LEGACY_OPTIONS = {
     "wcol",
     "showfig",
 }
+
+
+def _annotation_model(datafile, model, kwargs):
+    """Resolve a fit model and its recorded parameter display conventions."""
+    if isclass(model) and (issubclass(model, Model) or issubclass(model, odrModel)):
+        model = model()  # Instantiate a bare class first
+
+    if isinstance(model, odrModel):  # Get predix from odrModel
+        model_prefix = model.meta.get("__name__", type(model).__name__)
+        prefix = kwargs.pop("prefix", datafile.get("odr.prefix", model_prefix))
+        param_names = model.meta.get("param_names", [])
+        display_names = model.meta.get("display_names", param_names)
+        units = model.meta.get("units", [""] * len(param_names))
+    elif isinstance(model, Model):  # Get prefix from lmfit
+        prefix = kwargs.pop("prefix", datafile.get("lmfit.prefix", type(model).__name__))
+        param_names = model.param_names
+        display_names = getattr(model, "display_names", model.param_names)
+        units = getattr(model, "units", [""] * len(param_names))
+    elif callable(model):  # Get prefix from callable name
+        prefix = kwargs.pop("prefix", model.__name__)
+        model = Model(model)
+        param_names = model.param_names
+        display_names = getattr(model, "display_names", model.param_names)
+        units = getattr(model, "units", [""] * len(param_names))
+    else:
+        raise RuntimeError(f"model should be either an lmfit_mod.Model or a callable function, not a {type(model)}")
+
+    if prefix is not None:
+        if isinstance(prefix, (list, tuple)):
+            prefix = prefix[0]
+
+        prefix = prefix.strip(" :")
+        prefix = "" if prefix == "" else prefix + ":"
+
+    else:
+        if isinstance(prefix, (list, tuple)):
+            prefix = prefix[0]
+
+        if model.prefix == "":
+            prefix = ""
+        else:
+            prefix = model.prefix + ":"
+
+    return model, (prefix, param_names, display_names, units)
+
+
+def _annotation_text(datafile, model, description, mode):
+    """Format parameter values while retaining recorded labels and uncertainty units."""
+    prefix, param_names, display_names, units = description
+    try:  # if the model has an attribute display params then use these as the parameter names
+        for k, display_name, unit in zip(param_names, display_names, units):
+            if prefix:
+                datafile[f"{prefix}{k} label"] = display_name
+                datafile[f"{prefix}{k} units"] = unit
+
+            else:
+                datafile[f"{k} label"] = display_name
+                datafile[f"{k} units"] = unit
+    except (AttributeError, KeyError):
+        pass
+
+    text = "\n".join([datafile.format(f"{prefix}{k}", fmt="latex", mode=mode) for k in model.param_names])
+    try:
+        datafile[f"{prefix}chi^2 label"] = r"\chi^2_{red}"
+        text += "\n" + datafile.format(f"{prefix}chi^2", fmt="latex", mode="eng")
+    except KeyError:
+        pass
+
+    return text
 
 
 class DataPlotter(PlotAccessor):
@@ -96,7 +169,6 @@ class DataPlotter(PlotAccessor):
             Worked examples of panels, styles, independent scales and offsets.
     """
 
-
     @property
     def labels(self):
         """Return mutable label overrides, filling unspecified entries from headers."""
@@ -117,7 +189,6 @@ class DataPlotter(PlotAccessor):
             raise TypeError("labels must contain only strings.")
         self._data.__dict__["_labels"] = labels
 
-
     def _projection_for(self, x=None, y=None, *, kind="auto", **kwargs):
         """Resolve a folder member's required projection without creating axes."""
         if kind not in ("auto", *_XY_KINDS, *_FIELD_KINDS, *_STAT_KINDS):
@@ -126,7 +197,6 @@ class DataPlotter(PlotAccessor):
             selections = {key: kwargs[key] for key in ("z", "u", "v", "w", "startx", "no_guess") if key in kwargs}
             kind = resolve_columns(self._data, x=x, y=y, **selections).kind
         return "3d" if kind in ("surface", "matrix", "scatter3d", "vector3d", "voxels") else "rectilinear"
-
 
     def annotate_fit(self, model, x=None, y=None, z=None, text_only=False, mode="float", **kwargs):
         """Annotate a fit or return its formatted parameter text.
@@ -168,96 +238,32 @@ class DataPlotter(PlotAccessor):
             coordinates. Parameter labels/units may be recorded in metadata for
             formatting, including when text_only is True. Drawing creates no figure.
         """
-        from inspect import isclass
+        model, description = _annotation_model(self._data, model, kwargs)
+        text = _annotation_text(self._data, model, description, mode)
+        if text_only:
+            return text
+        self._place_fit_annotation(text, 0.75 if x is None else x, 0.5 if y is None else y, z, kwargs)
+        return self._data
 
-        from lmfit.model import Model
-        from scipy.odr import Model as odrModel
-
-        datafile = self._data
-        if isclass(model) and (issubclass(model, Model) or issubclass(model, odrModel)):
-            model = model()  # Instantiate a bare class first
-
-        if isinstance(model, odrModel):  # Get predix from odrModel
-            model_prefix = model.meta.get("__name__", type(model).__name__)
-            prefix = kwargs.pop("prefix", datafile.get("odr.prefix", model_prefix))
-            param_names = model.meta.get("param_names", [])
-            display_names = model.meta.get("display_names", param_names)
-            units = model.meta.get("units", [""] * len(param_names))
-        elif isinstance(model, Model):  # Get prefix from lmfit
-            prefix = kwargs.pop("prefix", datafile.get("lmfit.prefix", type(model).__name__))
-            param_names = model.param_names
-            display_names = getattr(model, "display_names", model.param_names)
-            units = getattr(model, "units", [""] * len(param_names))
-        elif callable(model):  # Get prefix from callable name
-            prefix = kwargs.pop("prefix", model.__name__)
-            model = Model(model)
-            param_names = model.param_names
-            display_names = getattr(model, "display_names", model.param_names)
-            units = getattr(model, "units", [""] * len(param_names))
+    def _place_fit_annotation(self, text, x, y, z, kwargs):
+        """Draw prepared fit text on a live 2D or 3D annotation target."""
+        ax = kwargs.pop("ax", None)
+        if ax is None:
+            ax = self.ax
+        if ax is None:
+            raise ValueError("Plot data first or supply ax= to plot.annotate_fit.")
+        if "zlim" in ax.properties():
+            # 3D plot then
+            if z is None:
+                zb, zt = ax.properties()["zlim"]
+                z = 0.5 * (zt - zb) + zb
+            ax.text3D(x, y, z, text)
+        elif "arrowprops" in kwargs:
+            ax.annotate(text, xy=(x, y), **kwargs)
         else:
-            raise RuntimeError(f"model should be either an lmfit_mod.Model or a callable function, not a {type(model)}")
-
-        if prefix is not None:
-            if isinstance(prefix, (list, tuple)):
-                prefix = prefix[0]
-
-            prefix = prefix.strip(" :")
-            prefix = "" if prefix == "" else prefix + ":"
-
-        else:
-            if isinstance(prefix, (list, tuple)):
-                prefix = prefix[0]
-
-            if model.prefix == "":
-                prefix = ""
-            else:
-                prefix = model.prefix + ":"
-
-        x = 0.75 if x is None else x
-        y = 0.5 if y is None else y
-
-        try:  # if the model has an attribute display params then use these as the parameter names
-            for k, display_name, unit in zip(param_names, display_names, units):
-                if prefix:
-                    datafile[f"{prefix}{k} label"] = display_name
-                    datafile[f"{prefix}{k} units"] = unit
-
-                else:
-                    datafile[f"{k} label"] = display_name
-                    datafile[f"{k} units"] = unit
-        except (AttributeError, KeyError):
-            pass
-
-        text = "\n".join([datafile.format(f"{prefix}{k}", fmt="latex", mode=mode) for k in model.param_names])
-        try:
-            datafile[f"{prefix}chi^2 label"] = r"\chi^2_{red}"
-            text += "\n" + datafile.format(f"{prefix}chi^2", fmt="latex", mode="eng")
-        except KeyError:
-            pass
-
-        if not text_only:
-            ax = kwargs.pop("ax", None)
-            if ax is None:
-                ax = self.ax
-            if ax is None:
-                raise ValueError("Plot data first or supply ax= to plot.annotate_fit.")
-            if "zlim" in ax.properties():
-                # 3D plot then
-                if z is None:
-                    zb, zt = ax.properties()["zlim"]
-                    z = 0.5 * (zt - zb) + zb
-                ax.text3D(x, y, z, text)
-            elif "arrowprops" in kwargs:
-                ax.annotate(text, xy=(x, y), **kwargs)
-            else:
-                kwargs.pop("xycoords", None)
-                kwargs["transform"] = ax.transAxes
-                ax.text(x, y, text, **kwargs)
-            ret = datafile
-        else:
-            ret = text
-        return ret
-
+            kwargs.pop("xycoords", None)
+            kwargs["transform"] = ax.transAxes
+            ax.text(x, y, text, **kwargs)
 
     def __call__(
         self,
@@ -346,13 +352,7 @@ class DataPlotter(PlotAccessor):
             if any(value is not None for value in (z, u, v, w, xerr, yerr)):
                 raise ValueError("matrix uses x/y coordinates and a table block, not field or uncertainty selectors.")
             return self._matrix(x, y, **kwargs)
-        if kind in _FIELD_KINDS and not no_guess and not any(role != "." for role in self._data.setas):
-            required = {"vector": "xyuv", "quiver": "xyuv", "vector3d": "xyzuvw", "voxels": "xyzu"}.get(kind, "xyz")
-            selections = {"x": x, "y": y, "z": z, "u": u, "v": v, "w": w}
-            for index, name in enumerate(required):
-                if selections[name] is None and index < self._data.shape[1]:
-                    selections[name] = index
-            x, y, z, u, v, w = (selections[name] for name in "xyzuvw")
+        x, y, z, u, v, w = self._field_defaults(kind, no_guess, (x, y, z, u, v, w))
         columns = resolve_columns(self._data, x=x, y=y, z=z, u=u, v=v, w=w, startx=startx, no_guess=no_guess)
         if kind == "auto" and columns.kind != "xy":
             kind = columns.kind
@@ -371,6 +371,17 @@ class DataPlotter(PlotAccessor):
             xerr = yerr = False
         traces = prepare_traces(self._data, columns, xerr=xerr, yerr=yerr)
         return self._draw(kind, traces, xcolumn=columns.x, **kwargs)
+
+    def _field_defaults(self, kind, no_guess, values):
+        """Infer explicit field coordinates only for wholly unassigned tables."""
+        if kind not in _FIELD_KINDS or no_guess or any(role != "." for role in self._data.setas):
+            return values
+        required = {"vector": "xyuv", "quiver": "xyuv", "vector3d": "xyzuvw", "voxels": "xyzu"}.get(kind, "xyz")
+        selections = dict(zip("xyzuvw", values))
+        for index, name in enumerate(required):
+            if selections[name] is None and index < self._data.shape[1]:
+                selections[name] = index
+        return tuple(selections[name] for name in "xyzuvw")
 
     def line(self, x=None, y=None, **kwargs):
         """Draw plain lines, using current roles for omitted X/Y selectors.
@@ -609,7 +620,6 @@ class DataPlotter(PlotAccessor):
             return list(value)
         return [value] * count
 
-
     def _draw(
         self,
         kind,
@@ -640,12 +650,7 @@ class DataPlotter(PlotAccessor):
         if kind == "errorfill" and any(t.xerr is not None and t.yerr is not None for t in traces):
             raise ValueError("errorfill supports one uncertainty direction; disable xerr or yerr with False.")
         ax = self._target(ax)
-        for trace, trace_fmt, trace_label in zip(traces, formats, labels):
-            if not trace.x.size:
-                continue
-            options = {key: self._text(value) for key, value in kwargs.items()}
-            options["label"] = self._text(self._label(trace.column) if trace_label is _AUTO else trace_label)
-            self._draw_trace(ax, kind, trace, trace_fmt, options)
+        self._draw_traces(ax, kind, traces, formats, labels, kwargs)
         self._annotate(ax, traces, xcolumn, xlabel, ylabel, title)
         if xscale is not None:
             ax.set_xscale(xscale)
@@ -655,6 +660,15 @@ class DataPlotter(PlotAccessor):
             ax.legend()
         self._record(ax.figure, ax)
         return ax
+
+    def _draw_traces(self, ax, kind, traces, formats, labels, kwargs):
+        """Draw each independently prepared trace with its corresponding format and label."""
+        for trace, trace_fmt, trace_label in zip(traces, formats, labels):
+            if not trace.x.size:
+                continue
+            options = {key: self._text(value) for key, value in kwargs.items()}
+            options["label"] = self._text(self._label(trace.column) if trace_label is _AUTO else trace_label)
+            self._draw_trace(ax, kind, trace, trace_fmt, options)
 
     @staticmethod
     def _draw_trace(ax, kind, trace, fmt, options):

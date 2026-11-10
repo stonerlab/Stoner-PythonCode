@@ -141,7 +141,8 @@ inlinevar-rgx=[A-Za-z_][A-Za-z0-9_]*$
 class-rgx=[A-Z_][a-zA-Z0-9_]+$
 
 # Regular expression matching correct module names
-module-rgx=(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$
+# Retain documented CLI command filenames and historical scientific script names.
+module-rgx=(([a-z_][a-z0-9_-]*)|([A-Z][a-zA-Z0-9_ -]+))$
 
 # Regular expression matching correct method names
 method-rgx=[a-z_][a-z0-9_]{2,25}$
@@ -263,7 +264,8 @@ ignore-comments=yes
 ignore-docstrings=yes
 
 # Ignore imports when computing similarities.
-ignore-imports=no
+# Shared dependency lists are not duplicated implementation.
+ignore-imports=yes
 
 
 [SPELLING]
@@ -372,4 +374,4 @@ exclude-protected=_asdict,_fields,_replace,_source,_make
 
 # Exceptions that will emit a warning when being caught. Defaults to
 # "Exception"
-overgeneral-exceptions=Exception
+overgeneral-exceptions=builtins.Exception

@@ -2,7 +2,6 @@
 """HDF5 format Data loader routines."""
 
 import os
-from importlib import import_module
 
 import h5py
 import numpy as np
@@ -187,7 +186,8 @@ def load_sls_stxm(new_data, *args, **kwargs):
         new_data.metadata["counter0.sample_x"], new_data.metadata["counter0.sample_y"]
     )
     if "control.data" in new_data.metadata:
-        mod = import_module("Stoner.Image")
+        # Defer owner/factory dependencies until the package has initialised.
+        # pylint: disable-next=import-outside-toplevel
         from ...Image.numerical import numerical_image
 
         new_data.metadata["beam current"] = numerical_image(new_data.metadata["control.data"].reshape(new_data.shape))

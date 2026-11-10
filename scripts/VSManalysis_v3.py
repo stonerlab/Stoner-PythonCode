@@ -56,7 +56,8 @@ class VSMAnalysis(Data):
             )
         return self
 
-    def remove_diamagnetism_and_offset(self, threshold=0.85):
+    # Preserve the documented scientific script method name.
+    def remove_diamagnetism_and_offset(self, threshold=0.85):  # pylint: disable=invalid-name
         """Subtract the average linear background fitted to both saturated arms.
 
         Args:
@@ -99,10 +100,12 @@ class VSMAnalysis(Data):
         finally:
             self.mask = original_mask
 
-    def find_Hc(self):
+    # Preserve the documented scientific script method name.
+    def find_Hc(self):  # pylint: disable=invalid-name
         """Return the falling/rising moment-zero fields without changing exclusions."""
         return self._crossings("m (emu)", "H_vsm")
 
-    def find_Br(self):
+    # Preserve the documented scientific script method name.
+    def find_Br(self):  # pylint: disable=invalid-name
         """Return the falling/rising field-zero moments without changing exclusions."""
         return self._crossings("H_vsm", "m (emu)")

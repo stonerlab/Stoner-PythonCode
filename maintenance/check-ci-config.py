@@ -80,7 +80,8 @@ def main() -> None:
     deployment = workflows["build_conda.yaml"]
     require(deployment.count("ref: ${{ env.RELEASE_TAG }}") == 2,
             "Both deployment jobs must build the selected immutable release tag.")
-    require("--python=3.12" in deployment and "--override-channels --channel phygbu --channel conda-forge" in deployment,
+    require("--python=3.12" in deployment
+            and "--override-channels --channel phygbu --channel conda-forge" in deployment,
             "Conda build/test must use supported Python and explicit runtime channels.")
     require('set -euo pipefail' in deployment and 'test -s "${packages[0]}"' in deployment,
             "Conda deployment must reject failed builds and missing/empty archives.")
@@ -100,15 +101,15 @@ def main() -> None:
     require("environment-file: tests/minimum-env.yml" in lower, "The lower dependency environment is not exercised.")
     require("python -m pytest -n 2" in lower, "The lower dependency job must run the full parallel suite.")
     require("contents: read" in lower, "The lower dependency job must be read-only.")
-    minimum_environment = (ROOT / "tests" / "minimum-env.yml").read_text(encoding="utf-8")
+    minimum_env = (ROOT / "tests" / "minimum-env.yml").read_text(encoding="utf-8")
     require(
         "pytest-timeout >=2.4" in test_environment
-        and "pytest-timeout >=2.4" in minimum_environment,
+        and "pytest-timeout >=2.4" in minimum_env,
         "Both test environments must include the macOS watchdog plugin.",
     )
     minimum_packages = {
         re.sub(r"[-_.]+", "-", name.lower())
-        for name in re.findall(r"^  - (?:[\w-]+::)?([\w.-]+)", minimum_environment, re.MULTILINE)
+        for name in re.findall(r"^  - (?:[\w-]+::)?([\w.-]+)", minimum_env, re.MULTILINE)
     }
     project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
     for dependency in project["project"]["dependencies"]:
@@ -119,7 +120,7 @@ def main() -> None:
         )
     packages = workflows["check-packages.yaml"]
     require(project["project"]["requires-python"] == ">=3.12", "The package minimum must be Python 3.12.")
-    require("  - python =3.12" in minimum_environment, "The lower dependency job must use Python 3.12.")
+    require("  - python =3.12" in minimum_env, "The lower dependency job must use Python 3.12.")
     require("environment-name: stoner-py312-minimum" in lower, "The lower dependency environment name is stale.")
     require("3.11" not in tests + lower + packages, "CI still advertises unsupported Python 3.11.")
     require("python-version: ['3.12', '3.14']" in packages, "Installed-package checks must cover Python endpoints.")

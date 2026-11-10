@@ -207,6 +207,8 @@ def add_core(other: Union[Data, NumericArray, MappingType], newdata: Data) -> Da
         newdata:
             A modified newdata
     """
+    # Defer owner/factory dependencies until the package has initialised.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from . import storage_operations
 
     return storage_operations.append(newdata, other)
@@ -225,6 +227,8 @@ def and_core(other: Union[Data, NumericArray], newdata: Data) -> Data:
         ():py:class:`DataFile`):
             new Data object with the columns of other concatenated as new columns at the end of the self object.
     """
+    # Defer owner/factory dependencies until the package has initialised.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from . import storage_operations
 
     return storage_operations.concatenate_columns(newdata, other)
@@ -232,6 +236,8 @@ def and_core(other: Union[Data, NumericArray], newdata: Data) -> Data:
 
 def mod_core(other: Index, newdata: Data) -> Data:
     """Implement the column deletion method."""
+    # Defer owner/factory dependencies until the package has initialised.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from . import storage_operations
 
     return storage_operations.del_column(newdata, other)
@@ -239,6 +245,8 @@ def mod_core(other: Index, newdata: Data) -> Data:
 
 def sub_core(other: Union[int, slice, Callable], newdata: Data) -> Data:
     """Worker for the subtraction."""
+    # Defer owner/factory dependencies until the package has initialised.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from . import storage_operations
 
     return storage_operations.del_rows(newdata, other)

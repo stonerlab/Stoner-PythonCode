@@ -5,6 +5,7 @@ import fnmatch
 import json
 import pathlib
 import zipfile as zf
+from contextlib import ExitStack
 from os import path
 from traceback import format_exc
 
@@ -111,19 +112,15 @@ def load_zipfile(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
         filename = _split_filename(filename, **kwargs)
 
     new_data.filename = filename
-    other = None
-    close_me = False
-    try:
+    with ExitStack() as resources:
         try:
             if isinstance(filename, zf.ZipFile):
                 if filename.fp:
                     other = filename
                 else:
-                    other = zf.ZipFile(filename.filename, "r")
-                    close_me = True
+                    other = resources.enter_context(zf.ZipFile(filename.filename, "r"))
             elif isinstance(filename, path_types) and zf.is_zipfile(filename):
-                other = zf.ZipFile(filename, "r")
-                close_me = True
+                other = resources.enter_context(zf.ZipFile(filename, "r"))
             else:
                 raise StonerLoadError(f"{filename} does not appear to be a real zip file")
             names = other.namelist()
@@ -148,9 +145,6 @@ def load_zipfile(new_data: Data, *args: Args, **kwargs: Kwargs) -> Data:
         if solo_file:
             new_data.filename = str(filename)
         return new_data
-    finally:
-        if close_me and other is not None:
-            other.close()
 
 
 @register_saver(patterns=(".zip", 16), name="ZippedFile", what="Data")

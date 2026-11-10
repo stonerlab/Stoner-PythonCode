@@ -10,7 +10,6 @@ from skimage import exposure, io, transform
 
 from ..compat import which
 from ..core.base import TypeHintedDict
-from .numerical import numerical_image
 from ..core.exceptions import StonerAssertionError, assertion
 
 GRAY_RANGE = (0, 65535)  # 2^16

@@ -24,6 +24,7 @@ class _ImageMask:
         self._owner = owner
 
     def __array__(self, dtype=None, copy=None):
+        del copy  # This owner-aware mask always exports a detached copy.
         self._owner.validate()
         return np.array(self._owner._state.dataset.excluded.values, dtype=dtype, copy=True)
 
@@ -278,6 +279,8 @@ class ImageRegion(ImageOwner):
         replacing the parent invalidates existing regions even at the same shape.
     """
 
+    # Regions resolve the parent state instead of allocating an independent ImageOwner.
+    # pylint: disable-next=super-init-not-called
     def __init__(self, parent, rows, columns):
         if not isinstance(parent, ImageOwner) or parent._state.kind != "image":
             raise TypeError("Regions require a two-dimensional image owner")

@@ -118,18 +118,22 @@ class Column:
 class DataStorage:
     """Detached versioned values, exclusions and descriptive state."""
 
+    # Keep this experimental record independent for the controlled storage comparison.
+    # pylint: disable=duplicate-code
     values: pd.DataFrame
     excluded: np.ndarray
     schema: list
     metadata: TypeHintedDict
     fill_value: object
     version: int = 1
-    dtype: object = None
+    dtype: np.dtype | None = None
+    # pylint: enable=duplicate-code
 
     def __deepcopy__(self, memo):
         """Copy typed metadata without invoking its value-inference setter."""
         return DataStorage(self.values.copy(deep=True), self.excluded.copy(), deepcopy(self.schema, memo),
-                           metadata_copy(self.metadata, memo), deepcopy(self.fill_value, memo), self.version, self.dtype)
+                           metadata_copy(self.metadata, memo), deepcopy(self.fill_value, memo),
+                           self.version, self.dtype)
 
     def validate(self):
         """Reject inconsistent packages before they acquire an owner."""
@@ -198,10 +202,11 @@ class Mask:
             draft.mask[key] = value
 
     def __array__(self, dtype=None, copy=None):
+        del copy  # Prototype exclusions are exported as detached arrays.
         return np.array(self.owner.to_numpy().mask, dtype=dtype, copy=True)
 
 
-class Editing:
+class EditingMixin:
     """Implement detached numerical drafts with atomic commit and rollback."""
 
     _editing = False
@@ -215,6 +220,8 @@ class Editing:
         """Return the owner-aware exclusion interface."""
         return Mask(self)
 
+    # Repeat the draft lifecycle independently so the controlled comparison can expose regressions.
+    # pylint: disable=duplicate-code
     @contextmanager
     def edit_numpy(self):
         """Yield a fixed-shape/dtype draft and commit only on normal exit."""
@@ -229,9 +236,10 @@ class Editing:
             self._commit_array(draft)
         finally:
             self._editing = False
+    # pylint: enable=duplicate-code
 
 
-class Table(Editing):
+class Table(EditingMixin):
     """Own a numeric DataFrame and explicit schema/mask for the experiment."""
 
     def __init__(self, values, headers=None, roles=None, mask=None, metadata=None):
@@ -328,6 +336,8 @@ class Table(Editing):
         candidate.validate()
         self._state = candidate
 
+    # Retain an independent experimental transaction lifecycle for the controlled comparison.
+    # pylint: disable=duplicate-code
     @contextmanager
     def edit_pandas(self):
         """Edit raw values without changing axes, dtype or exclusions."""
@@ -344,6 +354,7 @@ class Table(Editing):
             self._state.values = draft.copy(deep=True)
         finally:
             self._editing = False
+    # pylint: enable=duplicate-code
 
     def select(self, selector):
         """Select/reorder schema and exclusions with values, duplicating IDs safely."""
@@ -385,10 +396,13 @@ class Table(Editing):
 class Frame:
     """Frame identity and descriptive state independent of padded pixels."""
 
+    # Keep experimental frame records independent of the production ownership backend.
+    # pylint: disable=duplicate-code
     id: str
     name: str
     metadata: TypeHintedDict
     fill_value: object
+    # pylint: enable=duplicate-code
 
     def __deepcopy__(self, memo):
         """Copy frame metadata without reparsing explicit string values."""
@@ -445,7 +459,7 @@ class ImageStorage:
         np.ma.array(values, fill_value=self.fill_value)
 
 
-class Stack(Editing):
+class Stack(EditingMixin):
     """Own an eager padded xarray Dataset with durable frame handles."""
 
     def __init__(self, images, names=None, metadata=None):
@@ -557,7 +571,7 @@ class Stack(Editing):
         self._state = candidate._state
 
 
-class FrameHandle(Editing):
+class FrameHandle(EditingMixin):
     """Route pixel and mask writes by frame identity, even after reordering."""
 
     def __init__(self, owner, identity):

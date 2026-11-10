@@ -14,6 +14,8 @@ from .storage_owner import DataOwner
 
 def _copy_rows(datafile, rows):
     """Copy a positional preview through the existing object's deepcopy graph."""
+    # Defer owner/factory dependencies until the package has initialised.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from .data import Data
 
     owner = datafile._require_storage_owner()
@@ -56,7 +58,8 @@ class _BoundSetas(Setas):
     _row = False
     _owner_bound = True
 
-    def __init__(self, data):
+    # A bound facade must not allocate the detached base Setas state.
+    def __init__(self, data):  # pylint: disable=super-init-not-called
         self._data = data
 
     @property

@@ -1,4 +1,7 @@
 engines:
+    markdownlint:
+        exclude_paths:
+         - LICENSE.md
     duplication:
         enabled: true
         exclude_paths:

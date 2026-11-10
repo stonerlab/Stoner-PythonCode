@@ -26,33 +26,11 @@ def permute(package, name, args=(), kwargs=None):
     """
     kwargs = dict(kwargs or {})
     if name == "rot90":
-        k = index(args[0] if args else kwargs.pop("k", 1))
-        axes = args[1] if len(args) > 1 else kwargs.pop("axes", (0, 1))
-        axes = tuple(index(axis) for axis in axes)
-        if len(args) > 2 or len(axes) != 2 or any(axis not in (-2, -1, 0, 1) for axis in axes):
-            raise ValueError("rot90 requires two image axes")
-        axes = tuple(axis % 2 for axis in axes)
-        if axes not in ((0, 1), (1, 0)) or kwargs:
-            raise ValueError("Invalid rot90 axes or arguments")
-        result = package.copy()
-        for _ in range((k if axes == (0, 1) else -k) % 4):
-            result = permute(result, "CCW")
-        return result
+        return _rotate_quarters(package, args, kwargs)
     result = package.copy()
     swap, reverse_y, reverse_x = False, False, False
     if name in {"T", "transpose"}:
-        if args and "axes" in kwargs:
-            raise TypeError("Transpose axes were supplied twice")
-        axes = kwargs.pop("axes", args if len(args) > 1 else (args[0] if args else None))
-        if axes is None:
-            axes = (1, 0)
-        axes = tuple(index(axis) for axis in axes)
-        if len(axes) != 2 or any(axis not in (-2, -1, 0, 1) for axis in axes):
-            raise ValueError("Transpose requires two image axes")
-        axes = tuple(axis % 2 for axis in axes)
-        if axes not in ((0, 1), (1, 0)):
-            raise ValueError("Transpose axes must be a permutation")
-        swap = axes == (1, 0)
+        swap = _transpose_swaps(args, kwargs)
     elif name == "swapaxes":
         if args:
             if len(args) != 2:
@@ -82,3 +60,35 @@ def permute(package, name, args=(), kwargs=None):
     result.dataset = dataset.copy(deep=True)
     result.validate()
     return result
+
+
+def _rotate_quarters(package, args, kwargs):
+    """Validate quarter-turn axes and apply the existing exact counterclockwise transform."""
+    k = index(args[0] if args else kwargs.pop("k", 1))
+    axes = args[1] if len(args) > 1 else kwargs.pop("axes", (0, 1))
+    axes = tuple(index(axis) for axis in axes)
+    if len(args) > 2 or len(axes) != 2 or any(axis not in (-2, -1, 0, 1) for axis in axes):
+        raise ValueError("rot90 requires two image axes")
+    axes = tuple(axis % 2 for axis in axes)
+    if axes not in ((0, 1), (1, 0)) or kwargs:
+        raise ValueError("Invalid rot90 axes or arguments")
+    result = package.copy()
+    for _ in range((k if axes == (0, 1) else -k) % 4):
+        result = permute(result, "CCW")
+    return result
+
+
+def _transpose_swaps(args, kwargs):
+    """Validate transpose arguments and report whether the spatial axes swap."""
+    if args and "axes" in kwargs:
+        raise TypeError("Transpose axes were supplied twice")
+    axes = kwargs.pop("axes", args if len(args) > 1 else (args[0] if args else None))
+    if axes is None:
+        axes = (1, 0)
+    axes = tuple(index(axis) for axis in axes)
+    if len(axes) != 2 or any(axis not in (-2, -1, 0, 1) for axis in axes):
+        raise ValueError("Transpose requires two image axes")
+    axes = tuple(axis % 2 for axis in axes)
+    if axes not in ((0, 1), (1, 0)):
+        raise ValueError("Transpose axes must be a permutation")
+    return axes == (1, 0)

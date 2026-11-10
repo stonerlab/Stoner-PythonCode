@@ -16,13 +16,15 @@ from .model import ColumnIndex, IndexOwner, combine, fixture, pickle_roundtrip, 
 def assert_package(left, right, *, same_ids=True):
     np.testing.assert_array_equal(left.values.to_numpy(), right.values.to_numpy())
     np.testing.assert_array_equal(left.excluded, right.excluded)
-    assert [(c.header, c.role) for c in left.schema] == [(c.header, c.role) for c in right.schema]
+    assert (  # nosec B101  # pytest check.
+        [(c.header, c.role) for c in left.schema] == [(c.header, c.role) for c in right.schema]
+    )
     if same_ids:
-        assert [c.id for c in left.schema] == [c.id for c in right.schema]
-    assert left.metadata == right.metadata
-    assert left.metadata.types == right.metadata.types
-    assert left.fill_value == right.fill_value
-    assert left.dtype == right.dtype
+        assert [c.id for c in left.schema] == [c.id for c in right.schema]  # nosec B101  # pytest check.
+    assert left.metadata == right.metadata  # nosec B101  # pytest check.
+    assert left.metadata.types == right.metadata.types  # nosec B101  # pytest check.
+    assert left.fill_value == right.fill_value  # nosec B101  # pytest check.
+    assert left.dtype == right.dtype  # nosec B101  # pytest check.
 
 
 @pytest.mark.parametrize("width", [0, 1, 8, 128])
@@ -31,14 +33,15 @@ def test_owner_construction(width, rows):
     package = fixture(width, rows)
     composed, indexed = DataOwner(package), IndexOwner(package)
     assert_package(composed.export_storage(), indexed.export_storage())
-    assert isinstance(indexed.frame.columns, ColumnIndex)
-    assert "schema" not in vars(indexed._state)
-    assert indexed._state.schema is indexed.frame.columns.schema
+    assert isinstance(indexed.frame.columns, ColumnIndex)  # nosec B101  # pytest check.
+    assert "schema" not in vars(indexed._state)  # nosec B101  # pytest check.
+    assert indexed._state.schema is indexed.frame.columns.schema  # nosec B101  # pytest check.
 
 
-@pytest.mark.parametrize("selector", [0, -1, "Signal", "Sig", "S*", "literal*", "Temperature [K]",
-                                     re.compile("signal", re.I), "^Sign.*$", ["Signal", 0, "Signal"],
-                                     slice(None, None, -1), [], "missing", "[", True, [0, 999]])
+@pytest.mark.parametrize("selector", [
+    0, -1, "Signal", "Sig", "S*", "literal*", "Temperature [K]", re.compile("signal", re.I),
+    "^Sign.*$", ["Signal", 0, "Signal"], slice(None, None, -1), [], "missing", "[", True, [0, 999],
+])
 @pytest.mark.parametrize("first,force_list", [(False, False), (False, True), (True, False), (True, True)])
 def test_cs2_matching(selector, first, force_list):
     schema = ColumnSchema(fixture().schema)
@@ -49,7 +52,7 @@ def test_cs2_matching(selector, first, force_list):
         with pytest.raises(type(error)):
             index.find_col(selector, first=first, force_list=force_list)
     else:
-        assert index.find_col(selector, first=first, force_list=force_list) == expected
+        assert index.find_col(selector, first=first, force_list=force_list) == expected  # nosec B101  # pytest check.
 
 
 def test_pandas_exact_duplicates_equality_alignment_and_hashes():
@@ -61,13 +64,13 @@ def test_pandas_exact_duplicates_equality_alignment_and_hashes():
         index.get_loc("Sig")
     changed = ColumnIndex(ColumnSchema(replace(c, id=fixture(1).schema[0].id if i == 0 else c.id,
                                                role=".") for i, c in enumerate(index.schema)))
-    assert index.equals(changed) and index.equals(plain)
+    assert index.equals(changed) and index.equals(plain)  # nosec B101  # pytest check.
     np.testing.assert_array_equal(pd.util.hash_pandas_object(index), pd.util.hash_pandas_object(changed))
     frame = owner.frame
     other = frame.copy()
     other.columns = changed
     np.testing.assert_array_equal((frame + other).to_numpy(), frame.to_numpy() * 2)
-    assert frame.loc[:, "Signal"].shape[1] == 2
+    assert frame.loc[:, "Signal"].shape[1] == 2  # nosec B101  # pytest check.
 
 
 @pytest.mark.parametrize("owner_type", [DataOwner, IndexOwner])
@@ -80,21 +83,21 @@ def test_saved_views_atomicity_no_numeric_copy(owner_type):
     old_axis = frame.columns
     owner.roles[:] = _assign_roles(tuple(headers), tuple(roles), "Signal", "y")
     owner.headers[1] = "renamed"
-    assert owner.frame is frame and owner._state.excluded is mask
-    assert np.shares_memory(raw, owner.frame.to_numpy())
-    assert roles[1] == "y" and headers[1] == "renamed"
-    assert old_schema.headers[1] == "Signal"
+    assert owner.frame is frame and owner._state.excluded is mask  # nosec B101  # pytest check.
+    assert np.shares_memory(raw, owner.frame.to_numpy())  # nosec B101  # pytest check.
+    assert roles[1] == "y" and headers[1] == "renamed"  # nosec B101  # pytest check.
+    assert old_schema.headers[1] == "Signal"  # nosec B101  # pytest check.
     if owner_type is IndexOwner:
-        assert old_axis.schema is old_schema
-        assert owner.frame.columns is not old_axis
+        assert old_axis.schema is old_schema  # nosec B101  # pytest check.
+        assert owner.frame.columns is not old_axis  # nosec B101  # pytest check.
     before = owner.export_storage()
     with pytest.raises(ValueError):
         roles[:] = ["y"]
     assert_package(before, owner.export_storage())
     owner.take(columns=[3, 1, 1, 0])
-    assert list(headers) == ["Error", "renamed", "renamed", "Field (T)"]
-    assert list(roles) == ["y", "y", "y", "x"]
-    assert len(set(owner.column_ids)) == 4
+    assert list(headers) == ["Error", "renamed", "renamed", "Field (T)"]  # nosec B101  # pytest check.
+    assert list(roles) == ["y", "y", "y", "x"]  # nosec B101  # pytest check.
+    assert len(set(owner.column_ids)) == 4  # nosec B101  # pytest check.
     with owner.edit_numpy():
         with pytest.raises(RuntimeError):
             roles[0] = "z"
@@ -104,27 +107,27 @@ def test_saved_views_atomicity_no_numeric_copy(owner_type):
 def test_index_copy_and_pickle(transform):
     index = ColumnIndex(fixture().schema, name="channels")
     result = transform(index)
-    assert isinstance(result, ColumnIndex)
-    assert result.schema == index.schema
-    assert result.name == index.name
+    assert isinstance(result, ColumnIndex)  # nosec B101  # pytest check.
+    assert result.schema == index.schema  # nosec B101  # pytest check.
+    assert result.name == index.name  # nosec B101  # pytest check.
 
 
 @pytest.mark.parametrize("transform", [deepcopy, pickle_roundtrip])
 def test_owner_and_frame_copy(transform):
     owner = IndexOwner(fixture())
     frame = transform(owner.frame)
-    assert isinstance(frame.columns, ColumnIndex)
-    assert frame.columns.schema == owner._state.schema
+    assert isinstance(frame.columns, ColumnIndex)  # nosec B101  # pytest check.
+    assert frame.columns.schema == owner._state.schema  # nosec B101  # pytest check.
     result = transform(owner)
     assert_package(owner.export_storage(), result.export_storage())
     result.metadata["run"]["nested"].append(3)
     result.roles[0] = "z"
     result.frame.iloc[0, 0] = -99
     result.mask[0, 0] = True
-    assert owner.roles[0] == "x"
-    assert owner.frame.iloc[0, 0] == 0
-    assert owner.metadata["run"]["nested"] == [1, 2]
-    assert not owner.mask[0, 0]
+    assert owner.roles[0] == "x"  # nosec B101  # pytest check.
+    assert owner.frame.iloc[0, 0] == 0  # nosec B101  # pytest check.
+    assert owner.metadata["run"]["nested"] == [1, 2]  # nosec B101  # pytest check.
+    assert not owner.mask[0, 0]  # nosec B101  # pytest check.
 
 
 @pytest.mark.parametrize("positions", [[2, 0, 1], [1, 1, 1], [], [7, 0]])
@@ -133,12 +136,12 @@ def test_paired_owner_selection(positions):
     left = DataOwner(package).select(columns=positions).export_storage()
     right = IndexOwner(package).select(columns=positions).export_storage()
     assert_package(left, right, same_ids=len(set(positions)) == len(positions))
-    assert len({c.id for c in right.schema}) == len(positions)
+    assert len({c.id for c in right.schema}) == len(positions)  # nosec B101  # pytest check.
     for i, position in enumerate(positions):
         if position not in positions[:i]:
-            assert right.schema[i].id == package.schema[position].id
+            assert right.schema[i].id == package.schema[position].id  # nosec B101  # pytest check.
         else:
-            assert right.schema[i].id not in {c.id for c in package.schema}
+            assert right.schema[i].id not in {c.id for c in package.schema}  # nosec B101  # pytest check.
 
 
 def test_real_fixture_pair():
@@ -183,11 +186,11 @@ def test_explicit_combination_policy(owner_type, axis):
     np.testing.assert_array_equal(result.to_numpy().data,
                                   np.concatenate([package.to_numpy().data] * 2, axis=axis))
     np.testing.assert_array_equal(result.excluded, np.concatenate([package.excluded] * 2, axis=axis))
-    assert result.metadata == package.metadata
-    assert len({c.id for c in result.schema}) == len(result.schema)
-    assert result.schema[:8] == package.schema
+    assert result.metadata == package.metadata  # nosec B101  # pytest check.
+    assert len({c.id for c in result.schema}) == len(result.schema)  # nosec B101  # pytest check.
+    assert result.schema[:8] == package.schema  # nosec B101  # pytest check.
     if axis == 1:
-        assert [c.role for c in result.schema[8:]] == [c.role for c in package.schema]
+        assert [c.role for c in result.schema[8:]] == [c.role for c in package.schema]  # nosec B101  # pytest check.
     else:
         owners[1].roles[0] = "z"
         with pytest.raises(ValueError, match="identical scientific"):
@@ -209,18 +212,18 @@ def test_inherited_structural_and_transaction_machinery(owner_type):
     assert_package(original, owner.export_storage())
     with owner.edit_pandas() as draft:
         draft.iloc[0, 0] = 123
-    assert owner.frame.iloc[0, 0] == 123
-    assert owner.column_ids == tuple(c.id for c in original.schema)
+    assert owner.frame.iloc[0, 0] == 123  # nosec B101  # pytest check.
+    assert owner.column_ids == tuple(c.id for c in original.schema)  # nosec B101  # pytest check.
     with owner.edit_numpy() as draft:
         draft[0, 0] = 124
-    assert owner.frame.iloc[0, 0] == 124
+    assert owner.frame.iloc[0, 0] == 124  # nosec B101  # pytest check.
     owner.insert_rows(1, np.ma.array([[7] * 8], mask=[[True] + [False] * 7]))
-    assert owner.mask[1, 0]
+    assert owner.mask[1, 0]  # nosec B101  # pytest check.
     owner.insert_columns(2, np.ma.array(np.ones((65, 1)), mask=True))
-    assert len(owner.column_ids) == 9
-    assert owner._state.excluded[:, 2].all()
-    assert tuple(owner.headers) == owner._state.schema.headers
-    assert tuple(owner.frame.columns) == tuple(owner.headers)
+    assert len(owner.column_ids) == 9  # nosec B101  # pytest check.
+    assert owner._state.excluded[:, 2].all()  # nosec B101  # pytest check.
+    assert tuple(owner.headers) == owner._state.schema.headers  # nosec B101  # pytest check.
+    assert tuple(owner.frame.columns) == tuple(owner.headers)  # nosec B101  # pytest check.
 
 
 @pytest.mark.parametrize("selector", [slice(None, None, -1), [2, 0], [1, 1], np.array([True, False] * 4)])
@@ -229,12 +232,12 @@ def test_native_axis_selection_records(selector):
     index = owner.frame.columns
     result = index[selector]
     positions = np.arange(len(index))[selector]
-    assert result.schema.headers == tuple(index[i] for i in positions)
-    assert result.schema.roles == tuple(index.schema[i].role for i in positions)
-    assert len(set(result.schema.ids)) == len(result)
+    assert result.schema.headers == tuple(index[i] for i in positions)  # nosec B101  # pytest check.
+    assert result.schema.roles == tuple(index.schema[i].role for i in positions)  # nosec B101  # pytest check.
+    assert len(set(result.schema.ids)) == len(result)  # nosec B101  # pytest check.
     frame = owner.frame.iloc[:, selector]
-    assert isinstance(frame.columns, ColumnIndex)
-    assert frame.columns.schema.headers == result.schema.headers
+    assert isinstance(frame.columns, ColumnIndex)  # nosec B101  # pytest check.
+    assert frame.columns.schema.headers == result.schema.headers  # nosec B101  # pytest check.
     np.testing.assert_array_equal(frame.to_numpy(), owner.frame.to_numpy()[:, selector])
 
 
@@ -242,34 +245,36 @@ def test_native_matrix_records_every_boundary():
     from .assess import native_matrix
 
     rows = native_matrix()
-    assert len(rows) == 52
+    assert len(rows) == 52  # nosec B101  # pytest check.
     index = {row["operation"]: row for row in rows if row["backend"] == "index"}
     for operation in ("copy_shallow", "copy_deep", "iloc_reorder", "iloc_repeat", "iloc_slice",
                       "loc_duplicates", "take", "drop", "pickle"):
-        assert index[operation]["schema"] == "valid"
+        assert index[operation]["schema"] == "valid"  # nosec B101  # pytest check.
     for operation in ("rename", "insert", "concat_columns_same", "reindex_unique", "replace_ordinary"):
-        assert index[operation]["schema"] == "lost"
-    assert index["reindex_duplicate_source"]["error"] == "ValueError"
-    assert index["concat_rows_conflict"]["boundary"].startswith("unsupported native combination")
+        assert index[operation]["schema"] == "lost"  # nosec B101  # pytest check.
+    assert index["reindex_duplicate_source"]["error"] == "ValueError"  # nosec B101  # pytest check.
+    assert (  # nosec B101  # pytest check.
+        index["concat_rows_conflict"]["boundary"].startswith("unsupported native combination")
+    )
     for row in rows:
-        assert row["boundary"]
+        assert row["boundary"]  # nosec B101  # pytest check.
 
 
 def test_paired_owner_matrix():
     from .assess import owner_matrix
 
     rows = owner_matrix()
-    assert len(rows) == 24
+    assert len(rows) == 24  # nosec B101  # pytest check.
     left, right = rows[:12], rows[12:]
     for composed, indexed in zip(left, right):
         for key in ("operation", "labels", "roles", "shape", "dtype", "values", "excluded",
                     "metadata", "metadata_types", "identity_origin", "shares_values", "shares_mask",
                     "same_owner", "same_frame",
                     "saved_headers", "saved_roles"):
-            assert composed[key] == indexed[key], (composed["operation"], key)
-        assert len(set(indexed["ids"])) == len(indexed["ids"])
+            assert composed[key] == indexed[key], (composed["operation"], key)  # nosec B101  # pytest check.
+        assert len(set(indexed["ids"])) == len(indexed["ids"])  # nosec B101  # pytest check.
         if composed["operation"] not in ("repeat", "concat_columns", "insert"):
-            assert composed["ids"] == indexed["ids"]
+            assert composed["ids"] == indexed["ids"]  # nosec B101  # pytest check.
 
 
 @pytest.mark.parametrize("owner_type", [DataOwner, IndexOwner])
@@ -283,15 +288,15 @@ def test_actual_bound_setas_uses_experimental_owner(owner_type):
     roles = data.setas
     roles["Signal"] = "y"
     data.column_headers[1] = "renamed"
-    assert roles.find_col("Signal") == 2
-    assert roles.to_list()[1:3] == ["y", "y"]
+    assert roles.find_col("Signal") == 2  # nosec B101  # pytest check.
+    assert roles.to_list()[1:3] == ["y", "y"]  # nosec B101  # pytest check.
     data._storage_owner.take(columns=[3, 1, 1, 0])
-    assert roles.to_list() == ["y", "y", "y", "x"]
-    assert roles.find_col("renamed") == [1, 2]
+    assert roles.to_list() == ["y", "y", "y", "x"]  # nosec B101  # pytest check.
+    assert roles.find_col("renamed") == [1, 2]  # nosec B101  # pytest check.
     detached = roles.clone
     roles[0] = "z"
-    assert detached.to_list()[0] == "y"
-    assert roles.to_list()[0] == "z"
+    assert detached.to_list()[0] == "y"  # nosec B101  # pytest check.
+    assert roles.to_list()[0] == "z"  # nosec B101  # pytest check.
 
 
 def test_pandas_draft_cannot_replace_roles_just_because_labels_compare_equal():

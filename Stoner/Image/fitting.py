@@ -4,10 +4,12 @@ import json
 from collections.abc import Mapping
 from copy import deepcopy
 from enum import Enum
+from typing import NamedTuple
 
 import numpy as np
 from lmfit import Parameters
 from lmfit.model import ModelResult
+from lmfit.minimizer import SCALAR_METHODS
 
 from ..analysis.fitting.models import model_registry
 from ..analysis.fitting.models.surfaces import _SurfaceModel
@@ -29,6 +31,7 @@ from .fit_support import (
 )
 from .roi import copy_roi
 from .storage_bridge import owner_of
+from .storage import ImageStorage
 
 __all__ = ["ImageFitContext", "ImageFitter"]
 
@@ -157,108 +160,22 @@ class ImageFitter:
         """
         output = FitOutput(_normalise_fit_output(output))
         report, namespace = self._fit(model, x, y, p0, sigma, where, box, coordinates, prefix, fit_options)
-        record = report.image_fit.to_dict()
-        covariance = np.asarray(record["covariance"])
-        values = np.asarray(record["coefficients"])
-        errors = np.sqrt(np.maximum(np.diag(covariance), 0))
-        row = np.r_[np.column_stack((values, errors)).ravel(), report.redchi]
-        result = {}
-        for name, value, error in zip(record["parameter_names"], values, errors):
-            result[name], result[f"d_{name}"] = value, error
-        result.update({"chi-square": report.chisqr, "red. chi-sqr": report.redchi, "nfev": report.nfev})
-        current = owner_of(self._image)._state.dataset.intensity
-        if (geometry_signature(current) != record["grid"]
-                or current.attrs.get("units") != record["intensity_units"]):
-            raise ValueError("Image geometry/units changed during fitting; metadata was not published.")
-        metadata = _metadata(self._image)
-        metadata[f"{namespace}image_fit"] = record
-        owner_of(self._image)._replace_metadata(metadata)
-        return {FitOutput.FIT: (values, covariance), FitOutput.REPORT: report, FitOutput.FULL: (report, row),
-                FitOutput.ROW: row, FitOutput.DICT: result, FitOutput.DATA: self._image}[output]
+        result = _fit_output(self._image, report, output)
+        _publish_fit(self._image, report, namespace)
+        return result
 
     def _fit(self, model, x, y, p0, sigma, where, box, coordinates, prefix, options):
-        options = dict(options)
-        allowed = {"method", "iter_cb", "verbose", "fit_kws", "max_nfev", "calc_covar", "coerce_farray",
-                   "absolute_sigma", "scale_covar", "nan_policy"}
-        unknown = set(options)-allowed
-        if unknown:
-            raise TypeError(f"Unsupported image fitting options: {', '.join(sorted(unknown))}")
-        if options.pop("nan_policy", "raise") != "raise":
-            raise ValueError("Image fitting uses explicit eligibility; nan_policy must be 'raise'.")
-        both_scaling = "absolute_sigma" in options and "scale_covar" in options
-        absolute = options.pop("absolute_sigma", False)
-        scale = options.pop("scale_covar", not absolute)
-        if not isinstance(absolute, (bool, np.bool_)) or not isinstance(scale, (bool, np.bool_)):
-            raise TypeError("absolute_sigma and scale_covar must be Boolean.")
-        if both_scaling and scale == absolute:
-            raise ValueError("absolute_sigma and scale_covar specify conflicting covariance policies.")
-        from lmfit.minimizer import SCALAR_METHODS
-
-        method = options.get("method", "leastsq")
-        if not isinstance(method, str) or isinstance(method, Enum):
-            raise TypeError("method must be a full lmfit optimiser name.")
-        method = method.lower()
-        methods = {"leastsq", "least_squares", "brute", "basinhopping", "ampgo", "emcee", "shgo", "dual_annealing"}
-        methods.update(SCALAR_METHODS)
-        methods.update(value.lower() for value in SCALAR_METHODS.values())
-        if method not in methods:
-            raise ValueError(f"Unknown lmfit optimiser {method!r}; use a full supported method name.")
-        options["method"] = method
+        options, scale = _fit_options(options)
         model, key = construct_model(model)
         if prefix is not None and (not isinstance(prefix, str) or not prefix):
             raise ValueError("prefix must be a non-empty string or None.")
         namespace = (key if prefix is None else prefix).rstrip(":") + ":"
-        dataset, grid, selected, eligible, xv, yv, data, weights = prepare(
-            self._image, x, y, sigma, where, box, coordinates)
-        independent = dict(zip(model.independent_vars, (xv, yv)))
-        params, normal, transform, rank, condition = parameters(model, data, independent, p0, weights)
-        if normal is not None and options.get("method", "leastsq") == "leastsq":
-            kws = dict(options.get("fit_kws") or {})
-            if not kws.get("col_deriv", False):
-                kws.setdefault("Dfun", model._jacobian)
-            options["fit_kws"] = kws
-        report = model.fit(data, params=params, weights=weights, scale_covar=scale, nan_policy="raise",
-                           **independent, **options)
-        if not report.success or np.iscomplexobj(report.best_fit) or not np.isfinite(report.best_fit).all():
-            raise RuntimeError(f"Image fitting failed: {report.message}")
-        covariance = physical_covariance(report, transform)
-        weighted = (weights/np.max(weights))**2
-        from .. import __version__
-
-        record = {
-            "version": 1, "stoner_version": __version__, "model": key, "model_class": type(model).__qualname__,
-            "parameter_names": list(model.param_names), "coefficients": [report.params[p].value for p in model.param_names],
-            "covariance": covariance.tolist(), "coordinate_mode": str(CoordinateMode(coordinates)),
-            "x": x, "y": y, "coordinate_labels": [grid.xlabel, grid.ylabel],
-            "grid": geometry_signature(dataset.intensity), "normalization": normal,
-            "selection": ROI.from_mask(selected, reference=dataset.intensity).to_dict(),
-            "eligibility": ROI.from_mask(eligible, reference=dataset.intensity).to_dict(),
-            "sigma": None if sigma is None else (1/weights).tolist(),
-            "sample_count": int(eligible.sum()), "rank": rank, "condition": condition,
-            "condition_basis": "normalised_surface" if normal is not None else "column_scaled_jacobian",
-            "degrees_of_freedom": int(report.nfree), "absolute_sigma": not scale,
-            "reference_mean": float(np.average(report.best_fit, weights=weighted)),
-            "sample_span": [[float(xv.min()), float(xv.max())], [float(yv.min()), float(yv.max())]],
-            "source": str(self._image.filename), "source_dtype": str(dataset.intensity.dtype),
-            "intensity_units": dataset.intensity.attrs.get("units"),
-            "coordinate_names": [x or "x", y or "y"],
-            "coordinate_units": ["pixel", "pixel"] if CoordinateMode(coordinates) is CoordinateMode.PIXEL else [
-                dataset.coords[name].attrs.get("units") for name in (x or "x", y or "y")],
-            "success": bool(report.success), "method": str(report.method),
-            "chi_square": float(report.chisqr), "reduced_chi_square": float(report.redchi),
-            "nfev": int(report.nfev),
-            "metadata_prefix": namespace,
-        }
-        if isinstance(model, _SurfaceModel):
-            intensity = record["intensity_units"]
-            ux, uy = record["coordinate_units"]
-            units = [intensity, f"{intensity} / {ux}" if intensity and ux else None,
-                     f"{intensity} / {uy}" if intensity and uy else None]
-            if model._quadratic:
-                units.extend((f"{intensity} / {ux}^2" if intensity and ux else None,
-                              f"{intensity} / ({ux} * {uy})" if intensity and ux and uy else None,
-                              f"{intensity} / {uy}^2" if intensity and uy else None))
-            record["parameter_units"] = units
+        observations = _Observations(*prepare(self._image, x, y, sigma, where, box, coordinates))
+        independent = dict(zip(model.independent_vars, (observations.xv, observations.yv)))
+        solution = _FitParameters(*parameters(model, observations.data, independent, p0, observations.weights))
+        report = _run_fit(model, observations, independent, solution, options, scale)
+        request = _FitRequest(key, namespace, sigma, coordinates, x, y, scale)
+        record = _fit_record(self._image, model, observations, solution, report, request)
         report.image_fit = ImageFitContext(json.dumps(record, allow_nan=False), report.params.dumps())
         return report, namespace
 
@@ -284,8 +201,6 @@ class ImageFitter:
         return values, record
 
     def _result(self, values, record, operation, reference=0.):
-        from .storage import ImageStorage
-
         original = owner_of(self._image)._state
         metadata = _metadata(self._image)
         for name in ("ax", "fig"):
@@ -381,3 +296,153 @@ class ImageFitter:
         finite = np.isfinite(measured)
         corrected[finite] = measured[finite]-background[finite]+level
         return self._result(corrected, record, "correction", level)
+
+
+class _Observations(NamedTuple):
+    """Keep the detached observation snapshot together during fitting."""
+    dataset: object
+    grid: object
+    selected: object
+    eligible: object
+    xv: object
+    yv: object
+    data: object
+    weights: object
+
+
+class _FitParameters(NamedTuple):
+    """Keep native parameters and their physical transformation together."""
+    params: object
+    normal: object
+    transform: object
+    rank: int
+    condition: float
+
+
+class _FitRequest(NamedTuple):
+    """Record provenance choices independently of numerical optimiser state."""
+    key: str
+    namespace: str
+    sigma: object
+    coordinates: object
+    x: object
+    y: object
+    scale: bool
+
+
+def _fit_options(options):
+    """Validate optimiser names, covariance policy and supported options."""
+    options = dict(options)
+    allowed = {"method", "iter_cb", "verbose", "fit_kws", "max_nfev", "calc_covar", "coerce_farray",
+               "absolute_sigma", "scale_covar", "nan_policy"}
+    unknown = set(options)-allowed
+    if unknown:
+        raise TypeError(f"Unsupported image fitting options: {', '.join(sorted(unknown))}")
+    if options.pop("nan_policy", "raise") != "raise":
+        raise ValueError("Image fitting uses explicit eligibility; nan_policy must be 'raise'.")
+    both_scaling = "absolute_sigma" in options and "scale_covar" in options
+    absolute = options.pop("absolute_sigma", False)
+    scale = options.pop("scale_covar", not absolute)
+    if not isinstance(absolute, (bool, np.bool_)) or not isinstance(scale, (bool, np.bool_)):
+        raise TypeError("absolute_sigma and scale_covar must be Boolean.")
+    if both_scaling and scale == absolute:
+        raise ValueError("absolute_sigma and scale_covar specify conflicting covariance policies.")
+    method = options.get("method", "leastsq")
+    if not isinstance(method, str) or isinstance(method, Enum):
+        raise TypeError("method must be a full lmfit optimiser name.")
+    method = method.lower()
+    methods = {"leastsq", "least_squares", "brute", "basinhopping", "ampgo", "emcee", "shgo", "dual_annealing"}
+    methods.update(SCALAR_METHODS)
+    methods.update(value.lower() for value in SCALAR_METHODS.values())
+    if method not in methods:
+        raise ValueError(f"Unknown lmfit optimiser {method!r}; use a full supported method name.")
+    options["method"] = method
+    return options, scale
+
+
+def _run_fit(model, observations, independent, solution, options, scale):
+    """Execute the configured native fit and reject unsuccessful numerical outputs."""
+    if solution.normal is not None and options.get("method", "leastsq") == "leastsq":
+        kws = dict(options.get("fit_kws") or {})
+        if not kws.get("col_deriv", False):
+            kws.setdefault("Dfun", model._jacobian)
+        options["fit_kws"] = kws
+    report = model.fit(observations.data, params=solution.params, weights=observations.weights,
+                       scale_covar=scale, nan_policy="raise", **independent, **options)
+    if not report.success or np.iscomplexobj(report.best_fit) or not np.isfinite(report.best_fit).all():
+        raise RuntimeError(f"Image fitting failed: {report.message}")
+    return report
+
+
+def _fit_record(image, model, observations, solution, report, request):
+    """Capture immutable physical fit provenance without retaining the image owner."""
+    covariance = physical_covariance(report, solution.transform)
+    weighted = (observations.weights/np.max(observations.weights))**2
+    # Preserve lazy image adapters and avoid owner/accessor import cycles.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
+    from .. import __version__
+
+    record = {
+        "version": 1, "stoner_version": __version__, "model": request.key, "model_class": type(model).__qualname__,
+        "parameter_names": list(model.param_names),
+        "coefficients": [report.params[p].value for p in model.param_names],
+        "covariance": covariance.tolist(), "coordinate_mode": str(CoordinateMode(request.coordinates)),
+        "x": request.x, "y": request.y, "coordinate_labels": [observations.grid.xlabel, observations.grid.ylabel],
+        "grid": geometry_signature(observations.dataset.intensity), "normalization": solution.normal,
+        "selection": ROI.from_mask(observations.selected, reference=observations.dataset.intensity).to_dict(),
+        "eligibility": ROI.from_mask(observations.eligible, reference=observations.dataset.intensity).to_dict(),
+        "sigma": None if request.sigma is None else (1/observations.weights).tolist(),
+        "sample_count": int(observations.eligible.sum()), "rank": solution.rank, "condition": solution.condition,
+        "condition_basis": "normalised_surface" if solution.normal is not None else "column_scaled_jacobian",
+        "degrees_of_freedom": int(report.nfree), "absolute_sigma": not request.scale,
+        "reference_mean": float(np.average(report.best_fit, weights=weighted)),
+        "sample_span": [[float(observations.xv.min()), float(observations.xv.max())],
+                        [float(observations.yv.min()), float(observations.yv.max())]],
+        "source": str(image.filename), "source_dtype": str(observations.dataset.intensity.dtype),
+        "intensity_units": observations.dataset.intensity.attrs.get("units"),
+        "coordinate_names": [request.x or "x", request.y or "y"],
+        "coordinate_units": ["pixel", "pixel"] if CoordinateMode(request.coordinates) is CoordinateMode.PIXEL else [
+            observations.dataset.coords[name].attrs.get("units") for name in (request.x or "x", request.y or "y")],
+        "success": bool(report.success), "method": str(report.method),
+        "chi_square": float(report.chisqr), "reduced_chi_square": float(report.redchi),
+        "nfev": int(report.nfev),
+        "metadata_prefix": request.namespace,
+    }
+    if isinstance(model, _SurfaceModel):
+        intensity = record["intensity_units"]
+        ux, uy = record["coordinate_units"]
+        units = [intensity, f"{intensity} / {ux}" if intensity and ux else None,
+                 f"{intensity} / {uy}" if intensity and uy else None]
+        if model._quadratic:
+            units.extend((f"{intensity} / {ux}^2" if intensity and ux else None,
+                          f"{intensity} / ({ux} * {uy})" if intensity and ux and uy else None,
+                          f"{intensity} / {uy}^2" if intensity and uy else None))
+        record["parameter_units"] = units
+    return record
+
+
+def _fit_output(image, report, output):
+    """Shape one successful native report into the requested public result."""
+    record = report.image_fit.to_dict()
+    covariance = np.asarray(record["covariance"])
+    values = np.asarray(record["coefficients"])
+    errors = np.sqrt(np.maximum(np.diag(covariance), 0))
+    row = np.r_[np.column_stack((values, errors)).ravel(), report.redchi]
+    result = {}
+    for name, value, error in zip(record["parameter_names"], values, errors):
+        result[name], result[f"d_{name}"] = value, error
+    result.update({"chi-square": report.chisqr, "red. chi-sqr": report.redchi, "nfev": report.nfev})
+    return {FitOutput.FIT: (values, covariance), FitOutput.REPORT: report, FitOutput.FULL: (report, row),
+            FitOutput.ROW: row, FitOutput.DICT: result, FitOutput.DATA: image}[output]
+
+
+def _publish_fit(image, report, namespace):
+    """Publish provenance only when the live image geometry and units still match."""
+    record = report.image_fit.to_dict()
+    current = owner_of(image)._state.dataset.intensity
+    if (geometry_signature(current) != record["grid"]
+            or current.attrs.get("units") != record["intensity_units"]):
+        raise ValueError("Image geometry/units changed during fitting; metadata was not published.")
+    metadata = _metadata(image)
+    metadata[f"{namespace}image_fit"] = record
+    owner_of(image)._replace_metadata(metadata)

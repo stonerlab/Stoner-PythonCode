@@ -263,28 +263,39 @@ def _to_Q(new_data, wavelength=1.540593):
     )
 
 
-def _parse_header(new_data, matched, value, key):
-    """Attempt to add a value from the header to the new data instance."""
+def _rigaku_header_value(value):
+    """Decode one quoted Rigaku header value and its missing-value marker."""
     try:
         newvalue = literal_eval(value.strip('"'))
     except (TypeError, ValueError, SyntaxError):
         newvalue = literal_eval(value)
     if newvalue == "-":
         newvalue = np.nan  # trap for missing float value
+    return newvalue
+
+
+def _promote_rigaku_header(new_data, key, idx):
+    """Promote an existing scalar header into an indexed string or numeric series."""
+    if key in new_data.metadata and not isinstance(new_data[key], (np.ndarray, list)):
+        if isinstance(new_data[key], str):
+            new_data[key] = [new_data[key]]
+            if idx > 1:
+                new_data[key].extend([""] * (idx - 1))
+        else:
+            new_data[key] = np.array(new_data[key])
+            if idx > 1:
+                new_data[key] = np.append(new_data[key], np.ones(idx - 1) * np.nan)
+
+
+def _parse_header(new_data, matched, value, key):
+    """Attempt to add a value from the header to the new data instance."""
+    newvalue = _rigaku_header_value(value)
     if not matched:
         new_data.metadata[key] = newvalue
         return new_data
     key = matched.groups()[0]
     idx = int(matched.groups()[1])
-    if key in new_data.metadata and not isinstance(new_data[key], (np.ndarray, list)):
-        if isinstance(new_data[key], str):
-            new_data[key] = list([new_data[key]])
-            if idx > 1:
-                new_data[key].extend([""] * idx - 1)
-        else:
-            new_data[key] = np.array(new_data[key])
-            if idx > 1:
-                new_data[key] = np.append(new_data[key], np.ones(idx - 1) * np.nan)
+    _promote_rigaku_header(new_data, key, idx)
     if key not in new_data.metadata:
         if isinstance(newvalue, str):
             listval = [""] * (idx + 1)
@@ -313,6 +324,54 @@ def _parse_header(new_data, matched, value, key):
     return new_data
 
 
+def _read_rigaku_header(f):
+    """Read a positively identified Rigaku preamble through its intensity marker."""
+    sh = re.compile(r"^\*([^\s]+)\s+(.*)$")
+    header = {}
+    for i, line in enumerate(f):
+        line = bytes2str(line).strip()
+        if i == 0 and not line.startswith("*RAS_"):
+            raise StonerLoadError("Not a Rigaku file!")
+        if line == "*RAS_HEADER_START":
+            break
+    for line in f:
+        line = bytes2str(line).strip()
+        if matched := sh.match(line):
+            key = matched.groups()[0].lower().replace("_", ".")
+            try:
+                value = matched.groups()[1].decode("utf-8", "ignore")
+            except AttributeError:
+                value = matched.groups()[1]
+            header[key] = value
+        if "*RAS_INT_START" in line:
+            break
+    return header
+
+
+def _read_rigaku_intensity(new_data, f):
+    """Read one intensity block, retaining its headers, roles and next-scan position."""
+    pos = f.tell()
+    max_rows = 0
+    for max_rows, line in enumerate(f):
+        line = bytes2str(line).strip()
+        if "RAS_INT_END" in line:
+            break
+    f.seek(pos)
+    if max_rows > 0:
+        new_data.data = np.genfromtxt(
+            f, dtype="float", delimiter=" ", invalid_raise=False, comments="*", max_rows=max_rows
+        )
+        column_headers = ["Column" + str(i) for i in range(new_data.shape[1])]
+        column_headers[0:2] = [new_data.metadata["meas.scan.unit.x"], new_data.metadata["meas.scan.unit.y"]]
+        for key in new_data.metadata:
+            if isinstance(new_data[key], list):
+                new_data[key] = np.array(new_data[key])
+        new_data.setas = "xy"
+        new_data.column_headers = column_headers
+    pos = f.tell()
+    return pos
+
+
 @register_loader(
     patterns=(".ras", 16),
     mime_types=[("application/x-wine-extension-ini", 16), ("text/plain", 16)],
@@ -330,52 +389,15 @@ def load_rigaku(new_data, *args, **kwargs):
         A copy of the itnew_data after loading the data.
     """
     filename, args, kwargs = get_filename(args, kwargs)
-    sh = re.compile(r"^\*([^\s]+)\s+(.*)$")  # Regexp to grab the keys
     ka = re.compile(r"(.*)\-(\d+)$")
-    header = {}
-    i = 0
     new_data.filename = filename
     with SizedFileManager(new_data.filename, "rb") as (f, end):
-        for i, line in enumerate(f):
-            line = bytes2str(line).strip()
-            if i == 0 and not line.startswith("*RAS_"):
-                raise StonerLoadError("Not a Rigaku file!")
-            if line == "*RAS_HEADER_START":
-                break
-        for line in f:
-            line = bytes2str(line).strip()
-            if matched := sh.match(line):
-                key = matched.groups()[0].lower().replace("_", ".")
-                try:
-                    value = matched.groups()[1].decode("utf-8", "ignore")
-                except AttributeError:
-                    value = matched.groups()[1]
-                header[key] = value
-            if "*RAS_INT_START" in line:
-                break
+        header = _read_rigaku_header(f)
         keys = list(header.keys())
         keys.sort()
         for key in keys:
             new_data = _parse_header(new_data, ka.match(key), header[key].strip(), key)
-        pos = f.tell()
-        max_rows = 0
-        for max_rows, line in enumerate(f):
-            line = bytes2str(line).strip()
-            if "RAS_INT_END" in line:
-                break
-        f.seek(pos)
-        if max_rows > 0:
-            new_data.data = np.genfromtxt(
-                f, dtype="float", delimiter=" ", invalid_raise=False, comments="*", max_rows=max_rows
-            )
-            column_headers = ["Column" + str(i) for i in range(new_data.shape[1])]
-            column_headers[0:2] = [new_data.metadata["meas.scan.unit.x"], new_data.metadata["meas.scan.unit.y"]]
-            for key in new_data.metadata:
-                if isinstance(new_data[key], list):
-                    new_data[key] = np.array(new_data[key])
-            new_data.setas = "xy"
-            new_data.column_headers = column_headers
-        pos = f.tell()
+        pos = _read_rigaku_intensity(new_data, f)
     if pos < end:  # Trap for Rigaku files with multiple scans in them.
         new_data["_endpos"] = pos
         if hasattr(filename, "seekable") and filename.seekable():

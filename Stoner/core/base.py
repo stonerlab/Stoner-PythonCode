@@ -243,6 +243,28 @@ class RegexpDict(SortedDict):
         return super().__contains__(name)
 
 
+def _convert_metadata_value(valuetype, value):
+    """Convert a matched metadata type, retaining literal and date fallback rules."""
+    if isinstance(valuetype, _evaluatable):
+        try:
+            if isinstance(value, string_types):  # we've got a string already don't need repr
+                return literal_eval(value)
+            return literal_eval(repr(value))  # pylint: disable=eval-used
+        except ValueError:  # Oops just keep string format
+            return str(value)
+        except SyntaxError:
+            return ""
+    if issubclass(valuetype, datetime.datetime):
+        try:
+            return parser.parse(value)
+        except ValueError:
+            try:
+                return literal_eval(value)
+            except ValueError:
+                return str(value)
+    return valuetype(value)
+
+
 class TypeHintedDict(RegexpDict):
     """Extends a :py:class:`blist.sorteddict` to include type hints of what each key contains.
 
@@ -358,6 +380,11 @@ class TypeHintedDict(RegexpDict):
         """Return the dictionary of value types."""
         return self._typehints
 
+    def _set_prepared(self, key, value, typehint):
+        """Store an already converted value without inferring its type again."""
+        super().__setitem__(key, value)
+        self.types[key] = typehint
+
     def findtype(self, value: Any) -> str:
         """Determine the correct string type to return for common python classes.
 
@@ -419,24 +446,7 @@ class TypeHintedDict(RegexpDict):
         for regexp, valuetype in self._tests:
             if regexp.search(typ) is None:
                 continue
-            if isinstance(valuetype, _evaluatable):
-                try:
-                    if isinstance(value, string_types):  # we've got a string already don't need repr
-                        return literal_eval(value)
-                    return literal_eval(repr(value))  # pylint: disable=eval-used
-                except ValueError:  # Oops just keep string format
-                    return str(value)
-                except SyntaxError:
-                    return ""
-            if issubclass(valuetype, datetime.datetime):
-                try:
-                    return parser.parse(value)
-                except ValueError:
-                    try:
-                        return literal_eval(value)
-                    except ValueError:
-                        return str(value)
-            return valuetype(value)
+            return _convert_metadata_value(valuetype, value)
         ret = str(value)
         try:
             return _parse_date(ret)

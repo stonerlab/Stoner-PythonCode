@@ -155,24 +155,29 @@ def gather(folder, xcol=None, ycol=None):
                     xerrdata = f.column(xerr)
                     xerr_title = f"Error in {xtitle}"
                     results.add_column(xerrdata, header=xerr_title, setas="d")
-            for col, has_err, ecol, setcol, setecol in zip(
-                ["ycol", "zcol", "ucol", "vcol", "wcol"],
-                ["has_yerr", "has_zerr", "", "", ""],
-                ["yerr", "zerr", "", "", ""],
-                "yzuvw",
-                "ef...",
-            ):
-                if len(cols[col]) == 0:
-                    continue
-                data = f.column(cols[col])
-                for i in range(len(cols[col])):
-                    title = f"{path.basename(f.filename)}:{f.column_headers[cols[col][i]]}"
-                    results.add_column(data[:, i], header=title, setas=setcol)
-                if has_err != "" and cols[has_err]:
-                    err_data = f.column(cols[ecol])
-                    for i in range(len(cols[ecol])):
-                        title = f"{path.basename(f.filename)}:{f.column_headers[cols[ecol][i]]}"
-                        results.add_column(err_data[:, i], header=title, setas=setecol)
+            _gather_channels(results, f, cols)
         return results
 
     return folder.walk_groups(_gatherer, group=True, replace_terminal=True, walker_args={"xcol": xcol, "ycol": ycol})
+
+
+def _gather_channels(results, datafile, cols):
+    """Append dependent channels and their absolute uncertainty groups in source order."""
+    for col, has_err, ecol, setcol, setecol in zip(
+        ["ycol", "zcol", "ucol", "vcol", "wcol"],
+        ["has_yerr", "has_zerr", "", "", ""],
+        ["yerr", "zerr", "", "", ""],
+        "yzuvw",
+        "ef...",
+    ):
+        if len(cols[col]) == 0:
+            continue
+        data = datafile.column(cols[col])
+        for i in range(len(cols[col])):
+            title = f"{path.basename(datafile.filename)}:{datafile.column_headers[cols[col][i]]}"
+            results.add_column(data[:, i], header=title, setas=setcol)
+        if has_err != "" and cols[has_err]:
+            err_data = datafile.column(cols[ecol])
+            for i in range(len(cols[ecol])):
+                title = f"{path.basename(datafile.filename)}:{datafile.column_headers[cols[ecol][i]]}"
+                results.add_column(err_data[:, i], header=title, setas=setecol)

@@ -62,81 +62,78 @@ def griddata(
         It creates no figure and changes no measurements. Rendering methods use
         their separately documented mask-aware preparation in Data.plot.
     """
-    startx = kwargs.pop("startx", 0)
-    cols = datafile.setas._get_cols(startx=startx)
-    if isanynone(xcol, ycol, zcol):
-        if xcol is None:
-            xcol = cols["xcol"]
-        if ycol is None:
-            ycol = cols["ycol"][0]
-        if zcol is None and len(cols["zcol"]) > 0:
-            zcol = cols["zcol"][0]
-    if ucol is None and len(cols["ucol"]) > 0:
-        ucol = cols["ucol"][0]
+    del shape  # The numerical API derives grid counts from distinct coordinates.
+    dims, selectors = _grid_selectors(datafile, (xcol, ycol, zcol, ucol), kwargs.pop("startx", 0))
+    counts = [
+        np.unique(datafile.column(column)).size
+        for column in selectors[:2 if getattr(selectors[2], "size", 0) else 3]
+    ]
+    limits, extents = _grid_slices(datafile, selectors, counts, (xlim, ylim, zlim), dims)
+    if dims == 2:
+        points = np.mgrid[limits[0], limits[1]].T  # pylint: disable=no-member
+        samples = np.array([datafile.column(column) for column in selectors[:2]]).T
+        values = _grid_response(datafile, selectors[2])
+        return points[:, :, 0], points[:, :, 1], _interpolate_response(samples, values, points, method)
+    points = np.mgrid[limits[0], limits[1], limits[2]].T  # pylint: disable=no-member
+    corners = np.mgrid[extents[0], extents[1], extents[2]].T  # pylint: disable=no-member
+    samples = np.array([datafile.column(column) for column in selectors[:3]]).T
+    values = _grid_response(datafile, selectors[3])
+    return corners[:, :, :, 0], corners[:, :, :, 1], corners[:, :, :, 2], _interpolate_response(
+        samples, values, points, method
+    )
 
-    dims = 3 if cols["axes"] == 3 and cols["has_ucol"] else 2
+
+def _grid_selectors(datafile, selectors, startx):
+    """Resolve numerical grid selectors while retaining the historical role defaults."""
+    xcol, ycol, zcol, ucol = selectors
+    columns = datafile.setas._get_cols(startx=startx)
+    if isanynone(xcol, ycol, zcol):
+        xcol = columns["xcol"] if xcol is None else xcol
+        ycol = columns["ycol"][0] if ycol is None else ycol
+        if zcol is None and len(columns["zcol"]) > 0:
+            zcol = columns["zcol"][0]
+    if ucol is None and len(columns["ucol"]) > 0:
+        ucol = columns["ucol"][0]
+    dims = 3 if columns["axes"] == 3 and columns["has_ucol"] else 2
     xcol = _single_column(datafile, xcol, "xcol")
     ycol = _single_column(datafile, ycol, "ycol")
     if dims == 3:
         zcol = _single_column(datafile, zcol, "zcol")
-    if getattr(zcol, "size", 0) != 0:
-        shape = [np.unique(datafile.column(x)).size for x in [xcol, ycol]]
-    else:
-        shape = [np.unique(datafile.column(x)).size for x in [xcol, ycol, zcol]]
+    return dims, (xcol, ycol, zcol, ucol)
 
-    lims = [xlim, ylim, zlim]
-    extents = [xlim, ylim, zlim]
-    for dim, (lim, col) in enumerate(zip(lims, [xcol, ycol, zcol])):
-        if dim >= dims:  # Don;t bother analysing more dimensions than we have
-            break
-        if lim is None:
-            lim = _span_slice(datafile, col, shape[dim])
-        elif isinstance(lim, tuple) and len(lim) > 1:
-            lim = lim + ((lim[1] - lim[0]) / shape[dim],)
-            lim = slice(lim[0], lim[1], lim[2])
+
+def _grid_slices(datafile, selectors, shape, limits, dims):
+    """Prepare inclusive numerical grid centres and half-cell boundary extents."""
+    slices, extents = list(limits), list(limits)
+    for dimension, (limit, column) in enumerate(zip(limits[:dims], selectors)):
+        if limit is None:
+            limit = _span_slice(datafile, column, shape[dimension])
+        elif isinstance(limit, tuple) and len(limit) > 1:
+            limit = limit + ((limit[1] - limit[0]) / shape[dimension],)
+            limit = slice(limit[0], limit[1], limit[2])
         else:
-            raise RuntimeError(f"{'xyz'[dim]} limit speciifcation not understood")
-        lims[dim] = lim
-        extents[dim] = slice(lim.start - lim.step / 2, lim.stop + lim.step / 2, lim.step)
+            raise RuntimeError(f"{'xyz'[dimension]} limit speciifcation not understood")
+        slices[dimension] = limit
+        extents[dimension] = slice(limit.start - limit.step / 2, limit.stop + limit.step / 2, limit.step)
+    return slices, extents
 
-    xlim = lims[0]
-    ylim = lims[1]
-    zlim = lims[2]
 
-    if dims == 2:
-        pts = np.mgrid[xlim, ylim].T  # pylint: disable=no-member
-        points = np.array([datafile.column(xcol), datafile.column(ycol)]).T
-        if zcol is None:
-            zdata = np.zeros(len(datafile))
-        elif isinstance(zcol, np.ndarray) and zcol.shape[0] == len(datafile):  # zcol is some data
-            zdata = zcol
-        else:
-            zdata = datafile.column(zcol)
-        if zdata.ndim == 1:
-            Z = sp_griddata(points, zdata, pts, method=method)
-        elif zdata.ndim == 2:
-            Z = np.zeros((pts.shape[0], pts.shape[1], zdata.shape[1]))
-            for i in range(zdata.shape[1]):
-                Z[:, :, i] = sp_griddata(points, zdata[:, i], pts, method=method)
+def _grid_response(datafile, selector):
+    """Obtain a numerical response vector or complete externally supplied channels."""
+    if selector is None:
+        return np.zeros(len(datafile))
+    if isinstance(selector, np.ndarray) and selector.shape[0] == len(datafile):
+        return selector
+    return datafile.column(selector)
 
-        return pts[:, :, 0], pts[:, :, 1], Z
-    if dims == 3:
-        pts = np.mgrid[xlim, ylim, zlim].T  # pylint: disable=no-member
-        vpts = np.mgrid[extents[0], extents[1], extents[2]].T  # pylint: disable=no-member
 
-        points = np.array([datafile.column(xcol), datafile.column(ycol), datafile.column(zcol)]).T
-        if ucol is None:
-            udata = np.zeros(len(datafile))
-        elif isinstance(ucol, np.ndarray) and ucol.shape[0] == len(datafile):  # zcol is some data
-            udata = ucol
-        else:
-            udata = datafile.column(ucol)
-        if udata.ndim == 1:
-            U = sp_griddata(points, udata, pts, method=method)
-        elif udata.ndim == 2:
-            U = np.zeros((pts.shape[0], pts.shape[1], udata.shape[1]))
-            for i in range(udata.shape[1]):
-                U[:, :, i] = sp_griddata(points, udata[:, i], pts, method=method)
-
-        return vpts[:, :, :, 0], vpts[:, :, :, 1], vpts[:, :, :, 2], U
-    return None
+def _interpolate_response(samples, values, points, method):
+    """Interpolate each response channel independently on the prepared sample grid."""
+    if values.ndim == 1:
+        return sp_griddata(samples, values, points, method=method)
+    if values.ndim == 2:
+        result = np.zeros((points.shape[0], points.shape[1], values.shape[1]))
+        for index in range(values.shape[1]):
+            result[:, :, index] = sp_griddata(samples, values[:, index], points, method=method)
+        return result
+    raise ValueError("Grid responses must be a vector or a matrix of response channels.")

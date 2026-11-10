@@ -26,6 +26,8 @@ OLD_METHODS = {
 FIT_METHODS = {"curve_fit", "lmfit", "odr", "differential_evolution", "polyfit", "annotate_fit"}
 HISTORICAL = {"doc/UserGuide/upgrade.rst", "doc/UserGuide/plot_migration.rst", "doc/release-notes.rst"}
 HISTORICAL_LITERALS = {
+    ("doc/development/plans/FIT_ACCESSOR_PLAN.md", "d.lmfit(Linear, xcol=0, ycol=1)"),
+    ("doc/development/plans/FIT_ACCESSOR_PLAN.md", "Data.lmfit(d, ...)"),
     ("doc/UserGuide/fitting_registry.rst", "d.lmfit(Linear, xcol=0, ycol=1)"),
     ("doc/UserGuide/image_plotting.rst", "image.imshow()"),
     ("doc/UserGuide/plot_recipes.rst", "d.inset(...)"),
@@ -34,6 +36,8 @@ HISTORICAL_LITERALS = {
 
 @dataclass
 class Example:
+    """Record one source example and its location for compatibility auditing."""
+
     path: str
     line: int
     kind: str
@@ -65,8 +69,10 @@ def markup_examples(text, path, offset=0):
             if directive or plot or (line.rstrip().endswith("::") and not line.lstrip().startswith(".. ")):
                 base = len(line) - len(line.lstrip())
                 start = i + 1
-                while start < len(lines) and (not lines[start].strip() or lines[start].lstrip().startswith(":")
-                                             or lines[start].strip() == "# doctest: +SKIP"):
+                while start < len(lines) and (
+                    not lines[start].strip() or lines[start].lstrip().startswith(":")
+                    or lines[start].strip() == "# doctest: +SKIP"
+                ):
                     start += 1
                 end = start
                 while end < len(lines) and (not lines[end].strip()
@@ -117,6 +123,45 @@ def examples(root=ROOT):
             yield from markup_examples(path.read_text(encoding="utf-8-sig"), path.name)
 
 
+def _attribute_violations(node):
+    """Check retired attributes while distinguishing scientific and rendering owners."""
+    found = []
+    owner = ast.unparse(node.value)
+    if node.attr in OLD_METHODS and not owner.startswith(("plt", "pyplot", "figure", "fig", "ax")):
+        found.append((node.lineno, f"retired method {node.attr}"))
+    if node.attr in {"_get_cols", "_cols", "_col_args"}:
+        found.append((node.lineno, f"private compatibility helper {node.attr}"))
+    if node.attr in FIT_METHODS and not (
+        owner.endswith((".fit", ".plot"))
+        or owner in {"np", "numpy", "sp", "scipy", "optimize", "odr"}
+        or owner.startswith(("np.", "numpy.", "scipy.", "self._fitter"))
+    ):
+        found.append((node.lineno, f"direct fitting/annotation method {owner}.{node.attr}"))
+    if node.attr == "imshow" and owner in {"im", "image", "binary", "xmcd", "strctural", "structural"}:
+        found.append((node.lineno, "legacy image display; use image.plot()"))
+    return found
+
+
+def _call_violations(node):
+    """Check dynamic method selection and retired accessor keyword conventions."""
+    found = []
+    if isinstance(node.func, ast.Name) and node.func.id == "getattr":
+        if len(node.args) > 1 and isinstance(node.args[1], ast.Constant) and node.args[1].value in FIT_METHODS:
+            owner = ast.unparse(node.args[0])
+            if not owner.endswith(".fit"):
+                found.append((node.lineno, "dynamic direct fitting method"))
+        if len(node.args) > 1 and ".method" in ast.unparse(node.args[1]):
+            if not ast.unparse(node.args[0]).endswith(".fit"):
+                found.append((node.lineno, "configuration-selected fitting must use the fit accessor"))
+    elif isinstance(node.func, ast.Attribute):
+        owner = ast.unparse(node.func.value)
+        if owner.endswith((".plot", ".fit")) or ".plot." in owner or ".fit." in owner:
+            old = {"xcol", "ycol"}.intersection(k.arg for k in node.keywords)
+            if old:
+                found.append((node.lineno, "legacy accessor coordinate keywords: " + ", ".join(sorted(old))))
+    return found
+
+
 def violations(code):
     """Find known removed/compatibility surfaces without confusing NumPy or Axes."""
     found = []
@@ -138,31 +183,9 @@ def violations(code):
         return found, False
     for node in ast.walk(tree):
         if isinstance(node, ast.Attribute):
-            owner = ast.unparse(node.value)
-            if node.attr in OLD_METHODS and not owner.startswith(("plt", "pyplot", "figure", "fig", "ax")):
-                found.append((node.lineno, f"retired method {node.attr}"))
-            if node.attr in {"_get_cols", "_cols", "_col_args"}:
-                found.append((node.lineno, f"private compatibility helper {node.attr}"))
-            if node.attr in FIT_METHODS and not (owner.endswith((".fit", ".plot"))
-                                                or owner in {"np", "numpy", "sp", "scipy", "optimize", "odr"}
-                                                or owner.startswith(("np.", "numpy.", "scipy.", "self._fitter"))):
-                found.append((node.lineno, f"direct fitting/annotation method {owner}.{node.attr}"))
-            if node.attr == "imshow" and owner in {"im", "image", "binary", "xmcd", "strctural", "structural"}:
-                found.append((node.lineno, "legacy image display; use image.plot()"))
-        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "getattr":
-            if len(node.args) > 1 and isinstance(node.args[1], ast.Constant) and node.args[1].value in FIT_METHODS:
-                owner = ast.unparse(node.args[0])
-                if not owner.endswith(".fit"):
-                    found.append((node.lineno, "dynamic direct fitting method"))
-            if len(node.args) > 1 and ".method" in ast.unparse(node.args[1]):
-                if not ast.unparse(node.args[0]).endswith(".fit"):
-                    found.append((node.lineno, "configuration-selected fitting must use the fit accessor"))
-        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
-            owner = ast.unparse(node.func.value)
-            if owner.endswith((".plot", ".fit")) or ".plot." in owner or ".fit." in owner:
-                old = {"xcol", "ycol"}.intersection(k.arg for k in node.keywords)
-                if old:
-                    found.append((node.lineno, "legacy accessor coordinate keywords: " + ", ".join(sorted(old))))
+            found.extend(_attribute_violations(node))
+        elif isinstance(node, ast.Call):
+            found.extend(_call_violations(node))
     return sorted(set(found)), True
 
 

@@ -5,6 +5,9 @@ from __future__ import division
 
 __all__ = ["sign_loss", "prec_loss", "dtype_range", "_dtype", "_dtype2"]
 from warnings import warn
+from io import BytesIO
+
+from matplotlib.pyplot import close
 
 import numpy as np
 
@@ -142,3 +145,11 @@ def _up_scale(image, src_bits, dest_bits, dtypeobj_in, dtypeobj, copy=True):
     np.multiply(image, (2**upscale_factor - 1) // (2**src_bits - 1), out=image2, dtype=image2.dtype)
     image2 //= 2 ** (upscale_factor - dest_bits)
     return image2
+
+
+def _figure_png(figure):
+    """Capture a temporary image display as PNG bytes and close its rendered figure."""
+    with BytesIO() as buffer:
+        figure.savefig(buffer, format="png")
+        close(figure)
+        return buffer.getvalue()

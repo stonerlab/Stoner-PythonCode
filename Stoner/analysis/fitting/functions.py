@@ -17,7 +17,7 @@ from scipy.optimize import differential_evolution as _differential_evolution
 from ...compat import string_types
 from ...enums import FitOutput as _FitOutput, _normalise_fit_output
 from ...core.utils import assemnle_data as _assemnle_data_to_fit
-from ...tools import isiterable, islistlike, ordinal
+from ...tools import isiterable, ordinal
 from .classes import (
     MimizerAdaptor,
     ODR_Model,
@@ -467,6 +467,62 @@ def _chi2_fit_to_data(datafile, ret_val, model):
     return ret
 
 
+def _curve_fit_options(func, initial, xdat, ydat, uncertainty, kwargs, scale_covar):
+    """Resolve one channel's initial guess and optimiser keyword arguments."""
+    p0 = initial
+    if callable(p0):
+        try:
+            p0 = p0(ydat, xdat)
+        except (ArithmeticError, RuntimeError, ValueError):
+            p0 = None
+    p0 = _curve_fit_p0_list(p0, func)
+    parameter_count = len(p0) if p0 is not None else len(_get_model_parnames(func))
+    if len(ydat) <= parameter_count:
+        raise ValueError("A fit requires more eligible observations than free parameters")
+    options = dict(kwargs)
+    options.setdefault("absolute_sigma", not scale_covar if scale_covar is not None else uncertainty is not None)
+    if p0 is not None:
+        options["p0"] = p0
+    if uncertainty is not None:
+        options["sigma"] = uncertainty
+    for var in ["xcol", "ycol", "zcol", "xerr", "yerr", "zerr"]:
+        options.pop(var, None)
+    return options, p0
+
+
+def _curve_fit_report(datafile, function, settings, channel, p0, fitted):
+    """Build a channel report with independent settings and full-axis masks."""
+    xdat, ydat, uncertainty, columns, full_x, full_y, model_mask, residual_mask = channel
+    report = _Curve_Fit_Result()
+    report.settings = deepcopy(settings)
+    report.settings.columns = columns
+    report.func = function
+    report.results = {"popt": fitted[0], "pcov": fitted[1], "mesg": fitted[3], "ier": fitted[4]}
+    report.infodict = fitted[2]
+    report.p0 = np.ones(len(report.popt)) if p0 is None else p0
+    report.data = datafile
+    report.residual_vals = ydat - function(xdat, *report.popt)
+    report.nfree = len(ydat) - len(report.popt)
+    report.n_observations = len(ydat)
+    residuals = report.residual_vals if uncertainty is None else report.residual_vals / uncertainty
+    report.chisq = np.sum(residuals**2) / report.nfree
+    report.full_x = full_x
+    if settings.result is not None and settings.result is not False:
+        report.model_values = function(full_x, *report.popt)
+        report.model_mask = model_mask | ~np.isfinite(report.model_values)
+        report.full_residuals = full_y - report.model_values
+        report.residual_mask = residual_mask | ~np.isfinite(report.full_residuals)
+    return report
+
+
+def _fit_curve_channel(datafile, func, fit_func, initial, settings, kwargs, scale_covar, channel):
+    """Fit one prepared channel and return its detached numerical report."""
+    xdat, ydat, uncertainty = channel[:3]
+    options, p0 = _curve_fit_options(func, initial, xdat, ydat, uncertainty, kwargs, scale_covar)
+    fitted = _curve_fit(fit_func, xdat, ydat, **options)
+    return _curve_fit_report(datafile, fit_func, settings, channel, p0, fitted)
+
+
 def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
     """General curve fitting function passed through from scipy.
 
@@ -583,45 +639,8 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
     scale_covar = kwargs.pop("scale_covar", None)
     _func, initial = _get_curve_fit_func(func, kwargs)
     reports, retvals = [], []
-    for xdat, ydat, uncertainty, columns, full_x, full_y, model_mask, residual_mask in inputs:
-        p0 = initial
-        if callable(p0):
-            try:
-                p0 = p0(ydat, xdat)
-            except (ArithmeticError, RuntimeError, ValueError):
-                p0 = None
-        p0 = _curve_fit_p0_list(p0, func)
-        parameter_count = len(p0) if p0 is not None else len(_get_model_parnames(func))
-        if len(ydat) <= parameter_count:
-            raise ValueError("A fit requires more eligible observations than free parameters")
-        options = dict(kwargs)
-        options.setdefault("absolute_sigma", not scale_covar if scale_covar is not None else uncertainty is not None)
-        if p0 is not None:
-            options["p0"] = p0
-        if uncertainty is not None:
-            options["sigma"] = uncertainty
-        for var in ["xcol", "ycol", "zcol", "xerr", "yerr", "zerr"]:
-            options.pop(var, None)
-        popt, pcov, infodict, msg, ier = _curve_fit(_func, xdat, ydat, **options)
-        report = _Curve_Fit_Result()
-        report.settings = deepcopy(settings)
-        report.settings.columns = columns
-        report.func = _func
-        report.results = {"popt": popt, "pcov": pcov, "mesg": msg, "ier": ier}
-        report.infodict = infodict
-        report.p0 = np.ones(len(report.popt)) if p0 is None else p0
-        report.data = datafile
-        report.residual_vals = ydat - _func(xdat, *popt)
-        report.nfree = len(ydat) - len(popt)
-        report.n_observations = len(ydat)
-        weighted_residuals = report.residual_vals if uncertainty is None else report.residual_vals / uncertainty
-        report.chisq = np.sum(weighted_residuals**2) / report.nfree
-        report.full_x = full_x
-        if settings.result is not None and settings.result is not False:
-            report.model_values = _func(full_x, *popt)
-            report.model_mask = model_mask | ~np.isfinite(report.model_values)
-            report.full_residuals = full_y - report.model_values
-            report.residual_mask = residual_mask | ~np.isfinite(report.full_residuals)
+    for channel in inputs:
+        report = _fit_curve_channel(datafile, func, _func, initial, settings, kwargs, scale_covar, channel)
         reports.append(report)
         try:
             retvals.append(getattr(report, settings.output))
@@ -638,6 +657,52 @@ def curve_fit(datafile, func, xcol=None, ycol=None, sigma=None, **kwargs):
         owner._check_writable()
         owner._publish_storage(candidate)
     return retvals[0] if len(retvals) == 1 else retvals
+
+
+def _polish_evolution_fit(datafile, model, data, p0, fit, settings, kwargs, abs_sigma):
+    """Polish an evolutionary solution and attach the existing report representations."""
+    kwargs.pop("polish", None)
+    kwargs["full_output"] = True
+    kwargs["absolute_sigma"] = abs_sigma
+    popt, pcov, infodict, mesg, ier = _curve_fit(model.func, data.x, data.y[0], sigma=data.e[0], p0=fit.x, **kwargs)
+    polish = _Curve_Fit_Result()
+    polish.results = {"popt": popt, "pcov": pcov, "mesg": mesg, "ier": ier}
+    polish.infodict = infodict
+    polish.data = datafile
+    polish.settings = settings
+
+    polish.func = model.func
+    polish.p0 = p0
+    polish.residual_vals = data.y - polish.fvec
+    polish.chisq = (polish.residual_vals**2).sum()
+    polish.nfree = len(datafile) - len(polish.popt)
+    polish.chisq /= polish.nfree
+
+    model.popt = polish.popt
+    fit.covar = polish.pcov
+    fit.popt = polish.popt
+    fit.perr = polish.perr
+    fit.fit_report = polish.fit_report
+    row = _record_curve_fit_result(datafile, model, fit, settings)
+    ret_dict = {}
+    for i, p in enumerate(model.param_names):
+        ret_dict[p], ret_dict[f"d_{p}"] = row[2 * i], row[2 * i + 1]
+    ret_dict["chi-square"] = polish.chisqr
+    ret_dict["red. chi-sqr"] = polish.redchi
+    ret_dict["nfev"] = fit.nfev
+    fit.dict = ret_dict
+
+    retval = {
+        _FitOutput.FIT: (row[::2], fit.covar),
+        _FitOutput.REPORT: fit,
+        _FitOutput.ROW: row,
+        _FitOutput.FULL: (fit, row),
+        _FitOutput.DATA: datafile,
+        _FitOutput.DICT: fit.dict,
+    }
+    if settings.output not in retval:
+        raise RuntimeError(f"Failed to recognise output format:{settings.output}")
+    return retval[settings.output]
 
 
 def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kwargs):
@@ -749,48 +814,7 @@ def differential_evolution(datafile, model, xcol=None, ycol=None, p0=None, sigma
     )
     if not fit.success:
         raise RuntimeError(fit.message)
-    kwargs.pop("polish", None)
-    kwargs["full_output"] = True
-    kwargs["absolute_sigma"] = abs_sigma
-    popt, pcov, infodict, mesg, ier = _curve_fit(model.func, data.x, data.y[0], sigma=data.e[0], p0=fit.x, **kwargs)
-    polish = _Curve_Fit_Result()
-    polish.results = {"popt": popt, "pcov": pcov, "mesg": mesg, "ier": ier}
-    polish.infodict = infodict
-    polish.data = datafile
-    polish.settings = settings
-
-    polish.func = model.func
-    polish.p0 = p0
-    polish.residual_vals = data.y - polish.fvec
-    polish.chisq = (polish.residual_vals**2).sum()
-    polish.nfree = len(datafile) - len(polish.popt)
-    polish.chisq /= polish.nfree
-
-    model.popt = polish.popt
-    fit.covar = polish.pcov
-    fit.popt = polish.popt
-    fit.perr = polish.perr
-    fit.fit_report = polish.fit_report
-    row = _record_curve_fit_result(datafile, model, fit, settings)
-    ret_dict = {}
-    for i, p in enumerate(model.param_names):
-        ret_dict[p], ret_dict[f"d_{p}"] = row[2 * i], row[2 * i + 1]
-    ret_dict["chi-square"] = polish.chisqr
-    ret_dict["red. chi-sqr"] = polish.redchi
-    ret_dict["nfev"] = fit.nfev
-    fit.dict = ret_dict
-
-    retval = {
-        _FitOutput.FIT: (row[::2], fit.covar),
-        _FitOutput.REPORT: fit,
-        _FitOutput.ROW: row,
-        _FitOutput.FULL: (fit, row),
-        _FitOutput.DATA: datafile,
-        _FitOutput.DICT: fit.dict,
-    }
-    if settings.output not in retval:
-        raise RuntimeError(f"Failed to recognise output format:{settings.output}")
-    return retval[settings.output]
+    return _polish_evolution_fit(datafile, model, data, p0, fit, settings, kwargs, abs_sigma)
 
 
 def lmfit(datafile, model, xcol=None, ycol=None, p0=None, sigma=None, **kwargs):
@@ -1038,7 +1062,8 @@ def odr(datafile, model, xcol=None, ycol=None, **kwargs):
             -   A callable function which should have a signature f(x,parameter1,parameter2...) and *not* the
                 scip.odr standard f(beta,x)
 
-        This function is designed to be as compatible as possible with :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.curve_fit` and
+        This function is designed to be as compatible as possible with
+        :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.curve_fit` and
         :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.lmfit` to facilitate switching between them.
 
     See Also:

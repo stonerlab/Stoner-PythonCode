@@ -6,6 +6,7 @@ import numpy as np
 import xarray as xr
 
 from ..core.base import TypeHintedDict
+from ..core.exceptions import StonerLoadError
 from ..core.storage import _copy_metadata
 from .stack_owner import FrameOwner, _FrameMetadata
 from .storage_bridge import bind
@@ -25,16 +26,12 @@ def read_exclusions(group, image):
     if "excluded" in group:
         mask = group["excluded"][...]
         if mask.dtype != np.dtype(bool) or mask.shape != image.shape:
-            from ..core.exceptions import StonerLoadError
-
             raise StonerLoadError("Invalid stored image exclusion mask")
         package.dataset.excluded.data = mask
     package.fill_value = group.attrs.get("image_fill_value", package.fill_value)
     try:
         image.__dict__["_image_owner"].replace(package)
     except (ValueError, TypeError, OverflowError) as error:
-        from ..core.exceptions import StonerLoadError
-
         raise StonerLoadError("Invalid stored image fill or exclusion state") from error
     return image
 
@@ -64,8 +61,7 @@ class _ScanMetadata(_FrameMetadata):
         prepared[key] = value
         target = self._owner._record.metadata
         for name, item in prepared.items():
-            super(TypeHintedDict, target).__setitem__(name, item)
-            target.types[name] = prepared.type(name)
+            target._set_prepared(name, item, prepared.type(name))
 
     def __delitem__(self, key):
         self._owner._check_writable()
@@ -80,8 +76,7 @@ class ScanFrameOwner(FrameOwner):
         state = super()._state
         metadata = _copy_metadata(self._root._state.metadata)
         for key, value in state.metadata.items():
-            super(TypeHintedDict, metadata).__setitem__(key, value)
-            metadata.types[key] = state.metadata.type(key)
+            metadata._set_prepared(key, value, state.metadata.type(key))
         state.metadata = metadata
         return state
 
@@ -110,6 +105,8 @@ class ScanMetadataMixin:
         bind(image, ScanFrameOwner(self._stack_owner, self.frame_ids[index]))
         return image
 
+    # Preserve the established public export keyword.
+    # pylint: disable-next=redefined-builtin
     def to_xarray(self, *, format="stack"):
         """Export canonical storage or named channels on one common image grid.
 

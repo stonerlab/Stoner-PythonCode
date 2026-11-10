@@ -52,7 +52,11 @@ class StackOwner(ImageOwner):
 
     def image(self, selector, image_type=None):
         """Return an ImageFile whose pixel, mask and metadata writes reach a frame."""
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .core import ImageFile
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .storage_bridge import bind
 
         handle = self.frame(selector)
@@ -166,18 +170,18 @@ class StackOwner(ImageOwner):
         if state.frames:
             candidate.fill_value = state.fill_value
         candidate.dataset = candidate.dataset.assign_coords(frame=[frame.id for frame in frames])
-        for name in ("frame", "y", "x", "valid_height", "valid_width"):
-            candidate.dataset[name].attrs = state.dataset[name].attrs.copy()
+        for variable_name in ("frame", "y", "x", "valid_height", "valid_width"):
+            candidate.dataset[variable_name].attrs = state.dataset[variable_name].attrs.copy()
         if not state.frames:
             if state.dataset.attrs:
                 _common_attrs([state.dataset, candidate.dataset], "empty stack Dataset")
-            for name, variable in state.dataset.variables.items():
-                if name in {"frame", "y", "x", "valid_height", "valid_width"}:
+            for variable_name, variable in state.dataset.variables.items():
+                if variable_name in {"frame", "y", "x", "valid_height", "valid_width"}:
                     continue
-                if name not in candidate.dataset:
+                if variable_name not in candidate.dataset:
                     raise ValueError("Insertion would discard an empty stack calibration coordinate")
                 if variable.attrs:
-                    _common_attrs([variable, candidate.dataset[name]], name)
+                    _common_attrs([variable, candidate.dataset[variable_name]], variable_name)
         candidate.validate()
         self._state = candidate
         self._frame_versions[new_frame.id] = 0
@@ -239,20 +243,15 @@ class _FrameMetadata(_Metadata):
     def __getattr__(self, name):
         if name in {"import_key", "import_all"}:
 
-            def import_metadata(*args, **kwargs):
-                self._owner._check_writable()
-                draft = self.copy()
-                result = getattr(draft, name)(*args, **kwargs)
-                self._owner._replace_metadata(draft)
-                return result
-
-            return import_metadata
+            return self._metadata_importer(name, self._owner._replace_metadata)
         return super().__getattr__(name)
 
 
 class FrameOwner(ImageOwner):
     """Resolve a frame by ID for every access, sharing the stack's edit lock."""
 
+    # Frame handles share the parent state and must not allocate an independent ImageOwner.
+    # pylint: disable-next=super-init-not-called
     def __init__(self, parent, identity):
         self._root = parent
         self._identity = identity

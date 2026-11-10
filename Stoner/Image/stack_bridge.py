@@ -1,6 +1,7 @@
 """Connect the public ImageStack folder interface to authoritative stack storage."""
 
 from copy import deepcopy
+from pathlib import Path
 from operator import index as integer_index
 import re
 
@@ -9,7 +10,6 @@ import numpy as np
 from ..core.base import RegexpDict
 from ..core.selection import selected_image_values
 from .core import ImageFile
-from .numerical import numerical_image
 from .storage import ImageStorage, _fill
 from .stack_owner import StackOwner
 
@@ -18,6 +18,8 @@ class OwnedStackMixin:
     """Provide stack construction, interchange and folder edits through stable IDs."""
 
     def __init__(self, *args, **kwargs):
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from ..folders.core import BaseFolder
 
         self._stack_owner = StackOwner(ImageStorage.from_images([]))
@@ -150,11 +152,13 @@ class OwnedStackMixin:
         return image
 
     def __getter__(self, name, instantiate=True):
+        del instantiate  # Eager stack frames are always instantiated.
         index = self.__lookup__(name)
         return self._instantiate(index)
 
     def fetch(self, *args, **kwargs):
         """Return this eager stack; every frame is already held by its owner."""
+        del args, kwargs  # Retain BaseFolder.fetch compatibility for eager storage.
         return self
 
     def __getitem__(self, key):
@@ -210,8 +214,6 @@ class OwnedStackMixin:
 
     def __setter__(self, name, value, force_insert=False):
         if isinstance(value, str):
-            from pathlib import Path
-
             filename = Path(value)
             if not filename.is_file():
                 filename = Path(self.directory) / filename
@@ -245,6 +247,7 @@ class OwnedStackMixin:
             owner._commit_dataset(candidate.dataset)
             owner._state.frames = candidate.frames
         self._public_attrs_store[self.frame_ids[index]] = attrs
+        return None
 
     def __inserter__(self, index, name, value):
         package, attrs = self._prepare(value)
@@ -282,19 +285,24 @@ class OwnedStackMixin:
         if recurse:
             for group in self.groups.values():
                 group.sort(key=key, reverse=reverse, recurse=True)
-        if key is None:
-            get_key = lambda i: self.__names__()[i]
-        elif isinstance(key, str):
-            get_key = lambda i: self[i].metadata.get(key)
-        elif isinstance(key, re.Pattern):
-            get_key = lambda i: key.match(self.__names__()[i]).groups()
-        else:
-            get_key = lambda i: key(self[i])
+
+        def get_key(index):
+            """Resolve the selected name, metadata or callable ordering key."""
+            if key is None:
+                return self.__names__()[index]
+            if isinstance(key, str):
+                return self[index].metadata.get(key)
+            if isinstance(key, re.Pattern):
+                return key.match(self.__names__()[index]).groups()
+            return key(self[index])
+
         order = sorted(range(len(self)), key=get_key, reverse=reverse)
         return self.reorder([self.frame_ids[i] for i in order])
 
     def convert(self, dtype, force_copy=False, uniform=False, normalise=True):
         """Convert all valid intensities, retaining calibration, masks and identities."""
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .imagefuncs import convert
 
         package = self.export_storage()

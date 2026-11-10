@@ -27,6 +27,7 @@ from packaging.version import Version
 from Stoner.core.column_schema import _assign_roles
 from Stoner.core.storage_owner import DataOwner
 from .model import IndexOwner, fixture
+import pytest_timeout
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -64,7 +65,6 @@ def environment():
                                      (minimum is None or Version(actual) >= Version(minimum))))
     if len(dependencies) != 39 or not all(item["satisfied"] for item in dependencies):
         raise RuntimeError(f"Incomplete test dependencies: {dependencies}")
-    import pytest_timeout
     return dict(python=sys.version, executable=sys.executable, prefix=sys.prefix,
                 platform=platform.platform(), pandas=pd.__version__, numpy=np.__version__,
                 pandas_module=pd.__file__, timeout_module=pytest_timeout.__file__,
@@ -73,6 +73,7 @@ def environment():
 
 
 def prepare(owner_type, width, rows):
+    """Prepare equivalent owner operations outside the measured timing loop."""
     owner = owner_type(fixture(width, rows))
     pattern = re.compile("Signal|Error")
 
@@ -121,9 +122,9 @@ def measure(width, rows, repeats, iterations):
                 samples[key].append((time.perf_counter_ns() - start) / count / 1e9)
                 del value
         pair = {}
-        for key in owners:
+        for key, owner_type in owners.items():
             # Separate fresh fixture for allocation measurement; one operation.
-            operation = prepare(owners[key], width, rows)[workload]
+            operation = prepare(owner_type, width, rows)[workload]
             gc.collect()
             tracemalloc.start()
             value = operation()
@@ -139,6 +140,7 @@ def measure(width, rows, repeats, iterations):
 
 
 def main():
+    """Write paired schema-owner timing and allocation measurements."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--repeats", type=int, default=9)

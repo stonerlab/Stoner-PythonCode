@@ -6,6 +6,7 @@ from inspect import signature
 import numpy as np
 import xarray as xr
 from scipy.ndimage import maximum_filter
+from skimage.transform import resize
 
 GEOMETRY = {"rotate", "resize", "rescale", "warp", "translate", "shift", "zoom", "affine_transform", "gridimage"}
 
@@ -16,6 +17,8 @@ def require_alignment(left, right):
     Raw arrays, scalars and uncalibrated images are positional operands. Two
     calibrated images must have identical coordinates and units, without alignment.
     """
+    # Preserve lazy image adapters and avoid owner/accessor import cycles.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from .storage_bridge import owner_of, calibrated
 
     first = owner_of(left) if hasattr(left, "__dict__") else None
@@ -50,9 +53,30 @@ def interpolate(package, function, args, kwargs, working):
             maps use linear interpolation; higher-order pixel interpolation uses
             conservatively expanded exclusions around masked samples.
     """
-    if function.__name__ == "resize":
-        from skimage.transform import resize
+    run, parameters = _geometry_runner(function, args, kwargs, working)
+    numerical = run(working)
+    if not isinstance(numerical, np.ndarray) or numerical.ndim != 2:
+        raise ValueError("Image geometry must return a two-dimensional array")
+    source = package.dataset
+    result = package.copy()
+    dataset = _resampled_dataset(source, numerical)
+    outside = _resample_coordinates(source, dataset, run)
+    radius = _exclusion_radius(function, parameters, source.intensity.shape, numerical.shape)
+    exclusions = source.excluded.values
+    if radius:
+        exclusions = maximum_filter(exclusions, size=2 * radius + 1, mode="constant")
+    coverage = np.asarray(run(exclusions.astype(float), field=True))
+    dataset.excluded.data |= outside | ~np.isfinite(coverage) | (coverage > 0)
+    result.dataset = dataset
+    if hasattr(numerical, "metadata"):
+        result.metadata = numerical.metadata.copy()
+    result.validate()
+    return result
 
+
+def _geometry_runner(function, args, kwargs, working):
+    """Bind pixel geometry once and reuse it for coordinate/exclusion fields."""
+    if function.__name__ == "resize":
         function = resize
     bound = signature(function).bind(working, *args, **kwargs)
     bound.apply_defaults()
@@ -65,6 +89,8 @@ def interpolate(package, function, args, kwargs, working):
 
     def run(values, *, field=False):
         options = dict(parameters)
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .numerical import numerical_image
 
         array = numerical_image(np.array(values, dtype=float, copy=True)) if field else values
@@ -90,13 +116,13 @@ def interpolate(package, function, args, kwargs, working):
         result = function(*call.args, **call.kwargs)
         return result
 
-    numerical = run(working)
-    if not isinstance(numerical, np.ndarray) or numerical.ndim != 2:
-        raise ValueError("Image geometry must return a two-dimensional array")
-    source = package.dataset
+    return run, parameters
+
+
+def _resampled_dataset(source, numerical):
+    """Create detached resampled pixels with positional target coordinates."""
     height, width = numerical.shape
-    result = package.copy()
-    dataset = xr.Dataset(
+    return xr.Dataset(
         {
             "intensity": (("y", "x"), np.ma.getdata(numerical).copy(), deepcopy(source.intensity.attrs)),
             "excluded": (("y", "x"), np.ma.getmaskarray(numerical).copy(), deepcopy(source.excluded.attrs)),
@@ -104,12 +130,16 @@ def interpolate(package, function, args, kwargs, working):
         coords={"y": np.arange(height), "x": np.arange(width)},
         attrs=deepcopy(source.attrs),
     )
+
+
+def _resample_coordinates(source, dataset, run):
+    """Resample all spatial maps and return target pixels outside their domain."""
     maps = dict(source.coords)
     for axis in ("y", "x"):
         if f"physical_{axis}" not in maps:
             maps[f"physical_{axis}"] = source[axis]
         del maps[axis]
-    outside = np.zeros(numerical.shape, bool)
+    outside = np.zeros(dataset.intensity.shape, bool)
     for name, coordinate in maps.items():
         if not coordinate.dims:
             dataset.coords[name] = coordinate.copy(deep=True)
@@ -120,20 +150,16 @@ def interpolate(package, function, args, kwargs, working):
         mapped = np.asarray(run(values, field=True))
         outside |= ~np.isfinite(mapped)
         dataset.coords[name] = (("y", "x"), mapped, deepcopy(coordinate.attrs))
+    return outside
+
+
+def _exclusion_radius(function, parameters, source_shape, target_shape):
+    """Calculate the conservative source neighbourhood contributing to each pixel."""
     order = parameters.get("order", 3 if parameters.get("method") == "cubic" else 1)
     order = 1 if order is None else order
-    exclusions = source.excluded.values
     radius = int(np.ceil(order / 2)) if order > 1 else 0
     if function.__name__ in {"resize", "rescale"} and parameters.get("anti_aliasing") is not False:
-        ratio = max(np.array(source.intensity.shape) / np.array(numerical.shape))
+        ratio = max(np.array(source_shape) / np.array(target_shape))
         sigma = parameters.get("anti_aliasing_sigma")
         radius += int(np.ceil(4 * np.max(sigma if sigma is not None else max(0, (ratio - 1) / 2))))
-    if radius:
-        exclusions = maximum_filter(exclusions, size=2 * radius + 1, mode="constant")
-    coverage = np.asarray(run(exclusions.astype(float), field=True))
-    dataset.excluded.data |= outside | ~np.isfinite(coverage) | (coverage > 0)
-    result.dataset = dataset
-    if hasattr(numerical, "metadata"):
-        result.metadata = numerical.metadata.copy()
-    result.validate()
-    return result
+    return radius

@@ -648,16 +648,7 @@ def select(fldr, *args, **kwargs):
         gkwargs["recurse"] = True
         for g, val in fldr.groups.items():
             result.groups[g] = val.select(*args, **gkwargs)
-    if isinstance(fldr.pattern[0], regexp_type):
-        pattern_keys = list(fldr.pattern[0].groupindex.keys())
-        for karg in kwargs:
-            if karg.split("__")[0] not in pattern_keys:
-                must_read = True
-                break
-        else:
-            must_read = False
-    else:
-        must_read = True
+    must_read = _selection_needs_data(fldr.pattern[0], kwargs)
 
     for f in fldr.objects:
         if must_read and isinstance(f, string_types):
@@ -905,3 +896,11 @@ def zip_groups(fldr, groups):
         raise SyntaxError("groups must be a list of groups")
     grps = [list(fldr.groups[x]) for x in groups]
     return zip(*grps)
+
+
+def _selection_needs_data(pattern, criteria):
+    """Require loaded metadata only when filename groups cannot answer the criteria."""
+    if not isinstance(pattern, regexp_type):
+        return True
+    keys = set(pattern.groupindex)
+    return any(key.split("__")[0] not in keys for key in criteria)

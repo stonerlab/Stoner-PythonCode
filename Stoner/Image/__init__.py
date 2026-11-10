@@ -15,6 +15,8 @@ __all__ = [
     "kerr",
     "widgets",
     "ImageFile",
+    "KerrImageFile",
+    "numerical_image",
     "ImagePlotter",
     "ImageROI",
     "ImageFitter",

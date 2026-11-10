@@ -2,9 +2,11 @@
 
 import matplotlib.pyplot as plt
 from matplotlib._pylab_helpers import Gcf
+from matplotlib.axes import Axes
 from matplotlib.widgets import PolygonSelector, RectangleSelector
 
 from ..core.roi import ROI, geometry_signature
+from ..plot.state import live_figure
 from .coordinates import resolve_grid
 from .storage_bridge import owner_of
 
@@ -28,14 +30,17 @@ class _ROISelection:
                             canvas.mpl_connect("close_event", self.close)]
 
     def rectangle(self, start, stop):
+        """Capture the pending rectangle without publishing an owner selection."""
         x0, x1 = sorted((start.xdata, stop.xdata))
         y0, y1 = sorted((start.ydata, stop.ydata))
         self.pending = ROI.box(x0, x1, y0, y1, coordinates=self.coordinates, reference=self.reference)
 
     def polygon(self, vertices):
+        """Capture pending polygon vertices without publishing an owner selection."""
         self.pending = ROI.polygon(vertices, coordinates=self.coordinates, reference=self.reference)
 
     def key(self, event):
+        """Accept a completed selection or cancel on the corresponding key event."""
         if event.key == "escape":
             self.close(event)
         elif event.key in {"enter", "return"} and self.pending is not None:
@@ -43,10 +48,13 @@ class _ROISelection:
             self.close(event)
 
     def close(self, event):
+        """Finish the selection event loop without changing accepted geometry."""
+        del event  # Matplotlib callbacks supply an event even when it is unused.
         self.finished = True
         self.ax.figure.canvas.stop_event_loop()
 
     def disconnect(self):
+        """Disconnect the selector and all session-specific canvas callbacks."""
         self.widget.disconnect_events()
         for connection in self.connections:
             self.ax.figure.canvas.mpl_disconnect(connection)
@@ -57,10 +65,6 @@ def select_roi(image, kind, *, ax, coordinates):
     resolve_grid(image, coordinates=coordinates)  # Validate before creating any figure.
     if "_roi_selector" in image.__dict__:
         raise RuntimeError("An ROI selection is already running for this image.")
-    from matplotlib.axes import Axes
-
-    from ..plot.state import live_figure
-
     if ax is not None and (not isinstance(ax, Axes) or not live_figure(ax.figure)):
         raise ValueError("ax must be live Matplotlib Axes.")
     previous_manager = Gcf.get_active()

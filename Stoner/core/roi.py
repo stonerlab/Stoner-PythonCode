@@ -287,31 +287,44 @@ class ROI:
                 right = values[1].resolve(target, grid=grid).values
                 result = left | right if kind == "union" else left & (right if kind == "intersection" else ~right)
         else:
-            if self._coordinates is CoordinateMode.NATIVE:
-                if _units(target) != self._units:
-                    raise ValueError("Native ROI units do not match the target; no implicit unit conversion occurs.")
-                if grid is None:
-                    vectors = [np.asarray(target[axis].values) for axis in ("x", "y")]
-                    for vector in vectors:
-                        if vector.dtype.kind not in "iuf" or not np.isfinite(vector).all():
-                            raise ValueError("Native ROI coordinates must be finite real vectors.")
-                        steps = np.diff(vector)
-                        if len(steps) and not (np.all(steps > 0) or np.all(steps < 0)):
-                            raise ValueError("Native ROI coordinates must be strictly monotonic.")
-                else:
-                    vectors = [grid.x, grid.y]
-            else:
-                vectors = [np.arange(target.sizes[axis]) for axis in ("x", "y")]
-            x, y = np.meshgrid(*vectors)
-            if kind == "box":
-                xmin, xmax, ymin, ymax = values
-                result = (x >= xmin) & (x < xmax) & (y >= ymin) & (y < ymax)
-            elif kind == "ellipse":
-                cx, cy, rx, ry = values
-                result = ((x-cx)/rx)**2 + ((y-cy)/ry)**2 <= 1
-            else:
-                result = points_in_poly(np.column_stack((x.ravel(), y.ravel())), np.asarray(values)).reshape(target.shape)
+            result = self._resolve_geometry(target, grid)
         return xr.DataArray(result.copy(), dims=target.dims, coords=target.coords, name="included").copy(deep=True)
+
+    def _coordinate_vectors(self, target, grid):
+        """Resolve pixel or validated native coordinate vectors for geometry."""
+        if self._coordinates is CoordinateMode.NATIVE:
+            if _units(target) != self._units:
+                raise ValueError("Native ROI units do not match the target; no implicit unit conversion occurs.")
+            if grid is None:
+                vectors = [np.asarray(target[axis].values) for axis in ("x", "y")]
+                for vector in vectors:
+                    if vector.dtype.kind not in "iuf" or not np.isfinite(vector).all():
+                        raise ValueError("Native ROI coordinates must be finite real vectors.")
+                    steps = np.diff(vector)
+                    if len(steps) and not (np.all(steps > 0) or np.all(steps < 0)):
+                        raise ValueError("Native ROI coordinates must be strictly monotonic.")
+            else:
+                vectors = [grid.x, grid.y]
+        else:
+            vectors = [np.arange(target.sizes[axis]) for axis in ("x", "y")]
+        return vectors
+
+    def _resolve_geometry(self, target, grid):
+        """Evaluate primitive shape membership on the validated coordinate mesh."""
+        kind, values = self._kind, self._values
+        vectors = self._coordinate_vectors(target, grid)
+        x, y = np.meshgrid(*vectors)
+        if kind == "box":
+            xmin, xmax, ymin, ymax = values
+            result = (x >= xmin) & (x < xmax) & (y >= ymin) & (y < ymax)
+        elif kind == "ellipse":
+            cx, cy, rx, ry = values
+            result = ((x-cx)/rx)**2 + ((y-cy)/ry)**2 <= 1
+        else:
+            result = points_in_poly(
+                np.column_stack((x.ravel(), y.ravel())), np.asarray(values)
+            ).reshape(target.shape)
+        return result
 
     def to_dict(self):
         """Export a detached version-1 JSON-compatible description for explicit replay."""
@@ -333,25 +346,14 @@ class ROI:
         """
         if not isinstance(record, dict) or set(record) != {"version", "kind", "values", "coordinates", "units"}:
             raise ValueError("Invalid ROI record fields.")
-        if type(record["version"]) is not int or record["version"] != 1:
+        # JSON wire versions are built-in integers, not Boolean subclasses.
+        if type(record["version"]) is not int or record["version"] != 1:  # pylint: disable=unidiomatic-typecheck
             raise ValueError("Unsupported ROI record version.")
         kind, values = record["kind"], record["values"]
         if not isinstance(values, list):
             raise TypeError("ROI record values must be a list.")
-        mode, units = record["coordinates"], record["units"]
-        reference = None
-        if mode is not None:
-            mode = _mode(mode)
-            if mode is CoordinateMode.NATIVE:
-                if not isinstance(units, list) or len(units) != 2 or any(not isinstance(v, str) for v in units):
-                    raise ValueError("Native records require two unit labels.")
-                reference = xr.DataArray([[0]], dims=("y", "x"), coords={"x": [0], "y": [0]})
-                for axis, unit in zip(("x", "y"), units):
-                    reference[axis].attrs["units"] = unit
-            elif units is not None:
-                raise ValueError("Pixel records must not specify native units.")
-        elif units is not None:
-            raise ValueError("Unit labels require native coordinates.")
+        units = record["units"]
+        mode, reference = _record_reference(record["coordinates"], units)
         options = {"coordinates": mode, "reference": reference}
         if kind == "box" and len(values) == 4 and mode is not None:
             result = cls.box(*values, **options)
@@ -366,20 +368,43 @@ class ROI:
             children = [cls.from_dict(value) for value in values]
             result = ~children[0] if kind == "complement" else children[0]._combine(children[1], kind)
         elif kind == "mask" and mode is None and len(values) == 3:
-            signature, shape, packed = values
-            try:
-                geometry = json.loads(signature)
-                coordinates = xr.Dataset.from_dict(geometry["coords"])
-                target = xr.DataArray(np.empty(shape), dims=("y", "x"), coords=coordinates.coords)
-                raw = np.frombuffer(bytes.fromhex(packed), dtype=np.uint8)
-                if len(raw) != (target.size + 7)//8 or list(shape) != geometry["shape"]:
-                    raise ValueError("Invalid packed mask geometry.")
-                included = np.unpackbits(raw, count=target.size).reshape(shape).astype(bool)
-                result = cls.from_mask(included, reference=target)
-            except (TypeError, KeyError, ValueError) as error:
-                raise ValueError("Invalid ROI mask record.") from error
+            result = cls._restore_mask(values)
         else:
             raise ValueError("Invalid ROI record kind or parameters.")
         if result._coordinates != mode or result._units != (tuple(units) if units is not None else None):
             raise ValueError("ROI record coordinate fields are inconsistent.")
         return result
+
+    @classmethod
+    def _restore_mask(cls, values):
+        """Decode a packed mask only after checking its recorded geometry."""
+        signature, shape, packed = values
+        try:
+            geometry = json.loads(signature)
+            coordinates = xr.Dataset.from_dict(geometry["coords"])
+            target = xr.DataArray(np.empty(shape), dims=("y", "x"), coords=coordinates.coords)
+            raw = np.frombuffer(bytes.fromhex(packed), dtype=np.uint8)
+            if len(raw) != (target.size + 7)//8 or list(shape) != geometry["shape"]:
+                raise ValueError("Invalid packed mask geometry.")
+            included = np.unpackbits(raw, count=target.size).reshape(shape).astype(bool)
+            return cls.from_mask(included, reference=target)
+        except (TypeError, KeyError, ValueError) as error:
+            raise ValueError("Invalid ROI mask record.") from error
+
+
+def _record_reference(mode, units):
+    """Validate coordinate record fields and construct a native unit reference."""
+    reference = None
+    if mode is not None:
+        mode = _mode(mode)
+        if mode is CoordinateMode.NATIVE:
+            if not isinstance(units, list) or len(units) != 2 or any(not isinstance(v, str) for v in units):
+                raise ValueError("Native records require two unit labels.")
+            reference = xr.DataArray([[0]], dims=("y", "x"), coords={"x": [0], "y": [0]})
+            for axis, unit in zip(("x", "y"), units):
+                reference[axis].attrs["units"] = unit
+        elif units is not None:
+            raise ValueError("Pixel records must not specify native units.")
+    elif units is not None:
+        raise ValueError("Unit labels require native coordinates.")
+    return mode, reference

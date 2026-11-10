@@ -10,6 +10,27 @@ import json
 from pathlib import Path
 
 
+if __package__:
+    from .limits import migration_limits
+else:
+    from limits import migration_limits
+
+
+def _assess_pair(size, workload, pair):
+    """Print one complete comparison and return whether its timing and memory gates pass."""
+    legacy, prototype = pair["legacy"], pair["prototype"]
+    if prototype["dimensions"] != legacy["dimensions"]:
+        raise ValueError("Different paired inputs")
+    time_limit, memory_limit = migration_limits(legacy, workload)
+    old_time, new_time = legacy["median_seconds"], prototype["median_seconds"]
+    old_memory, new_memory = legacy["traced_peak_bytes"], prototype["traced_peak_bytes"]
+    passed = new_time <= time_limit and new_memory <= memory_limit
+    gate = "pass" if passed else "FAIL"
+    print(f"| {size:5} | {workload:13} | {old_time * 1000:9.3f} | {new_time * 1000:8.3f} | "
+          f"{new_time / old_time:10.2f} | {old_memory / 1024**2:10.3f} | {new_memory / 1024**2:9.3f} | {gate:4} |")
+    return passed
+
+
 def assess(path):
     """Print paired timing/memory evidence and return whether thresholds pass."""
     report = json.loads(path.read_text(encoding="utf-8"))
@@ -31,25 +52,7 @@ def assess(path):
     print("| Size  | Workload      | Legacy ms | Proto ms | Time ratio | Legacy MiB | Proto MiB | Gate |")
     print("| ----- | ------------- | --------- | -------- | ---------- | ---------- | --------- | ---- |")
     for (size, workload), pair in pairs.items():
-        legacy, prototype = pair["legacy"], pair["prototype"]
-        dimensions = legacy["dimensions"]
-        if prototype["dimensions"] != dimensions:
-            raise ValueError("Different paired inputs")
-        if "rows" in dimensions:
-            payload = (dimensions["rows"] + dimensions.get("appends", 0)) * dimensions["columns"] * 9
-        elif "frames" in dimensions:
-            frames = dimensions["frames"] + (workload == "stack_insert")
-            payload = frames * dimensions["height"] * dimensions["width"] * 3
-        else:
-            payload = 0
-        old_time, new_time = legacy["median_seconds"], prototype["median_seconds"]
-        old_memory, new_memory = legacy["traced_peak_bytes"], prototype["traced_peak_bytes"]
-        time_ok = new_time <= max(old_time * 2, old_time + 0.005)
-        memory_ok = new_memory <= max(old_memory * 2, payload * 3 + 1024**2)
-        passed &= time_ok and memory_ok
-        gate = "pass" if time_ok and memory_ok else "FAIL"
-        print(f"| {size:5} | {workload:13} | {old_time*1000:9.3f} | {new_time*1000:8.3f} | "
-              f"{new_time/old_time:10.2f} | {old_memory/1024**2:10.3f} | {new_memory/1024**2:9.3f} | {gate:4} |")
+        passed &= _assess_pair(size, workload, pair)
     print("Timing limit: max(2 x legacy median, legacy median + 5 ms).")
     print("Traced allocation limit: max(2 x legacy peak, 3 x input/output payload + 1 MiB).")
     print("RSS remains diagnostic because sampling and allocator reuse limit comparability.")

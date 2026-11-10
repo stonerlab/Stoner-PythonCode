@@ -131,6 +131,39 @@ def clip(datafile: Data, clipper: Union[Tuple[float, float], NumericArray], colu
     return datafile.del_rows(col, lambda x, y: x < clipper[0] or x > clipper[1])
 
 
+def _decomposition_parts(datafile, xcol, ycol, hysteretic):
+    """Interpolate rising and reversed falling branches into symmetric components."""
+    if hysteretic:
+        fldr = split_up_down(datafile, datafile.xcol)
+        for grp in ["rising", "falling"]:
+            for f in fldr[grp][1:]:
+                fldr[grp][0] += f
+        rising = fldr["rising"][0].sort(xcol)
+        falling = fldr["falling"][0].sort(xcol)
+    else:
+        rising = datafile.clone.sort(xcol)
+        falling = rising.clone
+
+    rising_data = rising.deduplicate(xcol, clone=False)
+    falling_data = falling.deduplicate(xcol, clone=False)
+
+    falling_func = interp1d(
+        falling_data[:, xcol],
+        falling_data[:, ycol],
+        kind="linear",
+        bounds_error=False,
+        axis=0,
+    )
+
+    rising_func = interp1d(rising_data[:, xcol], rising_data[:, ycol], kind="linear", bounds_error=False, axis=0)
+    rising_vals = rising_func((datafile // xcol).view(np.ndarray))
+    falling_vals = falling_func(-(datafile // xcol).view(np.ndarray))
+
+    symd = (rising_vals + falling_vals) / 2
+    asymd = (rising_vals - falling_vals) / 2
+    return symd, asymd
+
+
 def decompose(datafile, xcol=None, ycol=None, sym=None, asym=None, replace=True, hysteretic=False, **kwords):
     """Given (x,y) data, decomposes the y part into symmetric and antisymmetric contributions in x.
 
@@ -171,34 +204,7 @@ def decompose(datafile, xcol=None, ycol=None, sym=None, asym=None, replace=True,
     if not isinstance(ycol, list):
         ycol = [ycol]
 
-    if hysteretic:
-        fldr = split_up_down(datafile, datafile.xcol)
-        for grp in ["rising", "falling"]:
-            for f in fldr[grp][1:]:
-                fldr[grp][0] += f
-        rising = fldr["rising"][0].sort(xcol)
-        falling = fldr["falling"][0].sort(xcol)
-    else:
-        rising = datafile.clone.sort(xcol)
-        falling = rising.clone
-
-    rising_data = rising.deduplicate(xcol, clone=False)
-    falling_data = falling.deduplicate(xcol, clone=False)
-
-    falling_func = interp1d(
-        falling_data[:, xcol],
-        falling_data[:, ycol],
-        kind="linear",
-        bounds_error=False,
-        axis=0,
-    )
-
-    rising_func = interp1d(rising_data[:, xcol], rising_data[:, ycol], kind="linear", bounds_error=False, axis=0)
-    rising_vals = rising_func((datafile // xcol).view(np.ndarray))
-    falling_vals = falling_func(-(datafile // xcol).view(np.ndarray))
-
-    symd = (rising_vals + falling_vals) / 2
-    asymd = (rising_vals - falling_vals) / 2
+    symd, asymd = _decomposition_parts(datafile, xcol, ycol, hysteretic)
 
     if sym is None:
         datafile &= symd
@@ -282,8 +288,7 @@ def integrate(
 
     final = []
     for i in range(ydat.shape[1]):
-        yd = ydat[:, i]
-        resultdata = func(yd, x=xdat, **kwargs)
+        resultdata = func(ydat[:, i], x=xdat, **kwargs)
         resultdata = np.append(np.array([0]), resultdata)
         if result is not None and result is not False:
             channel_header = header if header is not None else f"Integral of {source_headers[_.ycol[i]]}"
@@ -393,6 +398,79 @@ def normalise(
     return datafile
 
 
+def _stitch_overlap(datafile, other, columns, min_overlap, overlap):
+    """Select matching points and the recorded overlap interval for stitching."""
+    points = datafile.column([columns.xcol, columns.ycol])
+    points = points[points[:, 0].argsort(), :]
+    points[:, 0] += min_overlap
+    otherpoints = other.column([columns.xcol, columns.ycol])
+    otherpoints = otherpoints[otherpoints[:, 0].argsort(), :]
+    datafile_second = np.max(points[:, 0]) > np.max(otherpoints[:, 0])
+    match overlap:
+        case int() if overlap > 0:
+            if datafile_second:
+                lower = points[0, 0]
+                upper = points[overlap, 0]
+            else:
+                lower = points[-overlap - 1, 0]
+                upper = points[-1, 0]
+        case (float(), float()):
+            lower = min(overlap)
+            upper = max(overlap)
+        case _:
+            lower = max(np.min(points[:, 0]), np.min(otherpoints[:, 0]))
+            upper = min(np.max(points[:, 0]), np.max(otherpoints[:, 0]))
+
+    inrange = np.logical_and(points[:, 0] >= lower, points[:, 0] <= upper)
+    points = points[inrange]
+    num_pts = points.shape[0]
+    if datafile_second:
+        otherpoints = otherpoints[-num_pts - 1 : -1]
+    else:
+        otherpoints = otherpoints[0:num_pts]
+    return points, otherpoints, lower, upper
+
+
+def _stitch_model(points, otherpoints, mode, func, p0):
+    """Choose the stitching transform and its initial parameter estimates."""
+    x = points[:, 0]
+    y = points[:, 1]
+    xp = otherpoints[:, 0]
+    yp = otherpoints[:, 1]
+    if func is None:
+        opts = {
+            "all": (lambda x, y, A, B, C: (x + A, y * B + C)),
+            "scale y and shift x": (lambda x, y, A, B: (x + A, B * y)),
+            "scale and shift y": (lambda x, y, B, C: (x, y * B + C)),
+            "scale y": (lambda x, y, B: (x, y * B)),
+            "shift y": (lambda x, y, C: (x, y + C)),
+            "shift both": (lambda x, y, A, C: (x + A, y + C)),
+        }
+        defaults = {
+            "all": [1, 2, 3],
+            "scale y,shift x": [1, 2],
+            "scale and shift y": [2, 3],
+            "scale y": [2],
+            "shift y": [3],
+            "shift both": [1, 3],
+        }
+        A0 = np.mean(xp) - np.mean(x)
+        C0 = np.mean(yp) - np.mean(y)
+        B0 = (np.max(yp) - np.min(yp)) / (np.max(y) - np.min(y))
+        p = np.array([0, A0, B0, C0])
+        assertion(isinstance(mode, str), "mode keyword should be a string if func is not defined")
+        mode = mode.lower()
+        assertion(mode in opts, f"mode keyword should be one of {opts.keys}")
+        func = opts[mode]
+        p0 = p[defaults[mode]]
+    else:
+        assertion(callable(func), "Keyword func should be callable if given")
+        args = getfullargspec(func)[0]  # pylint: disable=W1505
+        assertion(isiterable(p0), "Keyword parameter p0 shoiuld be iterable if keyword func is given")
+        assertion(len(p0) == len(args) - 2, "Keyword p0 should be the same length as the optional arguments to func")
+    return func, p0
+
+
 def stitch(
     datafile: Data,
     other: Data,
@@ -458,72 +536,12 @@ def stitch(
             :outname:  stitch_int_overlap
     """
     _ = datafile._col_args(xcol=xcol, ycol=ycol, scalar=True, single=("xcol", "ycol"))
-    points = datafile.column([_.xcol, _.ycol])
-    points = points[points[:, 0].argsort(), :]
-    points[:, 0] += min_overlap
-    otherpoints = other.column([_.xcol, _.ycol])
-    otherpoints = otherpoints[otherpoints[:, 0].argsort(), :]
-    datafile_second = np.max(points[:, 0]) > np.max(otherpoints[:, 0])
-    match overlap:
-        case int() if overlap > 0:
-            if datafile_second:
-                lower = points[0, 0]
-                upper = points[overlap, 0]
-            else:
-                lower = points[-overlap - 1, 0]
-                upper = points[-1, 0]
-        case (float(), float()):
-            lower = min(overlap)
-            upper = max(overlap)
-        case _:
-            lower = max(np.min(points[:, 0]), np.min(otherpoints[:, 0]))
-            upper = min(np.max(points[:, 0]), np.max(otherpoints[:, 0]))
-
-    inrange = np.logical_and(points[:, 0] >= lower, points[:, 0] <= upper)
-    points = points[inrange]
+    points, otherpoints, lower, upper = _stitch_overlap(datafile, other, _, min_overlap, overlap)
     num_pts = points.shape[0]
-    if datafile_second:
-        otherpoints = otherpoints[-num_pts - 1 : -1]
-    else:
-        otherpoints = otherpoints[0:num_pts]
-    x = points[:, 0]
-    y = points[:, 1]
-    xp = otherpoints[:, 0]
-    yp = otherpoints[:, 1]
-    if func is None:
-        opts = {
-            "all": (lambda x, y, A, B, C: (x + A, y * B + C)),
-            "scale y and shift x": (lambda x, y, A, B: (x + A, B * y)),
-            "scale and shift y": (lambda x, y, B, C: (x, y * B + C)),
-            "scale y": (lambda x, y, B: (x, y * B)),
-            "shift y": (lambda x, y, C: (x, y + C)),
-            "shift both": (lambda x, y, A, C: (x + A, y + C)),
-        }
-        defaults = {
-            "all": [1, 2, 3],
-            "scale y,shift x": [1, 2],
-            "scale and shift y": [2, 3],
-            "scale y": [2],
-            "shift y": [3],
-            "shift both": [1, 3],
-        }
-        A0 = np.mean(xp) - np.mean(x)
-        C0 = np.mean(yp) - np.mean(y)
-        B0 = (np.max(yp) - np.min(yp)) / (np.max(y) - np.min(y))
-        p = np.array([0, A0, B0, C0])
-        assertion(isinstance(mode, str), "mode keyword should be a string if func is not defined")
-        mode = mode.lower()
-        assertion(mode in opts, f"mode keyword should be one of {opts.keys}")
-        func = opts[mode]
-        p0 = p[defaults[mode]]
-    else:
-        assertion(callable(func), "Keyword func should be callable if given")
-        args = getfullargspec(func)[0]  # pylint: disable=W1505
-        assertion(isiterable(p0), "Keyword parameter p0 shoiuld be iterable if keyword func is given")
-        assertion(len(p0) == len(args) - 2, "Keyword p0 should be the same length as the optional arguments to func")
+    func, p0 = _stitch_model(points, otherpoints, mode, func, p0)
     # This is a bit of a hack, we turn (x,y) points into a 1D array of x and then y data
-    set1 = np.append(x, y)
-    set2 = np.append(xp, yp)
+    set1 = np.append(points[:, 0], points[:, 1])
+    set2 = np.append(otherpoints[:, 0], otherpoints[:, 1])
     assertion(len(set1) == len(set2), "The number of points in the overlap are different in the two data sets")
 
     def _transform(set1, *p):
@@ -537,10 +555,9 @@ def stitch(
 
     # Curve fit for optimal A,B,C
     popt, pcov = curve_fit(_transform, set1, set2, p0=p0)  # pylint: disable=unbalanced-tuple-unpacking
-    perr = np.sqrt(np.diagonal(pcov))
     datafile[:, _.xcol], datafile[:, _.ycol] = func(datafile.column(_.xcol), datafile.column(_.ycol), *popt)
     datafile["Stitching Coefficients"] = list(popt)
-    datafile["Stitching Coefficient Errors"] = list(perr)
+    datafile["Stitching Coefficient Errors"] = list(np.sqrt(np.diagonal(pcov)))
     datafile["Stitching overlap"] = (lower, upper)
     datafile["Stitching Window"] = num_pts
 

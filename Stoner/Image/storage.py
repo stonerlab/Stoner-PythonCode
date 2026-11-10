@@ -9,7 +9,7 @@ import numpy as np
 import xarray as xr
 
 from ..core.base import TypeHintedDict
-from ..core.storage import _copy_metadata
+from ..core.storage import _copy_metadata, _validated_record_copy
 from .storage_coordinates import pack_coordinates
 
 __all__ = ["Frame", "ImageStorage"]
@@ -74,14 +74,27 @@ class ImageStorage:
 
     def validate(self):
         """Reject unsupported ranks, dtypes, identities, calibration and padding."""
-        if type(self.version) is not int or self.version != 1:
+        # Versions must be built-in integers: bool and NumPy scalars are not wire versions.
+        if type(self.version) is not int or self.version != 1:  # pylint: disable=unidiomatic-typecheck
             raise ValueError("Unsupported image storage version")
         if self.kind not in ("image", "stack"):
             raise ValueError("Unknown image storage kind")
         if not isinstance(self.dataset, xr.Dataset):
             raise TypeError("Image storage requires an xarray Dataset")
-        ds = self.dataset
         dims = ("y", "x") if self.kind == "image" else ("frame", "y", "x")
+        self._validate_values(dims)
+        self._validate_coordinates(dims)
+        if self.kind == "image":
+            if self.frames or min(self.dataset.sizes.values()) == 0:
+                raise ValueError("Single images require nonempty axes and no frame records")
+            if any(coord.dims not in ((), ("y",), ("x",), ("y", "x")) for coord in self.dataset.coords.values()):
+                raise ValueError("Image calibration must use scalar, axis or y/x coordinate maps")
+        else:
+            self._validate_frames()
+
+    def _validate_values(self, dims):
+        """Check eager measurements, exclusions, metadata and fill values."""
+        ds = self.dataset
         variables = {"intensity", "excluded"}
         if self.kind == "stack":
             variables |= {"valid_height", "valid_width"}
@@ -100,6 +113,10 @@ class ImageStorage:
         if not isinstance(self.metadata, TypeHintedDict):
             raise TypeError("Image metadata must be a TypeHintedDict")
         _fill(self.fill_value, dtype)
+
+    def _validate_coordinates(self, dims):
+        """Check explicit eager coordinates before rank-specific calibration."""
+        ds = self.dataset
         for axis in dims:
             if axis not in ds.coords or ds.coords[axis].dims != (axis,):
                 raise ValueError("Explicit one-dimensional dimension coordinates are required")
@@ -111,36 +128,18 @@ class ImageStorage:
         for axis in ("y", "x"):
             if ds[axis].dtype.kind not in "iuf" or not np.isfinite(ds[axis].values).all():
                 raise ValueError("Spatial coordinates must be finite real numbers")
-        if self.kind == "image":
-            if self.frames or min(ds.sizes.values()) == 0:
-                raise ValueError("Single images require nonempty axes and no frame records")
-            if any(coord.dims not in ((), ("y",), ("x",), ("y", "x")) for coord in ds.coords.values()):
-                raise ValueError("Image calibration must use scalar, axis or y/x coordinate maps")
-        else:
-            self._validate_frames()
 
     def _validate_frames(self):
         """Validate ordered frame records, valid rectangles and physical tails."""
         ds = self.dataset
-        ids = []
-        for frame in self.frames:
-            if not isinstance(frame, Frame) or not isinstance(frame.metadata, TypeHintedDict):
-                raise TypeError("Frames require typed frame records")
-            if not isinstance(frame.id, str) or str(UUID(frame.id)) != frame.id:
-                raise ValueError("Frame IDs must be canonical UUID strings")
-            if not isinstance(frame.name, str):
-                raise TypeError("Frame names must be strings")
-            _fill(frame.fill_value, ds.intensity.dtype)
-            ids.append(frame.id)
-        if len(set(ids)) != len(ids) or list(ds.frame.values) != ids:
-            raise ValueError("Frame identities must be unique and match record order")
+        self._validate_frame_records()
         for axis in ("y", "x"):
             if not np.array_equal(ds[axis].values, np.arange(ds.sizes[axis])):
                 raise ValueError("Stack y/x coordinates must be positional pixels")
         for name in ("valid_height", "valid_width"):
             if ds[name].dims != ("frame",) or ds[name].dtype.kind not in "iu":
                 raise ValueError("Valid extents must be integer frame variables")
-        for i, frame in enumerate(self.frames):
+        for i in range(len(self.frames)):
             height, width = int(ds.valid_height.values[i]), int(ds.valid_width.values[i])
             if not 0 < height <= ds.sizes["y"] or not 0 < width <= ds.sizes["x"]:
                 raise ValueError("Invalid frame extent")
@@ -149,26 +148,46 @@ class ImageStorage:
             if not ds.excluded.values[i][padding].all() or np.any(ds.intensity.values[i][padding] != 0):
                 raise ValueError("Padding must remain excluded zero")
         for name, coord in ds.coords.items():
-            if name in ("frame", "y", "x"):
-                continue
-            if coord.dims == ("frame", "y", "x"):
-                if coord.dtype.kind not in "iuf":
-                    raise ValueError("Coordinate maps must be real numeric values")
-                for i, (height, width) in enumerate(zip(ds.valid_height.values, ds.valid_width.values)):
-                    padding = np.ones(coord.shape[1:], bool)
-                    padding[:height, :width] = False
-                    if not np.isnan(coord.values[i][padding]).all():
-                        raise ValueError("Coordinate maps require NaN padding")
-            elif name in ("physical_y", "physical_x", "index_y", "index_x"):
-                axis = name[-1]
-                if coord.dims != ("frame", axis) or coord.dtype.kind not in "iuf":
-                    raise ValueError("Physical coordinates require frame and spatial dimensions")
-                extents = ds.valid_height.values if axis == "y" else ds.valid_width.values
-                for values, extent in zip(coord.values, extents):
-                    if not np.isfinite(values[:extent]).all() or not np.isnan(values[extent:]).all():
-                        raise ValueError("Physical coordinates require finite valid values and NaN padding")
-            elif coord.dims not in ((), ("frame",)):
-                raise ValueError("Unsupported stack calibration coordinate")
+            self._validate_stack_coordinate(name, coord)
+
+    def _validate_frame_records(self):
+        """Check typed records, fill values and unique ordered UUID identities."""
+        ids = []
+        for frame in self.frames:
+            if not isinstance(frame, Frame) or not isinstance(frame.metadata, TypeHintedDict):
+                raise TypeError("Frames require typed frame records")
+            if not isinstance(frame.id, str) or str(UUID(frame.id)) != frame.id:
+                raise ValueError("Frame IDs must be canonical UUID strings")
+            if not isinstance(frame.name, str):
+                raise TypeError("Frame names must be strings")
+            _fill(frame.fill_value, self.dataset.intensity.dtype)
+            ids.append(frame.id)
+        if len(set(ids)) != len(ids) or list(self.dataset.frame.values) != ids:
+            raise ValueError("Frame identities must be unique and match record order")
+
+    def _validate_stack_coordinate(self, name, coord):
+        """Check one stack calibration map or physical coordinate with its padding."""
+        ds = self.dataset
+        if name in ("frame", "y", "x"):
+            return
+        if coord.dims == ("frame", "y", "x"):
+            if coord.dtype.kind not in "iuf":
+                raise ValueError("Coordinate maps must be real numeric values")
+            for i, (height, width) in enumerate(zip(ds.valid_height.values, ds.valid_width.values)):
+                padding = np.ones(coord.shape[1:], bool)
+                padding[:height, :width] = False
+                if not np.isnan(coord.values[i][padding]).all():
+                    raise ValueError("Coordinate maps require NaN padding")
+        elif name in ("physical_y", "physical_x", "index_y", "index_x"):
+            axis = name[-1]
+            if coord.dims != ("frame", axis) or coord.dtype.kind not in "iuf":
+                raise ValueError("Physical coordinates require frame and spatial dimensions")
+            extents = ds.valid_height.values if axis == "y" else ds.valid_width.values
+            for values, extent in zip(coord.values, extents):
+                if not np.isfinite(values[:extent]).all() or not np.isnan(values[extent:]).all():
+                    raise ValueError("Physical coordinates require finite valid values and NaN padding")
+        elif coord.dims not in ((), ("frame",)):
+            raise ValueError("Unsupported stack calibration coordinate")
 
     @classmethod
     def from_numpy(cls, values, *, metadata=None):
@@ -281,9 +300,7 @@ class ImageStorage:
         return deepcopy(self)
 
     def __deepcopy__(self, memo):
-        self.validate()
-        result = type(self).__new__(type(self))
-        memo[id(self)] = result
+        result = _validated_record_copy(self, memo)
         result.kind, result.version = self.kind, self.version
         result.dataset = deepcopy(self.dataset, memo)
         result.metadata = _copy_metadata(self.metadata, memo)

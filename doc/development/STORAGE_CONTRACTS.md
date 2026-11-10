@@ -282,8 +282,8 @@ forwards a callback argument independently of operation selection.
 ```python
 frame = measurement.data                 # native only after 8c
 region = (frame['field'] < -5) | (frame['field'] > 5)
-parameters, covariance = measurement.curve_fit(
-    background, xcol='field', ycol='signal', sigma='uncertainty',
+parameters, covariance = measurement.fit.curve_fit(
+    background, x='field', y='signal', sigma='uncertainty',
     where=region, p0=[1, 0], result=None, output='fit',
 )
 model = background(frame['field'], *parameters)

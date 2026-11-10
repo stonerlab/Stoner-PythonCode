@@ -16,6 +16,29 @@ from ..core.selection import _reject_where
 from ..core.column_selection import _single_column, _insertion_position
 
 
+def _weighted_bin_column(values, weights, bin_indices, n_bins):
+    """Calculate one weighted bin mean, propagated scatter and observation count."""
+    w = weights
+    yw = values * w
+
+    sum_w = np.bincount(bin_indices, weights=w, minlength=n_bins)
+    sum_w[sum_w <= 0] = np.nan
+    sum_yw = np.bincount(bin_indices, weights=yw, minlength=n_bins)
+    counts = np.bincount(bin_indices, minlength=n_bins)
+
+    mean = sum_yw / sum_w
+
+    # Calculate the weighted uncertainty
+    variance = (values - mean[bin_indices]) ** 2
+
+    variance_n = variance / counts[bin_indices] * w / sum_w[bin_indices]
+    variance_b = np.bincount(bin_indices, weights=variance_n, minlength=n_bins)
+    std_err = np.sqrt(variance_b)
+    std_err[np.isnan(std_err)] = 0.0
+
+    return mean, std_err, counts
+
+
 def _bin_weighted(x, y_vals, bin_edges, y_errs=None):
     """Do the actual work of binning the data.
 
@@ -63,25 +86,9 @@ def _bin_weighted(x, y_vals, bin_edges, y_errs=None):
 
     # Use bincount for each column
     for j in range(m):
-        w = weights[:, j]
-        yw = y_vals[:, j] * w
-
-        sum_w = np.bincount(bin_indices, weights=w, minlength=n_bins)
-        sum_w[sum_w <= 0] = np.nan
-        sum_yw = np.bincount(bin_indices, weights=yw, minlength=n_bins)
-        binned_counts[:, j] = np.bincount(bin_indices, minlength=n_bins)
-
-        binned_y[:, j] = sum_yw / sum_w
-
-        # Calculate the weighted uncertainty
-        variance = (y_vals[:, j] - binned_y[:, j][bin_indices]) ** 2
-
-        variance_n = variance / binned_counts[:, j][bin_indices] * w / sum_w[bin_indices]
-        variance_b = np.bincount(bin_indices, weights=variance_n, minlength=n_bins)
-        std_err = np.sqrt(variance_b)
-        std_err[np.isnan(std_err)] = 0.0
-
-        binned_err[:, j] = std_err
+        binned_y[:, j], binned_err[:, j], binned_counts[:, j] = _weighted_bin_column(
+            y_vals[:, j], weights[:, j], bin_indices, n_bins
+        )
 
     # Bin centers
     bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
@@ -406,6 +413,81 @@ def deduplicate(datafile, col, action="average", clone=True):
     return data[select, :]
 
 
+def _extrapolation_models(kind, errors):
+    """Resolve the extrapolating model and its uncertainty function."""
+    kinds = {
+        "linear": lambda x, m, c: m * x + c,
+        "quadratic": lambda x, a, b, c: a * x**2 + b * x + c,
+        "cubic": lambda x, a, b, c, d: a * x**3 + b * x**2 + c * x + d,
+    }
+    errs = {
+        "linear": lambda x, me, ce, popt: np.sqrt((me * x) ** 2 + ce**2),
+        "quadratic": lambda x, ae, be, ce, popt: np.sqrt((2 * x**2 * ae) ** 2 + (x * be) ** 2 + ce**2),
+        "cubic": lambda x, ae, be, ce, de, popt: np.sqrt(
+            (3 * ae * x**3) ** 2 + (2 * x**2 * be) ** 2 + (x * ce) ** 2 + de**2
+        ),
+    }
+
+    if callable(kind):
+        kindf = kind
+        if not callable(errors):
+            raise TypeError("If kind is a callable, then errs must be defined and be callable as well")
+        errsf = errors
+    elif kind in kinds:
+        kindf = kinds[kind]
+        errsf = errs[kind]
+    else:
+        raise RuntimeError(f"Failed to recognise extrpolation function '{kind}'")
+    return kindf, errsf
+
+
+def _extrapolation_window(datafile, xcol, x, overlap):
+    """Select the local fitting window around one extrapolation coordinate."""
+    r = datafile.closest(x, xcol=xcol)
+    match overlap:
+        case int():
+            if (r.i - overlap / 2) < 0:
+                ll = 0
+                hl = min(len(datafile), overlap)
+            elif (r.i + overlap / 2) > len(datafile):
+                hl = len(datafile)
+                ll = max(hl - overlap, 0)
+            else:
+                ll = r.i - overlap / 2
+                hl = r.i + overlap / 2
+            bounds = {"_i__between": (ll, hl)}
+            mid_x = (datafile[ll, xcol] + datafile[hl - 1, xcol]) / 2.0
+        case float():
+            if (r[xcol] - overlap / 2) < datafile.min(xcol)[0]:
+                ll = datafile.min(xcol)[0]
+                hl = ll + overlap
+            elif (r[xcol] + overlap / 2) > datafile.max(xcol)[0]:
+                hl = datafile.max(xcol)[0]
+                ll = hl - overlap
+            else:
+                ll = r[xcol] - overlap / 2
+                hl = r[xcol] + overlap / 2
+            bounds = {f"{datafile.column_headers[xcol]}__between": (ll, hl)}
+            mid_x = (ll + hl) / 2.0
+        case _:
+            raise TypeError(f"Overlap should be an integer or floating point number not a {type(overlap)}")
+    return bounds, mid_x
+
+
+def _extrapolated_row(pointdata, columns, x, mid_x, kindf, errsf):
+    """Evaluate fitted channels and their propagated uncertainty at one coordinate."""
+    ret = pointdata.fit.curve_fit(kindf, x=columns.xcol, y=columns.ycol, sigma=columns.yerr, absolute_sigma=True)
+    if isinstance(ret, tuple):
+        ret = [ret]
+    values = np.zeros(2 * len(columns.ycol))
+    for iy, rt in enumerate(ret):
+        popt, pcov = rt
+        perr = np.sqrt(np.diag(pcov))
+        values[2 * iy] = kindf(x - mid_x, *popt)
+        values[2 * iy + 1] = errsf(x - mid_x, *perr, popt)
+    return values
+
+
 def extrapolate(datafile, new_x, xcol=None, ycol=None, yerr=None, overlap=20, kind="linear", errors=None):
     """Extrapolate data based on local fit to x,y data.
 
@@ -444,29 +526,7 @@ def extrapolate(datafile, new_x, xcol=None, ycol=None, yerr=None, overlap=20, ki
         the other parameters (i.e. as with :py:meth:`~Stoner.analysis.fitting.accessor.DataFitter.curve_fit`).
     """
     _ = datafile._col_args(xcol=xcol, ycol=ycol, yerr=yerr, scalar=False, single=("xcol",))
-    kinds = {
-        "linear": lambda x, m, c: m * x + c,
-        "quadratic": lambda x, a, b, c: a * x**2 + b * x + c,
-        "cubic": lambda x, a, b, c, d: a * x**3 + b * x**2 + c * x + d,
-    }
-    errs = {
-        "linear": lambda x, me, ce, popt: np.sqrt((me * x) ** 2 + ce**2),
-        "quadratic": lambda x, ae, be, ce, popt: np.sqrt((2 * x**2 * ae) ** 2 + (x * be) ** 2 + ce**2),
-        "cubic": lambda x, ae, be, ce, de, popt: np.sqrt(
-            (3 * ae * x**3) ** 2 + (2 * x**2 * be) ** 2 + (x * ce) ** 2 + de**2
-        ),
-    }
-
-    if callable(kind):
-        kindf = kind
-        if not callable(errors):
-            raise TypeError("If kind is a callable, then errs must be defined and be callable as well")
-        errsf = errors
-    elif kind in kinds:
-        kindf = kinds[kind]
-        errsf = errs[kind]
-    else:
-        raise RuntimeError(f"Failed to recognise extrpolation function '{kind}'")
+    kindf, errsf = _extrapolation_models(kind, errors)
     scalar_x = not isiterable(new_x)
     if scalar_x:
         new_x = [new_x]
@@ -475,44 +535,10 @@ def extrapolate(datafile, new_x, xcol=None, ycol=None, yerr=None, overlap=20, ki
     results = np.zeros((len(new_x), 2 * len(_.ycol)))
     work = datafile.clone
     for ix, x in enumerate(new_x):
-        r = datafile.closest(x, xcol=_.xcol)
-        match overlap:
-            case int():
-                if (r.i - overlap / 2) < 0:
-                    ll = 0
-                    hl = min(len(datafile), overlap)
-                elif (r.i + overlap / 2) > len(datafile):
-                    hl = len(datafile)
-                    ll = max(hl - overlap, 0)
-                else:
-                    ll = r.i - overlap / 2
-                    hl = r.i + overlap / 2
-                bounds = {"_i__between": (ll, hl)}
-                mid_x = (datafile[ll, _.xcol] + datafile[hl - 1, _.xcol]) / 2.0
-            case float():
-                if (r[_.xcol] - overlap / 2) < datafile.min(_.xcol)[0]:
-                    ll = datafile.min(_.xcol)[0]
-                    hl = ll + overlap
-                elif (r[_.xcol] + overlap / 2) > datafile.max(_.xcol)[0]:
-                    hl = datafile.max(_.xcol)[0]
-                    ll = hl - overlap
-                else:
-                    ll = r[_.xcol] - overlap / 2
-                    hl = r[_.xcol] + overlap / 2
-                bounds = {f"{datafile.column_headers[_.xcol]}__between": (ll, hl)}
-                mid_x = (ll + hl) / 2.0
-            case _:
-                raise TypeError(f"Overlap should be an integer or floating point number not a {type(overlap)}")
+        bounds, mid_x = _extrapolation_window(datafile, _.xcol, x, overlap)
         pointdata = work.select(**bounds)
         pointdata[:, _.xcol] = pointdata.column(_.xcol) - mid_x
-        ret = pointdata.fit.curve_fit(kindf, x=_.xcol, y=_.ycol, sigma=_.yerr, absolute_sigma=True)
-        if isinstance(ret, tuple):
-            ret = [ret]
-        for iy, rt in enumerate(ret):
-            popt, pcov = rt
-            perr = np.sqrt(np.diag(pcov))
-            results[ix, 2 * iy] = kindf(x - mid_x, *popt)
-            results[ix, 2 * iy + 1] = errsf(x - mid_x, *perr, popt)
+        results[ix] = _extrapolated_row(pointdata, _, x, mid_x, kindf, errsf)
     if scalar_x:
         results = results[0]
     return results
@@ -809,7 +835,68 @@ def outlier_detection(
     return datafile
 
 
-def scale(
+def _scale_points(datafile, other, columns, bounds, otherbounds):
+    """Prepare matched two-dimensional points from data owners or numerical arrays."""
+    working = datafile.search(columns.xcol, bounds)
+    working = ma.mask_rowcols(working, axis=0)
+    xdat = working[:, datafile.find_col(columns.xcol)]
+    ydat = working[:, datafile.find_col(columns.ycol)]
+
+    # Get data from the other. If it is already an ndarray, check size and dimensions
+
+    if isinstance(other, datafile._baseclass):
+        working2 = other.search(columns.xcol, otherbounds)
+        working2 = ma.mask_rowcols(working2, axis=0)
+        xdat2 = working2[:, other.find_col(columns.xcol)]
+        ydat2 = working2[:, other.find_col(columns.ycol)]
+        if len(xdat2) != len(xdat):
+            raise RuntimeError(f"Data lengths don't match {len(xdat)}!={len(xdat2)}")
+    elif isinstance(other, np.ndarray):
+        if other.ndim == 1:
+            other = np.atleast_2d(other).T
+        if other.shape[0] != len(xdat) or not 1 <= other.shape[1] <= 2:
+            raise RuntimeError(
+                (
+                    "If other is a numpy array it must be the same length as the number of points to match "
+                    + "to and 1 or 2 columns. (other shape={})"
+                ).format(other.shape)
+            )
+        if other.shape[1] == 1:
+            xdat2 = xdat
+            ydat2 = other[:, 0]
+        else:
+            xdat2 = other[:, 0]
+            ydat2 = other[:, 1]
+    else:
+        raise RuntimeError(f"other should be either a numpy array or subclass of DataFile, not a {type(other)}")
+
+    # Need two nx2 arrays of points now
+
+    xy1 = np.column_stack((xdat, ydat))
+    xy2 = np.column_stack((xdat2, ydat2))
+    return xy1, xy2
+
+
+def _scale_estimate(xy1, xy2, use_estimate):
+    """Estimate an affine starting matrix, falling back to the identity transform."""
+    if isinstance(use_estimate, bool) and use_estimate:
+        mid = int(len(xy1) / 2)
+        try:  # may go wrong if three points are co-linear
+            m0 = GetAffineTransform(xy1[[0, mid, -1], :], xy2[[0, mid, -1], :])
+        except (RuntimeError, np.linalg.LinAlgError):  # So use an idnetify transformation instead
+            m0 = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
+    elif isinstance(use_estimate, np.ndarray) and use_estimate.shape == (
+        2,
+        3,
+    ):  # use_estimate is an initial value transformation
+        m0 = use_estimate
+    else:  # Don't try to be clever
+        m0 = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
+    return m0
+
+
+# Preserve the established positional-call interface for existing analysis scripts.
+def scale(  # pylint: disable=too-many-positional-arguments
     datafile,
     other,
     xcol=None,
@@ -878,62 +965,13 @@ def scale(
 
     # Get our working data from this DataFile and remove masked rows
 
-    working = datafile.search(_.xcol, bounds)
-    working = ma.mask_rowcols(working, axis=0)
-    xdat = working[:, datafile.find_col(_.xcol)]
-    ydat = working[:, datafile.find_col(_.ycol)]
-
-    # Get data from the other. If it is already an ndarray, check size and dimensions
-
-    if isinstance(other, datafile._baseclass):
-        working2 = other.search(_.xcol, otherbounds)
-        working2 = ma.mask_rowcols(working2, axis=0)
-        xdat2 = working2[:, other.find_col(_.xcol)]
-        ydat2 = working2[:, other.find_col(_.ycol)]
-        if len(xdat2) != len(xdat):
-            raise RuntimeError(f"Data lengths don't match {len(xdat)}!={len(xdat2)}")
-    elif isinstance(other, np.ndarray):
-        if other.ndim == 1:
-            other = np.atleast_2d(other).T
-        if other.shape[0] != len(xdat) or not 1 <= other.shape[1] <= 2:
-            raise RuntimeError(
-                (
-                    "If other is a numpy array it must be the same length as the number of points to match "
-                    + "to and 1 or 2 columns. (other shape={})"
-                ).format(other.shape)
-            )
-        if other.shape[1] == 1:
-            xdat2 = xdat
-            ydat2 = other[:, 0]
-        else:
-            xdat2 = other[:, 0]
-            ydat2 = other[:, 1]
-    else:
-        raise RuntimeError(f"other should be either a numpy array or subclass of DataFile, not a {type(other)}")
-
-    # Need two nx2 arrays of points now
-
-    xy1 = np.column_stack((xdat, ydat))
-    xy2 = np.column_stack((xdat2, ydat2))
+    xy1, xy2 = _scale_points(datafile, other, _, bounds, otherbounds)
 
     # We're going to use three points to get an estimate for the affine transform to apply
 
-    if isinstance(use_estimate, bool) and use_estimate:
-        mid = int(len(xdat) / 2)
-        try:  # may go wrong if three points are co-linear
-            m0 = GetAffineTransform(xy1[[0, mid, -1], :], xy2[[0, mid, -1], :])
-        except (RuntimeError, np.linalg.LinAlgError):  # So use an idnetify transformation instead
-            m0 = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
-    elif isinstance(use_estimate, np.ndarray) and use_estimate.shape == (
-        2,
-        3,
-    ):  # use_estimate is an initial value transformation
-        m0 = use_estimate
-    else:  # Don't try to be clever
-        m0 = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
+    m0 = _scale_estimate(xy1, xy2, use_estimate)
     popt, perr, trans = _twoD_fit(xy1, xy2, xmode=xmode, ymode=ymode, m0=m0)
-    data = datafile.column([_.xcol, _.ycol])
-    new_data = trans(data)
+    new_data = trans(datafile.column([_.xcol, _.ycol]))
     if replace:  # In place scaling, replace and return datafile
         datafile.metadata["Transform"] = popt
         datafile.metadata["Transform Err"] = perr
@@ -1031,7 +1069,8 @@ def smooth(datafile, window="boxcar", xcol=None, ycol=None, size=None, replace=T
     return datafile
 
 
-def spline(
+# Preserve the established positional-call interface for existing analysis scripts.
+def spline(  # pylint: disable=too-many-positional-arguments
     datafile,
     xcol=None,
     ycol=None,

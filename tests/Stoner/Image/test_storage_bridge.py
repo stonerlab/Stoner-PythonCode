@@ -169,6 +169,31 @@ def test_mask_selection_targets_owner(image, monkeypatch):
     assert np.all(image.mask)
 
 
+def test_shape_selection_disconnects_cursor_callbacks(image, monkeypatch):
+    """Release actual Cursor callbacks even though connect_event returns no ID."""
+    from matplotlib import pyplot as plt
+    from Stoner.Image import widgets
+
+    selector = widgets.ShapeSelect()
+    cursors = []
+    original_cursor = widgets.Cursor
+
+    def capture_cursor(axes):
+        cursor = original_cursor(axes)
+        cursors.append(cursor)
+        return cursor
+
+    monkeypatch.setattr(widgets, "Cursor", capture_cursor)
+    monkeypatch.setattr(plt, "pause", lambda _seconds: setattr(selector, "finished", True))
+    selected = selector(image)
+
+    assert selected.shape == image.shape
+    assert "_select" not in image.__dict__
+    assert not plt.fignum_exists(selector.fig.number)
+    callbacks = selector.fig.canvas.callbacks.callbacks
+    assert all(connection not in handlers for connection in cursors[0]._cids for handlers in callbacks.values())
+
+
 def test_imshow_retains_actual_axes(image):
     from matplotlib import pyplot as plt
 

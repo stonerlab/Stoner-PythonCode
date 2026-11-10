@@ -69,7 +69,8 @@ try:
 except ImportError:
     Hyperspy_ok = False
     hs = None
-    hsload = None
+    # Keep the callable import alias consistent when the optional loader is absent.
+    hsload = None  # pylint: disable=invalid-name
 
 if __vi__[1] < 7:
     from re import _pattern_type  # pylint: disable = E0611
@@ -125,6 +126,8 @@ def get_filedialog(what="file", **opts):
     Returns:
         A file name or directory or list of files.
     """
+    # Defer owner/factory dependencies until the package has initialised.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from .tools.widgets import file_dialog
 
     funcs = {"file": "OpenFile", "directory": "SelectDirectory", "files": "OpenFiles", "save": "SaveFile"}
@@ -185,7 +188,7 @@ def _jit(func, *_, **__):
 class _dummy:
     """A class that does nothing so that float64 can be an instance of it safely."""
 
-    def jit(self, func, *_, **__):  # pylint: disable=no-self-use
+    def jit(self, func, *_, **__):
         """Null decorator function."""
         return func
 

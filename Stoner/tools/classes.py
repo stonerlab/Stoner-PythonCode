@@ -240,6 +240,8 @@ def copy_into(source: Data, dest: Data) -> Data:
     Metadata values and existing type hints are preserved without re-inferring
     types. Nested metadata values are deep-copied so the destination is independent.
     """
+    # Defer owner/factory dependencies until the package has initialised.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from ..core.base import TypeHintedDict
 
     copied_storage = "_storage_owner" in source.__dict__ and hasattr(dest, "export_storage")

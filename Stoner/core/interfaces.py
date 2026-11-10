@@ -86,6 +86,10 @@ class DataFileInterfacesMixin:
         if owner is not None and not isinstance(name, (str, _pattern_type)):
             if not (isinstance(name, tuple) and name and isinstance(name[0], str)):
                 return self._storage_slice(name)
+        return self._legacy_item(name)
+
+    def _legacy_item(self, name):
+        """Resolve metadata and numerical items for legacy subclasses without an owner."""
         match name:
             case str() | _pattern_type():
                 try:

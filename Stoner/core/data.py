@@ -20,6 +20,7 @@ from ..compat import index_types, string_types
 from ..tools import all_type, get_option, make_Data
 from ..tools.file import (
     URL_SCHEMES,
+    _apply_loader_options,
     FileManager,
     auto_load_classes,
     file_dialog,
@@ -28,7 +29,7 @@ from ..tools.file import (
     get_loader,
 )
 from ..tools.tests import ClassTester
-from .numerical import numerical_result
+from .numerical import numerical_result, column_arguments
 from .base import TypeHintedDict, metadataObject
 from .exceptions import StonerLoadError, StonerSetasError
 from .interfaces import DataFileInterfacesMixin
@@ -338,7 +339,6 @@ class Data(
         self.__dict__.pop("_data", None)
         self.__dict__.pop("_metadata", None)
         self.__dict__["_storage_owner"]._editing = False
-        return
 
     def _init_dict(self, arg, **kwargs):  # pylint: disable=unused-argument
         """Initialise from dictionary."""
@@ -467,6 +467,8 @@ class Data(
             Stoner.analysis.fitting.accessor.DataFitter:
                 A fresh lightweight accessor using this measurement's live state.
         """
+        # Defer owner/factory dependencies until the package has initialised.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from ..analysis.fitting.accessor import DataFitter
 
         return DataFitter(self)
@@ -485,6 +487,8 @@ class Data(
                 or select a named method such as line, hist or surface. Drawing
                 returns a Matplotlib Axes and does not show or save the figure.
         """
+        # Defer owner/factory dependencies until the package has initialised.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from ..plot.accessor import DataPlotter
 
         return DataPlotter(self)
@@ -605,7 +609,6 @@ class Data(
 
     def _col_args(self, *args, **kwargs):
         """Create an object which has keys  based either on arguments or setas attribute."""
-        from .numerical import column_arguments
 
         return column_arguments(self, *args, **kwargs)
 
@@ -830,14 +833,7 @@ class Data(
 
         outp = np.zeros((r + 1, c + 1), dtype=object)
         outp[:, :] = "..."
-        ch = [self.column_headers[ix] if ix >= 0 else "...." for ix in interesting]
-
-        for ix, (h, i) in enumerate(zip(ch, col_assignments)):
-            spaces1 = " " * ((c_w - len(h)) // 2)
-            spaces2 = " " * ((c_w - len(i)) // 2)
-            ch[ix] = f"{spaces1}{h}{lb}{spaces2}{i}"
-            if self.debug:
-                print(len(spaces1), len(spaces2))
+        ch = self._repr_headers(interesting, col_assignments, c_w, lb)
         outp[0, 1:] = ch
         outp[1, 1:] = col_assignments
         outp[0, 0] = f"TDI Format 1.5{lb}index"
@@ -860,6 +856,18 @@ class Data(
                     col_out = np.where(self.mask[:, c], "#####", values[:, c].astype(str))
                     outp[1 : len(values) + 1, ic + 1] = col_out
         return tabulate(outp[1:], outp[0], tablefmt=fmt, numalign="decimal", stralign="left")
+
+    def _repr_headers(self, interesting, col_assignments, width, linebreak):
+        """Centre displayed headers and role labels without reading numerical values."""
+        ch = [self.column_headers[ix] if ix >= 0 else "...." for ix in interesting]
+
+        for ix, (h, i) in enumerate(zip(ch, col_assignments)):
+            spaces1 = " " * ((width - len(h)) // 2)
+            spaces2 = " " * ((width - len(i)) // 2)
+            ch[ix] = f"{spaces1}{h}{linebreak}{spaces2}{i}"
+            if self.debug:
+                print(len(spaces1), len(spaces2))
+        return ch
 
     def _setattr_col(self, name, value):
         """Attempt to either assign data columns if set up, or setas setting.
@@ -913,7 +921,6 @@ class Data(
             else:
                 mask[i] = selected
         self.mask = mask
-        return
 
     def _push_mask(self, mask=None):
         """Copy the current data mask to a temporary store and replace it with a new mask if supplied.
@@ -1010,10 +1017,7 @@ class Data(
             except StonerLoadError as err:
                 raise ValueError(f"Unable to load {filename}") from err
 
-        for k, i in kwargs.items():
-            if not callable(getattr(ret, k, lambda x: False)):
-                setattr(ret, k, i)
-        ret._kwargs = kwargs
+        _apply_loader_options(ret, kwargs)
         filetype = ret.__class__.__name__
         if loaded_class:
             datafile = ret

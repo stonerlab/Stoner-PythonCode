@@ -187,17 +187,8 @@ def get_file_name_type(
     return filename, filetype
 
 
-def auto_load_classes(
-    filename: Filename,
-    baseclass: Type[metadataObject],
-    debug: bool = False,
-    args: Optional[Tuple] = None,
-    kwargs: Optional[Dict] = None,
-) -> Type[metadataObject]:
-    """Work through subclasses of parent to find one that will load this file."""
-    mimetype = get_mime_type(filename, debug=debug)
-    args = args if args is not None else ()
-    kwargs = kwargs if kwargs is not None else {}
+def _filename_pattern(filename):
+    """Resolve a candidate suffix without changing MIME or loader priority selection."""
     match filename:
         case str() | pathlib.Path():
             pattern = pathlib.Path(filename).suffix
@@ -216,7 +207,29 @@ def auto_load_classes(
             pattern = pathlib.Path(filename.filename).suffix
         case _:
             raise TypeError(f"Unable to figure out how to deal with {filename}")
-    pattern = pattern.lower()
+    return pattern.lower()
+
+
+def _apply_loader_options(loaded, options):
+    """Apply non-callable loader options while retaining the original option mapping."""
+    for key, value in options.items():
+        if not callable(getattr(loaded, key, lambda _: False)):
+            setattr(loaded, key, value)
+    loaded._kwargs = options
+
+
+def auto_load_classes(
+    filename: Filename,
+    baseclass: Type[metadataObject],
+    debug: bool = False,
+    args: Optional[Tuple] = None,
+    kwargs: Optional[Dict] = None,
+) -> Type[metadataObject]:
+    """Work through subclasses of parent to find one that will load this file."""
+    mimetype = get_mime_type(filename, debug=debug)
+    args = args if args is not None else ()
+    kwargs = kwargs if kwargs is not None else {}
+    pattern = _filename_pattern(filename)
     for loader in next_filer(pattern, mimetype, what=baseclass):
         try:
             match baseclass:

@@ -83,6 +83,8 @@ def _delim_detect(line):
 def load_imagefile(new_image, *args, **kwargs):
     """Read numerical pixels and publish them through the image owner."""
     filename, args, kwargs = get_filename(args, kwargs)
+    # Defer owner/factory dependencies until the package has initialised.
+    # pylint: disable-next=import-outside-toplevel
     from ...Image.numerical import load_pixels
 
     try:
@@ -100,9 +102,9 @@ if rsciio:
         patterns = [(f".{ext}", 64) for ext in plugin["file_extensions"]]
         mime_types = []
         name = plugin["name"]
-        WHAT = "Image"
+        image_kind = "Image"
 
-        CODE = f'''
+        loader_code = f'''
 def load_{name}file(new_image, *args, **kwargs):
     """Use a RosettaSciIO plugin to load an image file."""
     filename, args, kwargs = get_filename(args, kwargs)
@@ -125,7 +127,7 @@ def load_{name}file(new_image, *args, **kwargs):
             "make_Class": make_Class,
             "StonerLoadError": StonerLoadError,
         }
-        exec(CODE, namespace)  # nosec pylint: disable=exec-used
+        exec(loader_code, namespace)  # nosec B102  # pylint: disable=exec-used
         func = namespace[f"load_{name}file"]
-        register_loader(patterns=patterns, mime_types=mime_types, name=name, what=WHAT)(func)
+        register_loader(patterns=patterns, mime_types=mime_types, name=name, what=image_kind)(func)
         setattr(sys.modules[__name__], f"load_{name}file", func)

@@ -13,6 +13,51 @@ from .utils import threshold
 from ..core.selection import _reject_where
 
 
+def _sg_peak_positions(datafile, ycol, xcol, width, poly, kwargs, peaks, troughs, sort):
+    """Locate and interpolate significant derivative crossings for an SG peak search."""
+    d1 = datafile.SG_Filter(ycol, xcol=xcol, points=width, poly=poly, order=1).ravel()
+    d2 = datafile.SG_Filter(
+        ycol, xcol=xcol, points=2 * width, poly=poly, order=2
+    ).ravel()  # 2nd differential requires more smoothing
+
+    # We're going to ignore the start and end of the arrays
+    index_offset = int(width / 2)
+    d1 = d1[index_offset:-index_offset]
+    d2 = d2[index_offset:-index_offset]
+
+    # Pad the ends of d2 with the mean value
+    pad = np.mean(d2[index_offset:-index_offset])
+    d2[:index_offset] = pad
+    d2[-index_offset:] = pad
+
+    # Set the significance from the 2nd ifferential if not already set
+    significance = kwargs.pop(
+        "significance", np.max(np.abs(d2)) / (2 * width)
+    )  # Base an apriori significance on max d2y/dx2 / 20
+    if isinstance(significance, int):  # integer significance is inverse to floating
+        significance = np.max(np.abs(d2)) / significance  # Base an apriori significance on max d2y/dx2 / 20
+
+    d2_interp = sp_interp1d(np.arange(len(d2)), d2, kind="cubic")
+    # Ensure we have some X-data
+    if xcol is None:
+        xdata = np.arange(len(datafile))
+    else:
+        xdata = datafile.column(xcol).ravel()
+    xdata = sp_interp1d(np.arange(len(datafile)), xdata, kind="cubic")
+
+    possible_peaks = np.array(threshold(0, d1, rising=troughs, falling=peaks))
+    curvature = np.abs(d2_interp(possible_peaks))
+
+    # Filter just the significant peaks
+    possible_peaks = np.array([p for ix, p in enumerate(possible_peaks) if abs(curvature[ix]) > significance])
+    # Sort in order of significance
+    if sort:
+        possible_peaks = np.take(possible_peaks, np.argsort(np.abs(d2_interp(possible_peaks))))
+
+    xdat = xdata(possible_peaks + index_offset)
+    return xdat
+
+
 def peaks(datafile, **kwargs):
     """Locates peaks and/or troughs in a column of data by using SG-differentiation.
 
@@ -79,46 +124,7 @@ def peaks(datafile, **kwargs):
     width = max(width, poly + 1)
     setas = datafile.setas.clone  # pylint: disable=E0203
     datafile.setas = ""
-    d1 = datafile.SG_Filter(ycol, xcol=xcol, points=width, poly=poly, order=1).ravel()
-    d2 = datafile.SG_Filter(
-        ycol, xcol=xcol, points=2 * width, poly=poly, order=2
-    ).ravel()  # 2nd differential requires more smoothing
-
-    # We're going to ignore the start and end of the arrays
-    index_offset = int(width / 2)
-    d1 = d1[index_offset:-index_offset]
-    d2 = d2[index_offset:-index_offset]
-
-    # Pad the ends of d2 with the mean value
-    pad = np.mean(d2[index_offset:-index_offset])
-    d2[:index_offset] = pad
-    d2[-index_offset:] = pad
-
-    # Set the significance from the 2nd ifferential if not already set
-    significance = kwargs.pop(
-        "significance", np.max(np.abs(d2)) / (2 * width)
-    )  # Base an apriori significance on max d2y/dx2 / 20
-    if isinstance(significance, int):  # integer significance is inverse to floating
-        significance = np.max(np.abs(d2)) / significance  # Base an apriori significance on max d2y/dx2 / 20
-
-    d2_interp = sp_interp1d(np.arange(len(d2)), d2, kind="cubic")
-    # Ensure we have some X-data
-    if xcol is None:
-        xdata = np.arange(len(datafile))
-    else:
-        xdata = datafile.column(xcol).ravel()
-    xdata = sp_interp1d(np.arange(len(datafile)), xdata, kind="cubic")
-
-    possible_peaks = np.array(threshold(0, d1, rising=troughs, falling=peaks))
-    curvature = np.abs(d2_interp(possible_peaks))
-
-    # Filter just the significant peaks
-    possible_peaks = np.array([p for ix, p in enumerate(possible_peaks) if abs(curvature[ix]) > significance])
-    # Sort in order of significance
-    if sort:
-        possible_peaks = np.take(possible_peaks, np.argsort(np.abs(d2_interp(possible_peaks))))
-
-    xdat = xdata(possible_peaks + index_offset)
+    xdat = _sg_peak_positions(datafile, ycol, xcol, width, poly, kwargs, peaks, troughs, sort)
 
     if modify:
         datafile.data = datafile.interpolate(xdat, xcol=xcol, kind="cubic")
@@ -131,6 +137,56 @@ def peaks(datafile, **kwargs):
     # Return - but remembering to add back on the offset that we took off due to differentials not working at
     # start and end
     return ret
+
+
+def _peak_window_options(datafile, xcol, width, distance, plateau_size, kwargs):
+    """Convert physical peak widths and distances into sample-count options."""
+    if isinstance(width, float):  # Convert a floating point width unto an integer.
+        xmin, xmax = datafile.span(xcol)
+        width = int(len(datafile) * width / (xmax - xmin))
+    elif istuple(width, float, float):
+        xmin, xmax = datafile.span(xcol)
+        width = int(len(datafile) * width[0] / (xmax - xmin)), int(len(datafile) * width[1] / (xmax - xmin))
+    if width is not None:
+        kwargs["width"] = width
+
+    if isinstance(distance, float):  # Convert a floating point width unto an integer.
+        xmin, xmax = datafile.span(xcol)
+        distance = int(np.ceil(len(datafile) * distance / (xmax - xmin)))
+    if distance is not None:
+        kwargs["distance"] = distance
+
+    if isinstance(plateau_size, float):  # Convert a floating point plateau_size unto an integer.
+        xmin, xmax = datafile.span(xcol)
+        plateau_size = int(len(datafile) * plateau_size / (xmax - xmin))
+    elif istuple(plateau_size, float, float):
+        xmin, xmax = datafile.span(xcol)
+        plateau_size = (
+            int(len(datafile) * plateau_size[0] / (xmax - xmin)),
+            int(len(datafile) * plateau_size[1] / (xmax - xmin)),
+        )
+    if plateau_size is not None:
+        kwargs["plateau_size"] = plateau_size
+
+
+def _peak_properties(datafile, xcol, peaks, data, sort):
+    """Order peak properties and convert sample positions back to data coordinates."""
+    for sort_key in ["prominences", "peak_heights", "widths"]:
+        if sort_key in data:
+            break
+    else:
+        sort_key = None
+    if sort and sort_key:
+        idx = np.sort(np.array(list(zip(data[sort_key], np.arange(peaks.size)))), axis=0)[:, 1].astype(int)
+        peaks = peaks[idx]
+        for k in data:
+            data[k] = data[k][idx]
+    xmin, xmax = datafile.span(xcol)
+    xconv = len(datafile) / (xmax - xmin)
+    for k, v in data.items():
+        if k.startswith("left") or k.startswith("right") or k == "widths":
+            data[k] = v / xconv + (xmin if k != "widths" else 0)
+    return peaks
 
 
 def find_peaks(datafile, **kwargs):
@@ -222,53 +278,14 @@ def find_peaks(datafile, **kwargs):
     if isiterable(ycol):
         ycol = ycol[0]
 
-    if isinstance(width, float):  # Convert a floating point width unto an integer.
-        xmin, xmax = datafile.span(xcol)
-        width = int(len(datafile) * width / (xmax - xmin))
-    elif istuple(width, float, float):
-        xmin, xmax = datafile.span(xcol)
-        width = int(len(datafile) * width[0] / (xmax - xmin)), int(len(datafile) * width[1] / (xmax - xmin))
-    if width is not None:
-        kwargs["width"] = width
-
-    if isinstance(distance, float):  # Convert a floating point width unto an integer.
-        xmin, xmax = datafile.span(xcol)
-        distance = int(np.ceil(len(datafile) * distance / (xmax - xmin)))
-    if distance is not None:
-        kwargs["distance"] = distance
-
-    if isinstance(plateau_size, float):  # Convert a floating point plateau_size unto an integer.
-        xmin, xmax = datafile.span(xcol)
-        plateau_size = int(len(datafile) * plateau_size / (xmax - xmin))
-    elif istuple(plateau_size, float, float):
-        xmin, xmax = datafile.span(xcol)
-        plateau_size = (
-            int(len(datafile) * plateau_size[0] / (xmax - xmin)),
-            int(len(datafile) * plateau_size[1] / (xmax - xmin)),
-        )
-    if plateau_size is not None:
-        kwargs["plateau_size"] = plateau_size
+    _peak_window_options(datafile, xcol, width, distance, plateau_size, kwargs)
 
     row_indices = np.flatnonzero(datafile.search_index(xcol, bounds))
     seek = datafile[row_indices, :]
     peaks, data = sp_find_peaks(seek[:, ycol], **kwargs)
     peaks = row_indices[peaks]
 
-    for sort_key in ["prominences", "peak_heights", "widths"]:
-        if sort_key in data:
-            break
-    else:
-        sort_key = None
-    if sort and sort_key:
-        idx = np.sort(np.array(list(zip(data[sort_key], np.arange(peaks.size)))), axis=0)[:, 1].astype(int)
-        peaks = peaks[idx]
-        for k in data:
-            data[k] = data[k][idx]
-    xmin, xmax = datafile.span(_.xcol)
-    xconv = len(datafile) / (xmax - xmin)
-    for k, v in data.items():
-        if k.startswith("left") or k.startswith("right") or k == "widths":
-            data[k] = v / xconv + (xmin if k != "widths" else 0)
+    peaks = _peak_properties(datafile, _.xcol, peaks, data, sort)
     peak_data = datafile[peaks, :]
     for k, v in data.items():
         if prefix is None:

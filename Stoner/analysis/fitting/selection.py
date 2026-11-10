@@ -20,6 +20,25 @@ def _observations(datafile, specification, raw, *, uncertainty=False):
     return raw[:, _single_column(datafile, specification, "observation")]
 
 
+def _channel_inputs(datafile, raw, columns, x_values, model_mask, selected, yc, error, xcols):
+    """Prepare one independent fitting channel and its full-axis exclusion masks."""
+    y = _observations(datafile, yc, raw)
+    residual_mask = model_mask | np.ma.getmaskarray(y) | ~np.isfinite(y.data)
+    included = selected & ~residual_mask
+    uncertainty = None
+    if error is not None:
+        uncertainty = _observations(datafile, error, raw, uncertainty=True)
+        included &= ~np.ma.getmaskarray(uncertainty) & np.isfinite(uncertainty.data)
+        if np.any(uncertainty.data[included] <= 0):
+            raise ValueError("Eligible fitting uncertainties must be strictly positive")
+        uncertainty = uncertainty.data[included]
+    channel_columns = deepcopy(columns)
+    channel_columns.xcol = xcols[0] if len(xcols) == 1 else xcols
+    channel_columns.ycol = yc if isinstance(yc, np.ndarray) else [yc]
+    return (x_values[included], y.data[included], uncertainty, channel_columns,
+            x_values, y.data, model_mask, residual_mask)
+
+
 def curve_fit_inputs(datafile, xcol, ycol, sigma, where, bounds):
     """Resolve per-channel inputs and full-axis model/residual exclusions."""
     raw = datafile.to_numpy()
@@ -48,29 +67,5 @@ def curve_fit_inputs(datafile, xcol, ycol, sigma, where, bounds):
         errors = [errors] * len(ycols)
     inputs = []
     for yc, error in zip(ycols, errors):
-        y = _observations(datafile, yc, raw)
-        residual_mask = model_mask | np.ma.getmaskarray(y) | ~np.isfinite(y.data)
-        included = selected & ~residual_mask
-        uncertainty = None
-        if error is not None:
-            uncertainty = _observations(datafile, error, raw, uncertainty=True)
-            included &= ~np.ma.getmaskarray(uncertainty) & np.isfinite(uncertainty.data)
-            if np.any(uncertainty.data[included] <= 0):
-                raise ValueError("Eligible fitting uncertainties must be strictly positive")
-            uncertainty = uncertainty.data[included]
-        channel_columns = deepcopy(columns)
-        channel_columns.xcol = xcols[0] if len(xcols) == 1 else xcols
-        channel_columns.ycol = yc if isinstance(yc, np.ndarray) else [yc]
-        inputs.append(
-            (
-                x_values[included],
-                y.data[included],
-                uncertainty,
-                channel_columns,
-                x_values,
-                y.data,
-                model_mask,
-                residual_mask,
-            )
-        )
+        inputs.append(_channel_inputs(datafile, raw, columns, x_values, model_mask, selected, yc, error, xcols))
     return inputs

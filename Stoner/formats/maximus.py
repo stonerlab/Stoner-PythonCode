@@ -1,39 +1,38 @@
 # -*- coding: utf-8 -*-
 """Support files from the Bessy Maximus instrument."""
 
-import json
 import re
-from copy import deepcopy
 from os import path
 from pathlib import Path
 from warnings import warn
 
 import h5py
-import numpy as np
 
 from ..compat import string_types
-from ..core.base import TypeHintedDict
 
 # Imports for use in Stoner package
 from ..core.exceptions import StonerLoadError
 from ..Image import ImageFile
-from ..Image.numerical import numerical_image
 from ..Image.stack import ImageStack
-from ..Image.scan_metadata import ScanMetadataMixin, read_exclusions, write_exclusions
-from ..tools.file import FileManager, HDFFileManager, file_dialog, get_filename
+from ..Image.scan_metadata import ScanMetadataMixin
+from ..tools.file import HDFFileManager, file_dialog, get_filename
+from .utils.scan import (
+    parse_scan_args, raise_scan_error as _raise_error, write_scan_frame,
+    initialise_scan_metadata, read_scan_frame, write_common_metadata, read_common_metadata, read_scan_groups,
+)
+
+from .utils import maximus as _scan_io
+
+# Preserve historical import paths while sharing the reviewed scan parser.
+hdr_to_dict = _scan_io.hdr_to_dict
+read_scan = _scan_io.read_scan
+_flatten_header = _scan_io.flatten_header
+_process_key = _scan_io.process_key
+_read_images = _scan_io.read_images
+_read_pointscan = _scan_io.read_pointscan
+
 
 SCAN_NO = re.compile(r"MPI_(\d+)")
-
-
-def _raise_error(openfile, message=""):
-    """Raise a StonerLoadError after trying to close file."""
-    try:
-        raise StonerLoadError(message)
-    finally:
-        try:
-            openfile.close()
-        except (AttributeError, TypeError, ValueError, IOError):
-            pass
 
 
 class MaximusStack(ScanMetadataMixin, ImageStack):
@@ -43,31 +42,11 @@ class MaximusStack(ScanMetadataMixin, ImageStack):
 
     def __init__(self, *args, **kwargs):
         """Construct the attocube subclass of ImageStack."""
-        args = list(args)
-        if len(args) > 0:
-            for ix, arg in enumerate(args):
-                if isinstance(arg, Path):
-                    args[ix] = str(arg)
-        if len(args) > 0 and isinstance(args[0], string_types):
-            root_name = args.pop(0)
-            scan = SCAN_NO.search(root_name)
-            if scan:
-                scan = int(scan.groups()[0])
-            else:
-                scan = -1
-        elif len(args) > 0 and isinstance(args[0], int):
-            scan = args.pop(0)
-            root_name = f"MPI_{scan:039d}"
-        else:
-            root_name = kwargs.pop("root", None)
-            scan = kwargs.pop("scan", -1)
+        args, root_name, scan = parse_scan_args(args, kwargs, SCAN_NO, "MPI_{:039d}", path_type=Path)
 
         super().__init__(*args, **kwargs)
 
-        self._common_metadata = TypeHintedDict()
-
-        self.scan_no = scan
-        self._common_metadata["Scan #"] = scan
+        initialise_scan_metadata(self, scan)
 
         if root_name:
             self._load(root_name)
@@ -103,11 +82,8 @@ class MaximusStack(ScanMetadataMixin, ImageStack):
             self.append(image)
         return self
 
-    def _instantiate(self, idx):
-        """Return a stable frame with live common-header defaults."""
-        return super()._instantiate(idx)
-
-    def to_xarray(self, *, format="stack"):
+    # The published keyword is format; retain it for caller compatibility.
+    def to_xarray(self, *, format="stack"):  # pylint: disable=redefined-builtin
         """Export storage or the detector channel on the recorded scan grid and energy axis."""
         if format == "stack":
             return super().to_xarray()
@@ -158,26 +134,7 @@ class MaximusStack(ScanMetadataMixin, ImageStack):
         if "image" not in g:
             _raise_error(g.parent, message=f"{g.name} does not have a signal dataset !")
         tmp = self.type()  # pylint: disable=E1102
-        data = g["image"]
-        if np.prod(np.array(data.shape)) > 0:
-            tmp.image = data[...]
-        else:
-            tmp.image = [[]]
-        metadata = g.require_group("metadata")
-        typehints = g.get("typehints", None)
-        if not isinstance(typehints, h5py.Group):
-            typehints = {}
-        else:
-            typehints = typehints.attrs
-        for i in sorted(metadata.attrs):
-            v = metadata.attrs[i]
-            t = typehints.get(i, "Detect")
-            if isinstance(v, string_types) and t != "Detect":  # We have typehints and this looks like it got exported
-                tmp.metadata[f"{i}{{{t}}}".strip()] = f"{v}".strip()
-            else:
-                tmp[i] = metadata.attrs[i]
-        tmp.filename = path.basename(g.name)
-        return read_exclusions(g, tmp)
+        return read_scan_frame(g, tmp, "image")
 
     def to_hdf5(self, filename=None):
         """Save the AttocubeScan to an hdf5 file."""
@@ -197,20 +154,7 @@ class MaximusStack(ScanMetadataMixin, ImageStack):
             f.attrs["scan_no"] = self.scan_no
             f.attrs["groups"] = list(self.groups.keys())
             f.attrs["names"] = self.__names__()
-            if "common_metadata" in f.parent and "common_metadata" not in f:
-                f["common_metadata"] = h5py.SoftLink(f.parent["common_metadata"].name)
-                f["common_typehints"] = h5py.SoftLink(f.parent["common_typehints"].name)
-            else:
-                metadata = f.require_group("common_metadata")
-                typehints = f.require_group("common_typehints")
-                for k in self._common_metadata:
-                    try:
-                        typehints.attrs[k] = self._common_metadata._typehints[k]
-                        metadata.attrs[k] = self._common_metadata[k]
-                    except TypeError:
-                        # We get this for trying to store a bad data type - fallback to metadata export to string
-                        parts = self._common_metadata.export(k).split("=")
-                        metadata.attrs[k] = "=".join(parts[1:])
+            write_common_metadata(f, self._common_metadata)
 
             for g, group in self.groups.items():  # Recurse to save groups
                 grp = f.require_group(g)
@@ -219,26 +163,8 @@ class MaximusStack(ScanMetadataMixin, ImageStack):
             for ch in self.__names__():
                 signal = f.require_group(ch)
                 data = self[ch]
-                signal.require_dataset(
-                    "image",
-                    data=data.to_numpy(),
-                    shape=data.shape,
-                    dtype=data.dtype,
-                    compression=self.compression,
-                    compression_opts=self.compression_opts,
-                )
-                metadata = signal.require_group("metadata")
-                typehints = signal.require_group("typehints")
-                signal["image"][...] = data.to_numpy(masked=False)
-                write_exclusions(signal, data)
-                for k in data.metadata:
-                    try:
-                        typehints.attrs[k] = data.metadata._typehints[k]
-                        metadata.attrs[k] = data.metadata[k]
-                    except TypeError:
-                        # We get this for trying to store a bad data type - fallback to metadata export to string
-                        parts = data.metadata.export(k).split("=")
-                        metadata.attrs[k] = "=".join(parts[1:])
+                write_scan_frame(signal, data, "image", compression=self.compression,
+                                 compression_opts=self.compression_opts)
         return self
 
     @classmethod
@@ -249,204 +175,21 @@ class MaximusStack(ScanMetadataMixin, ImageStack):
         self.filename = filename
         with HDFFileManager(self.filename, "r") as f:
             self.scan_no = f.attrs["scan_no"]
-            if "groups" in f.attrs:
-                sub_grps = f.attrs["groups"]
-            else:
-                sub_grps = None
+            sub_grps = f.attrs.get("groups")
             if "names" in f.attrs:
                 names = f.attrs["names"]
             else:
                 names = []
-            grps = list(f.keys())
-            if "common_metadata" not in grps or "common_typehints" not in grps:
-                _raise_error(f, message="Couldn't find common metadata groups, something is not right here!")
-            metadata = f["common_metadata"].attrs
-            typehints = f["common_typehints"].attrs
-            for i in sorted(metadata):
-                v = metadata[i]
-                t = typehints.get(i, "Detect")
-                if (
-                    isinstance(v, string_types) and t != "Detect"
-                ):  # We have typehints and this looks like it got exported
-                    self._common_metadata[f"{i}{{{t}}}".strip()] = f"{v}".strip()
-                else:
-                    self._common_metadata[i] = metadata[i]
-            grps.remove("common_metadata")
-            grps.remove("common_typehints")
+            grps = read_common_metadata(self._common_metadata, f)
             if sub_grps is None:
                 sub_grps = grps
-            for grp in sub_grps:
-                if "type" in f[grp].attrs:
-                    self.groups[grp] = cls.read_hdf5(f[grp], *args, **kwargs)
-                    continue
-                g = f[grp]
-                self.append(self._read_image(g))
+            read_scan_groups(
+                self, f, sub_grps, self._read_image, cls.read_hdf5, args, kwargs
+            )
             for grp in names:
                 g = f[grp]
                 self.append(self._read_image(g))
         return self
-
-
-def hdr_to_dict(filename, to_python=True):
-    """Convert .hdr metadata file to  json or python dictionary.
-
-    Args:
-        filename (str):
-            Name of file to read (can also be a pathlib.Path).
-
-    Keyword Arguments:
-        to_python (bool):
-            If true, return a python dictionary, otherwise return a json text string.
-
-    Returns:
-        (dict or str):
-            Either the header file as a python dictionary, or a json string.
-    """
-    bare = re.compile(r"([\s\{])([A-Za-z][A-Za-z0-9_]*)\s\:")  # Match for keys
-    term = re.compile(r",\s*([\]\}])")  # match for extra , at the end of a dict or list
-    nan = re.compile(r"([\-0-9\.]+\#QNAN)")  # Handle NaN values
-
-    # Use oathlib to suck in the file
-    with FileManager(filename, "r") as f:
-        hdr = f.read()
-    # Simple string replacements first
-    stage1 = hdr.replace("=", ":").replace(";", ",").replace("(", "[").replace(")", "]")
-    # Wrap in { }
-    stage2 = f"{{{stage1}}}"
-    # Regexp replacements next
-    stage3 = bare.sub('\\1"\\2" :', stage2)
-    stage4 = term.sub("\\n\\1", stage3)
-    stage5 = nan.sub("NaN", stage4)
-
-    if to_python:
-        ret = _process_key(json.loads(stage5))
-    else:  # orettyify the json
-        ret = json.dumps(json.loads(stage5), indent=4)
-
-    return ret
-
-
-def read_scan(file_root):
-    """Find the .hdr and .xim/,xsp files for a scan load them into memory.
-
-    Args:
-        file_root (str): This is the part of the hdr filename beore the extension.
-
-    Returns:
-        (dict,ndarray, (n-1d arrays)):
-            Returns the metadata and an ndarray of the scan data and then n 1D arrays of the axes.
-    """
-    hdr = Path(str(file_root) + ".hdr")
-    header = hdr_to_dict(hdr, to_python=True)
-    scan_type = header["ScanDefinition"]["Type"]
-
-    if "Image Scan" in scan_type:
-        data, dims = _read_images(hdr.parent.glob(f"{hdr.stem}*.xim"), header)
-    elif "Point Scan" in scan_type:
-        data, dims = _read_pointscan(hdr.parent.glob(f"{hdr.stem}*.xsp"), header)
-    else:
-        raise ValueError(f"Unrecognised scan type {scan_type}")
-
-    return header, data, dims
-
-
-def _flatten_header(value):
-    """Flatten nested dictionaries."""
-    if isinstance(value, list) and len(value) == 1:
-        value = value[0]
-    if not isinstance(value, dict):
-        return value
-    dels = []
-    adds = {}
-    for key, item in value.items():
-        item = _flatten_header(item)
-        if isinstance(item, dict):
-            for item_key, item_val in item.items():
-                adds[f"{key}.{item_key}"] = item_val
-            dels.append(key)
-    for key in dels:
-        del value[key]
-    value.update(adds)
-    return value
-
-
-def _process_key(value):
-    """Carry out post loading processing of data structures."""
-    if isinstance(value, dict):
-        for key, val in value.items():
-            value[key] = _process_key(val)
-        return value
-    if isinstance(value, list):
-        if len(value) > 0 and isinstance(value[0], int) and len(value) == value[0] + 1:  # Lists prepended with size
-            del value[0]
-        a = np.array(value)
-        if a.dtype.kind in ["f", "i", "u", "U"]:  # convert arrays to arrays
-            return a
-        value = [_process_key(v) for v in value]
-    return value
-
-
-def _read_images(files, header):
-    """Read one or more .xim files and construct the data array.
-
-    Args:
-        files (glob): glob pattern of xim files to read.
-        header (dict): contents of the .jdr file.
-
-    Returns:
-        data (ndarray): 2D or 3D data.
-        dims (tuple of 1D arrays): 2 or 3 1D arrays corresponding to the dimensions of data.
-    """
-    xims = list(files)
-    scandef = header["ScanDefinition"]
-    # Known unimplemented feature: multi-region scans need facility format guidance and real fixtures.
-    # See maintenance/MAINTENANCE_PLAN.md, Known limitations and follow-ups, before changing region/file/axis mapping.
-    region = scandef["Regions"][0]
-    if len(xims) > 1:
-        data = np.stack([np.genfromtxt(x)[::-1] for x in xims]).T
-    elif len(xims) == 1:
-        data = np.genfromtxt(xims[0])[::-1]
-    else:  # no files !
-        raise IOError("No Images located")
-    xpts = region["PAxis"]["Points"]
-    ypts = region["QAxis"]["Points"]
-    if data.ndim == 3:
-        zpts = scandef["StackAxis"]["Points"]
-        dims = (xpts, ypts, zpts)
-    else:
-        dims = (xpts, ypts)
-    return data, dims
-
-
-def _read_pointscan(files, header):
-    """Read one or more .xsp files and construct the data array.
-
-    Args:
-        files (glob): glob pattern of xim files to read.
-        header (dict): contents of the .jdr file.
-
-    Returns:
-        data (ndarray): 2D or 3D data.
-        dims (tuple of 1D arrays): 2 or 3 1D arrays corresponding to the dimensions of data.
-    """
-    xsps = list(files)
-    scandef = header["ScanDefinition"]
-    # Known unimplemented feature: multi-region scans need facility format guidance and real fixtures.
-    # See maintenance/MAINTENANCE_PLAN.md, Known limitations and follow-ups, before changing region/file/axis mapping.
-    region = scandef["Regions"][0]
-    if len(xsps) > 1:
-        data = np.stack([np.genfromtxt(x)[:, 1] for x in xsps]).T
-    elif len(xsps) == 1:
-        data = np.genfromtxt(xsps[0])[:, 1]
-    else:  # No files !
-        raise IOError("No Spectra located")
-    xpts = region["PAxis"]["Points"]
-    if data.ndim == 2:
-        zpts = scandef["StackAxis"]["Points"]
-        dims = (xpts, zpts)
-    else:
-        dims = (xpts,)
-    return data, dims
 
 
 if __name__ == "__main__":

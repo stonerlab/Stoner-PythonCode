@@ -217,5 +217,7 @@ def register_model(model=None, *, name=None, replace=False, independent_vars=Non
             If the name is invalid, reserved, missing for a factory or duplicated.
     """
     if model is None:
-        return lambda candidate: register_model(candidate, name=name, replace=replace, independent_vars=independent_vars)
+        return lambda candidate: register_model(
+            candidate, name=name, replace=replace, independent_vars=independent_vars
+        )
     return model_registry.register(model, name=name, replace=replace, independent_vars=independent_vars)

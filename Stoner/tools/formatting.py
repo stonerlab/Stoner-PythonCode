@@ -68,6 +68,67 @@ prefs = {
 }
 
 
+def _error_scale(value, error, mode, fmt):
+    """Scale a value and uncertainty together and produce their common exponent suffix."""
+    # Sort out special formatting for different modes
+    if mode == "float":  # Standard
+        suffix_val = ""
+    elif mode == "eng":  # Use SI prefixes
+        if -1 <= floor(log10(abs(value))) <= 3:
+            v_mag = 0
+        else:
+            v_mag = floor(log10(abs(value)) / 3.0) * 3.0
+        prefixes = prefs.get(fmt, prefs["text"])
+        if v_mag in prefixes:
+            if fmt == "latex":
+                suffix_val = rf"\,\mathrm{{{{{prefixes[v_mag]}}}}}"
+            else:
+                suffix_val = " " + prefixes[v_mag]
+            value /= 10**v_mag
+            error /= 10**v_mag
+        else:  # Implies 10^-3<x<10^3
+            suffix_val = ""
+    elif mode == "sci":  # Scientific mode - raise to common power of 10
+        v_mag = floor(log10(abs(value)))
+        if fmt == "latex":
+            suffix_val = rf"\times 10^{{{{{int(v_mag)}}}}}\,"
+        elif fmt == "html":
+            suffix_val = f"&times; 10<sup>{int(v_mag)}</sup> "
+        else:
+            suffix_val = f"E{int(v_mag)} "
+        value /= 10**v_mag
+        error /= 10**v_mag
+    else:  # Bad mode
+        raise RuntimeError(f"Unrecognised mode: {mode} in format_error")
+    return value, error, suffix_val
+
+
+def _error_template(prefix, units, fmt, u_mag, suffix_val):
+    """Construct the escaped value/uncertainty template for one output representation."""
+    # Protect {} in units string
+    units = units.replace("{", "{{").replace("}", "}}")
+    prefix = prefix.replace("{", "{{").replace("}", "}}")
+    if fmt == "latex":  # Switch to latex math mode symbols
+        val_fmt_str = rf"${prefix}{{:.{int(abs(u_mag))}f}}\pm "
+        if units != "":
+            suffix_fmt = rf"\mathrm{{{{{units}}}}}"
+        else:
+            suffix_fmt = ""
+        suffix_fmt += "$"
+    elif fmt == "html":  # Switch to latex math mode symbols
+        val_fmt_str = rf"{prefix}{{:.{int(abs(u_mag))}f}}&plusmin;"
+        suffix_fmt = units
+    else:  # Plain text
+        val_fmt_str = rf"{prefix}{{:.{int(abs(u_mag))}f}}+/-"
+        suffix_fmt = units
+    if u_mag < 0:  # the error is less than 1, so con strain decimal places
+        err_fmt_str = r"{:." + str(int(abs(u_mag))) + "f}"
+    else:  # We'll be converting it to an integer anyway
+        err_fmt_str = r"{}"
+    fmt_str = val_fmt_str + err_fmt_str + suffix_val + suffix_fmt
+    return fmt_str
+
+
 def format_error(value, error=None, **kwargs):
     r"""Format answer with the uncertaintly to 1sf and the value to no more sf's than the uncertainty.
 
@@ -115,36 +176,7 @@ def format_error(value, error=None, **kwargs):
         prefix = escape_func(prefix)
         units = escape_func(units)
 
-    # Sort out special formatting for different modes
-    if mode == "float":  # Standard
-        suffix_val = ""
-    elif mode == "eng":  # Use SI prefixes
-        if -1 <= floor(log10(abs(value))) <= 3:
-            v_mag = 0
-        else:
-            v_mag = floor(log10(abs(value)) / 3.0) * 3.0
-        prefixes = prefs.get(fmt, prefs["text"])
-        if v_mag in prefixes:
-            if fmt == "latex":
-                suffix_val = rf"\,\mathrm{{{{{prefixes[v_mag]}}}}}"
-            else:
-                suffix_val = " " + prefixes[v_mag]
-            value /= 10**v_mag
-            error /= 10**v_mag
-        else:  # Implies 10^-3<x<10^3
-            suffix_val = ""
-    elif mode == "sci":  # Scientific mode - raise to common power of 10
-        v_mag = floor(log10(abs(value)))
-        if fmt == "latex":
-            suffix_val = rf"\times 10^{{{{{int(v_mag)}}}}}\,"
-        elif fmt == "html":
-            suffix_val = f"&times; 10<sup>{int(v_mag)}</sup> "
-        else:
-            suffix_val = f"E{int(v_mag)} "
-        value /= 10**v_mag
-        error /= 10**v_mag
-    else:  # Bad mode
-        raise RuntimeError(f"Unrecognised mode: {mode} in format_error")
+    value, error, suffix_val = _error_scale(value, error, mode, fmt)
 
     # Now do the rounding of the value based on error to 1 s.f.
     e2 = error
@@ -155,27 +187,7 @@ def format_error(value, error=None, **kwargs):
     value = round(value / 10**u_mag) * 10**u_mag
     u_mag = min(0, u_mag)  # Force integer results to have no dp
 
-    # Protect {} in units string
-    units = units.replace("{", "{{").replace("}", "}}")
-    prefix = prefix.replace("{", "{{").replace("}", "}}")
-    if fmt == "latex":  # Switch to latex math mode symbols
-        val_fmt_str = rf"${prefix}{{:.{int(abs(u_mag))}f}}\pm "
-        if units != "":
-            suffix_fmt = rf"\mathrm{{{{{units}}}}}"
-        else:
-            suffix_fmt = ""
-        suffix_fmt += "$"
-    elif fmt == "html":  # Switch to latex math mode symbols
-        val_fmt_str = rf"{prefix}{{:.{int(abs(u_mag))}f}}&plusmin;"
-        suffix_fmt = units
-    else:  # Plain text
-        val_fmt_str = rf"{prefix}{{:.{int(abs(u_mag))}f}}+/-"
-        suffix_fmt = units
-    if u_mag < 0:  # the error is less than 1, so con strain decimal places
-        err_fmt_str = r"{:." + str(int(abs(u_mag))) + "f}"
-    else:  # We'll be converting it to an integer anyway
-        err_fmt_str = r"{}"
-    fmt_str = val_fmt_str + err_fmt_str + suffix_val + suffix_fmt
+    fmt_str = _error_template(prefix, units, fmt, u_mag, suffix_val)
     if error >= 1.0:
         error = int(error)
         value = int(value)

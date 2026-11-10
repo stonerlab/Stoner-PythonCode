@@ -11,7 +11,9 @@ import sys
 import zlib
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-import Stoner
+# Checkout path must be configured before importing the measured source.
+# pylint: disable-next=wrong-import-position
+import Stoner  # noqa: E402
 
 
 def inventory_objects(build):
@@ -120,8 +122,11 @@ if __name__ == "__main__":
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps(result, indent=2))
-    if (result["missing_dynamic_data_methods"] or result["unexpected_removed_api_objects"]
-            or result["unexpected_warnings"]
-            or (args.require_fitting_functions and result["missing_fitting_functions"])
-            or not all(item["documented"] for item in result["primary_classes"].values())):
+    failed = (
+        result["missing_dynamic_data_methods"], result["unexpected_removed_api_objects"],
+        result["unexpected_warnings"],
+        args.require_fitting_functions and result["missing_fitting_functions"],
+        not all(item["documented"] for item in result["primary_classes"].values()),
+    )
+    if any(failed):
         sys.exit(1)

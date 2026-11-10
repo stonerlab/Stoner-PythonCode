@@ -79,11 +79,13 @@ class _SurfaceModel(Model):
     def __init__(self, **kwargs):
         super().__init__(quadratic_surface if self._quadratic else plane_surface, independent_vars=["x", "y"], **kwargs)
         self._conditioning = None
+        self._normal_names = ()
         for name in self.param_names:
             self.set_param_hint(name[len(self.prefix):], value=0.)
 
     def guess(self, data, x=None, y=None, **kwargs):
         """Guess physical coefficients using a centred full-rank linear solution."""
+        del kwargs  # Preserve the lmfit guess protocol without extra model options.
         x, y = np.asarray(x), np.asarray(y)
         normal, transform = conditioning(x, y, self._quadratic)
         cx, cy, sx, sy = normal
@@ -106,6 +108,7 @@ class _SurfaceModel(Model):
         return params
 
     def eval(self, params=None, **kwargs):
+        """Evaluate conditioned coefficients unless physical parameters are overridden."""
         physical_override = any(name in kwargs or name[len(self.prefix):] in kwargs for name in self.param_names)
         if (self._conditioning is not None and params is not None and not physical_override
                 and all(name in params for name in self._normal_names)):
@@ -116,6 +119,7 @@ class _SurfaceModel(Model):
 
     def _jacobian(self, params, data, weights, x=None, y=None):
         """Return the exact weighted residual Jacobian for conditioned free coefficients."""
+        del params, data  # Linear coefficient derivatives do not depend on these inputs.
         cx, cy, sx, sy = self._conditioning
         matrix = design_matrix((np.asarray(x)-cx)/sx, (np.asarray(y)-cy)/sy, self._quadratic)
         return -matrix if weights is None else -matrix*np.asarray(weights)[:, None]

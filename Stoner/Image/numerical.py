@@ -18,7 +18,11 @@ from .widgets import RegionSelect
 @cache
 def _functions():
     """Collect numerical operations once, without defining an array subclass."""
+    # Preserve lazy image adapters and avoid owner/accessor import cycles.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from scipy import ndimage
+    # Preserve lazy image adapters and avoid owner/accessor import cycles.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from skimage import (
         color,
         exposure,
@@ -31,6 +35,8 @@ def _functions():
         transform,
         util,
     )
+    # Preserve lazy image adapters and avoid owner/accessor import cycles.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from . import imagefuncs, kerrfuncs
 
     result = {}
@@ -63,6 +69,7 @@ def _functions():
 
 def load_pixels(filename, **kwargs):
     """Read ordinary image pixels and stored metadata without a custom array class."""
+    del kwargs  # Retain the common loader call signature for ordinary pixel files.
     filename = str(filename)
     metadata = TypeHintedDict()
     if Path(filename).suffix.lower() == ".npy":
@@ -74,6 +81,8 @@ def load_pixels(filename, **kwargs):
             if not is_tiff:
                 metadata.update(source.info)
             if is_tiff and pixels.ndim == 3:
+                # Preserve lazy image adapters and avoid owner/accessor import cycles.
+                # pylint: disable-next=import-outside-toplevel,cyclic-import
                 from skimage import io
 
                 pixels = np.ascontiguousarray(io.imread(filename)).view(np.uint32)[:, :, 0]
@@ -125,6 +134,8 @@ def numerical_image(values=None, *, metadata=None, **kwargs):
         result.max_box = (0, result.shape[1], 0, result.shape[0])
         result.centre = (result.shape[0] / 2, result.shape[1] / 2)
         result.aspect = result.shape[1] / result.shape[0] if result.shape[0] else 0
+    # Preserve lazy image adapters and avoid owner/accessor import cycles.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from .attrs import DrawProxy
 
     result.draw = DrawProxy(result, result)
@@ -186,19 +197,25 @@ def box(self, *args, **kwargs):
         case _:
             raise ValueError(f"crop accepts tuple of length 4, {len(args)} given.")
 
-    for i, item in enumerate(box):  # replace None with max extent
+    box = _normalise_bounds(self, box)
+    return slice(box[2], box[3]), slice(box[0], box[1])
+
+
+def _normalise_bounds(image, bounds):
+    """Resolve fractional, explicit and omitted pixel bounds without changing crop conventions."""
+    for i, item in enumerate(bounds):  # replace None with max extent
         match item:
             case float() | np.float16() | np.float32() | np.float64() if 0 <= item <= 1:
                 if i < 2:
-                    box[i] = int(round(self.shape[1] * item))
+                    bounds[i] = int(round(image.shape[1] * item))
                 else:
-                    box[i] = int(round(self.shape[0] * item))
+                    bounds[i] = int(round(image.shape[0] * item))
             case float() | np.float16() | np.float32() | np.float64():
-                box[i] = int(round(item))
+                bounds[i] = int(round(item))
             case int() | np.int16() | np.int32() | np.int64():
                 pass
             case None:
-                box[i] = self.max_box[i]
+                bounds[i] = image.max_box[i]
             case _:
                 raise TypeError(f"Arguments for box should be floats, integers or None, not {type(item)}")
-    return slice(box[2], box[3]), slice(box[0], box[1])
+    return bounds

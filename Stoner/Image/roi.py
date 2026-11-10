@@ -281,6 +281,8 @@ class ImageROI:
                 Owner; cancellation leaves its previous ROI unchanged. Callbacks
                 and preview artists are removed, and borrowed targets are restored.
         """
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .roi_widgets import select_roi
 
         return select_roi(self._image, "rectangle", ax=ax, coordinates=coordinates)
@@ -298,6 +300,8 @@ class ImageROI:
             ImageFile:
                 Owner; previous ROI is retained on cancellation or failed selection.
         """
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .roi_widgets import select_roi
 
         return select_roi(self._image, "polygon", ax=ax, coordinates=coordinates)

@@ -15,18 +15,19 @@ from matplotlib.widgets import SpanSelector
 
 from ..compat import mpl_version
 
-QT_VERSION = None
+# Retain the established public Qt binding indicator used by clients and widgets.
+QT_VERSION = None  # pylint: disable=invalid-name
 try:
     from PyQt5.QtWidgets import QApplication, QFileDialog, QWidget
 
-    QT_VERSION = 5
+    QT_VERSION = 5  # pylint: disable=invalid-name
 except ImportError:
     pass
 if QT_VERSION is None:
     try:
         from PyQt6.QtWidgets import QApplication, QFileDialog, QWidget  # noQA
 
-        QT_VERSION = 6
+        QT_VERSION = 6  # pylint: disable=invalid-name
     except ImportError:
         pass
 if QT_VERSION is None:
@@ -186,6 +187,8 @@ class RangeSelect:
             self.ycol.remove(self.xcol)
         # This transient selector owns its figure, not the measurement's recent
         # rendering state or another open pyplot figure.
+        # Defer owner/factory dependencies until the package has initialised.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from ..plot.state import live_figure
 
         previous = self.data.__dict__.get("_plot_state")

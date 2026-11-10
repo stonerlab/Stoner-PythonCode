@@ -28,6 +28,8 @@ class ColumnSchema(Sequence):
     _columns: tuple
 
     def __init__(self, columns=()):
+        # Defer owner/factory dependencies until the package has initialised.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .storage import Column
 
         records = tuple(columns)
@@ -68,6 +70,8 @@ class ColumnSchema(Sequence):
 
     def resolve(self, selector, *, force_list=False, first=False):
         """Apply the unchanged CS2 matching and cardinality rules."""
+        # Defer owner/factory dependencies until the package has initialised.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .storage import resolve_columns
 
         return resolve_columns(self, selector, force_list=force_list, first=first)
@@ -88,6 +92,8 @@ class ColumnSchema(Sequence):
 
     def resized(self, width):
         """Preserve overlapping records and describe newly added numerical columns."""
+        # Defer owner/factory dependencies until the package has initialised.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .storage import Column
 
         records = list(self[:width])
@@ -119,6 +125,8 @@ def _unique_records(records):
 
 def _resolve_roles(headers, selector, *, force_list=False, first=False):
     """Resolve detached headers with CS2 semantics without inventing column IDs."""
+    # Defer owner/factory dependencies until the package has initialised.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from .storage import resolve_columns
 
     return resolve_columns(tuple(_Header(header) for header in headers), selector,
@@ -154,6 +162,8 @@ def _assign_roles(headers, roles, key, value):
 
 def _parse_roles(headers, roles, args, options):
     """Prepare callable Setas syntax without mutating current roles or options."""
+    # Defer owner/factory dependencies until the package has initialised.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from .utils import decode_string
 
     options = dict(options)
@@ -200,6 +210,8 @@ def _add_roles(headers, roles, other):
 
 def _subtract_roles(headers, roles, other):
     """Prepare role/selector subtraction, preserving encoded role-string grammar."""
+    # Defer owner/factory dependencies until the package has initialised.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from .utils import decode_string
 
     result = list(roles)
@@ -243,6 +255,9 @@ def _update_roles(headers, roles, assignments):
 
 def _role_groups(roles, shape, *, row=False, startx=0, no_guess=False, what=None):
     """Derive fresh scientific groups with absolute uncertainty positions."""
+    del row  # Retained for callers of the historical row/column facade.
+    # Defer owner/factory dependencies until the package has initialised.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from ..tools import AttributeStore
 
     roles = tuple(roles)

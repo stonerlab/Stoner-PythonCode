@@ -12,6 +12,7 @@ import pandas as pd
 from Stoner.core.column_schema import ColumnSchema
 from Stoner.core.storage_owner import DataOwner
 from .model import ColumnIndex, IndexOwner, combine, fixture, pickle_roundtrip
+from .benchmark import environment, source_hashes
 
 
 def describe(frame, original):
@@ -49,7 +50,7 @@ def _native_matrix(original, backend):
         "loc_duplicates": lambda f: f.loc[:, ["Signal"]],
         "take": lambda f: f.take([3, 0, 1], axis=1),
         "drop": lambda f: f.drop(columns="Signal"),
-        "insert": lambda f: insert(f),
+        "insert": insert,
         "concat_rows_same": lambda f: pd.concat([f, f], ignore_index=True),
         "concat_rows_conflict": lambda f: pd.concat([f, conflict], ignore_index=True),
         "concat_rows_ordinary": lambda f: pd.concat([f, ordinary], ignore_index=True),
@@ -63,7 +64,7 @@ def _native_matrix(original, backend):
         "series_to_frame": lambda f: f.iloc[:, 0].to_frame(),
         "plain_export": lambda f: pd.DataFrame(f.to_numpy(copy=True), columns=list(f.columns)),
         "pickle": pickle_roundtrip,
-        "replace_ordinary": lambda f: set_axis(f),
+        "replace_ordinary": set_axis,
     }
     rows = []
     for operation, transform in operations.items():
@@ -83,6 +84,7 @@ def _native_matrix(original, backend):
 
 
 def native_matrix():
+    """Compare schema propagation through ordinary pandas operations."""
     package = fixture()
     return (_native_matrix(DataOwner(package).frame, "composed") +
             _native_matrix(IndexOwner(package).frame, "index"))
@@ -100,12 +102,14 @@ def owner_matrix():
             "reorder": lambda owner: owner.select(columns=[3, 0, 1]),
             "repeat": lambda owner: owner.select(columns=[1, 1, 0]),
             "drop": lambda owner: owner.select(columns=[0, 3, 4, 5, 6, 7]),
-            "insert": lambda owner: insert_owner(owner),
+            "insert": insert_owner,
             "clone": deepcopy,
             "pickle": pickle_roundtrip,
-            "package_import": lambda owner: owner_type(owner.export_storage()),
-            "concat_rows": lambda owner: combine([owner, owner], axis=0, owner_type=owner_type),
-            "concat_columns": lambda owner: combine([owner, owner], axis=1, owner_type=owner_type),
+            "package_import": lambda owner, owner_type=owner_type: owner_type(owner.export_storage()),
+            "concat_rows": lambda owner, owner_type=owner_type: combine([owner, owner], axis=0, owner_type=owner_type),
+            "concat_columns": lambda owner, owner_type=owner_type: combine(
+                [owner, owner], axis=1, owner_type=owner_type
+            ),
         }
         for operation, transform in operations.items():
             original = owner_type(package)
@@ -131,6 +135,7 @@ def owner_matrix():
 
 
 def edit(owner, field):
+    """Edit one owner field through the bound schema interface."""
     if field == "header":
         owner.headers[1] = "renamed"
     else:
@@ -139,26 +144,29 @@ def edit(owner, field):
 
 
 def insert_owner(owner):
+    """Insert one excluded column while retaining owner side state."""
     owner.insert_columns(1, np.ma.array(np.ones((64, 1), dtype=int), mask=True),
                          headers=["new"], roles=["y"])
     return owner
 
 
 def insert(frame):
+    """Insert an ordinary pandas column for the native-operation comparison."""
     frame.insert(1, "new", 0)
     return frame
 
 
 def set_axis(frame):
+    """Replace the custom Index with ordinary column labels."""
     frame.columns = pd.Index(list(frame.columns))
     return frame
 
 
 def main():
+    """Write the native and owner transformation matrices with source evidence."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    from .benchmark import environment, source_hashes
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(dict(environment=environment(), sources=source_hashes(),

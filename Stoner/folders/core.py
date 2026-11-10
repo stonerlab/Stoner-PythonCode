@@ -19,6 +19,7 @@ from . import functions, methods
 from .each import Item as EachItem
 from .groups import GroupsDict
 from .metadata import MetadataProxy
+from pandas.api.types import is_numeric_dtype
 
 regexp_type = (_pattern_type,)
 
@@ -790,15 +791,11 @@ class BaseFolder(MutableSequence):
 
     def __add__(self, other):
         """Implement the addition operator for BaseFolder and metadataObjects."""
-        result = deepcopy(self)
-        result = _add_core_(result, other)
-        return result
+        return _add_core_(deepcopy(self), other)
 
     def __iadd__(self, other):
         """Implement the addition operator for BaseFolder and metadataObjects."""
-        result = self
-        result = _add_core_(result, other)
-        return result
+        return _add_core_(self, other)
 
     def __truediv__(self, other):
         """Implement the divide operator as a grouping function for a :py:class:`BaseFolder`."""
@@ -864,15 +861,11 @@ class BaseFolder(MutableSequence):
 
     def __sub__(self, other):
         """Implement the addition operator for BaseFolder and metadataObjects."""
-        result = deepcopy(self)
-        result = _sub_core_(result, other)
-        return result
+        return _sub_core_(deepcopy(self), other)
 
     def __isub__(self, other):
         """Implement the addition operator for BaseFolder and metadataObjects."""
-        result = self
-        result = _sub_core_(result, other)
-        return result
+        return _sub_core_(self, other)
 
     def __deepcopy__(self, memo):
         """Provide support for copy.deepcopy to work."""
@@ -959,7 +952,6 @@ class BaseFolder(MutableSequence):
                 return item[name]
             except KeyError:
                 if name in item.metadata.common_keys:
-                    from pandas.api.types import is_numeric_dtype
 
                     frame = item.metadata.slice(name, output="frame")
                     if all(is_numeric_dtype(dtype) for dtype in frame.dtypes):

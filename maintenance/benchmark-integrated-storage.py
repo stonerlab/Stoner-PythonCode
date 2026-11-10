@@ -10,8 +10,14 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import subprocess
+import subprocess  # nosec B404  # isolated developer-selected benchmark checkouts.
 import sys
+
+
+if __package__:
+    from .storage_prototype.limits import migration_limits
+else:
+    from storage_prototype.limits import migration_limits
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -26,6 +32,17 @@ def fingerprint(root):
         digest.update(path.relative_to(root).as_posix().encode() + b"\0")
         digest.update(path.read_bytes().replace(b"\r\n", b"\n") + b"\0")
     return digest.hexdigest()
+
+
+def _compare_measurements(old, new, size, workload):
+    """Validate paired dimensions and apply the agreed timing/allocation gates."""
+    dimensions = old["dimensions"]
+    if dimensions != new["dimensions"]:
+        raise RuntimeError("Paired workload dimensions differ")
+    time_limit, memory_limit = migration_limits(old, workload)
+    passed = new["median_seconds"] <= time_limit and new["traced_peak_bytes"] <= memory_limit
+    return dict(size=size, workload=workload, passed=passed,
+                time_limit=time_limit, memory_limit=memory_limit)
 
 
 def main():
@@ -58,9 +75,9 @@ def main():
                 continue
             pair = {}
             for backend, root in roots.items():
-                result = subprocess.run(
+                result = subprocess.run(  # nosec B603  # fixed Python worker; no shell.
                     [sys.executable, "-c", worker, str(root), str(ROOT), workload, size, str(args.repeats)],
-                    cwd=root, env=env, capture_output=True, text=True,
+                    cwd=root, env=env, capture_output=True, text=True, check=False,
                 )
                 if result.returncode:
                     raise RuntimeError(f"{backend} {size} {workload} failed ({result.returncode}): {result.stderr}")
@@ -73,22 +90,10 @@ def main():
                 pair[backend] = item
                 report["measurements"].append(item)
             old, new = pair["legacy"], pair["production"]
-            dimensions = old["dimensions"]
-            if dimensions != new["dimensions"]:
-                raise RuntimeError("Paired workload dimensions differ")
-            if "rows" in dimensions:
-                payload = (dimensions["rows"] + dimensions.get("appends", 0)) * dimensions["columns"] * 9
-            elif "frames" in dimensions:
-                payload = (dimensions["frames"] + (workload == "stack_insert")) * dimensions["height"] * dimensions["width"] * 3
-            else:
-                payload = 0
-            time_limit = max(2 * old["median_seconds"], old["median_seconds"] + 0.005)
-            memory_limit = max(2 * old["traced_peak_bytes"], 3 * payload + 1024**2)
-            passed = new["median_seconds"] <= time_limit and new["traced_peak_bytes"] <= memory_limit
-            report["comparisons"].append(dict(size=size, workload=workload, passed=passed,
-                                              time_limit=time_limit, memory_limit=memory_limit))
+            comparison = _compare_measurements(old, new, size, workload)
+            report["comparisons"].append(comparison)
             args.output.write_text(json.dumps(report, indent=2), encoding="utf-8")
-            print(f"{size} {workload}: {'PASS' if passed else 'FAIL'} "
+            print(f"{size} {workload}: {'PASS' if comparison['passed'] else 'FAIL'} "
                   f"{old['median_seconds'] * 1000:.3f} -> {new['median_seconds'] * 1000:.3f} ms; "
                   f"{old['traced_peak_bytes']} -> {new['traced_peak_bytes']} bytes", flush=True)
     return 0 if all(item["passed"] for item in report["comparisons"]) else 1

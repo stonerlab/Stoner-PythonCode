@@ -18,6 +18,7 @@ __all__ = [
 
 from collections.abc import Mapping
 from configparser import ConfigParser as SafeConfigParser
+from inspect import signature
 from functools import partial, wraps
 from importlib import import_module
 from io import IOBase
@@ -66,6 +67,19 @@ def _get_model_(model):
     if not isinstance(model, Model):
         raise TypeError(f"model {model.__name__} is not an instance of llmfit.Model")
     return model
+
+
+def _model_independent_vars(model_func, independent_vars):
+    """Validate explicit independent names before constructing a model class."""
+    if independent_vars is None:
+        return None
+    if isinstance(independent_vars, str):
+        raise TypeError("independent_vars must be a sequence of variable names.")
+    independent_vars = tuple(independent_vars)
+    if (not independent_vars or len(set(independent_vars)) != len(independent_vars)
+            or any(var not in signature(model_func).parameters for var in independent_vars)):
+        raise ValueError("independent_vars must name unique arguments of the decorated function.")
+    return independent_vars
 
 
 def make_model(model_func=None, *, name=None, replace=False, independent_vars=None):
@@ -127,15 +141,7 @@ def make_model(model_func=None, *, name=None, replace=False, independent_vars=No
         return partial(make_model, name=name, replace=replace, independent_vars=independent_vars)
     if not callable(model_func):
         raise TypeError("make_model requires a callable model function")
-    if independent_vars is not None:
-        from inspect import signature
-
-        if isinstance(independent_vars, str):
-            raise TypeError("independent_vars must be a sequence of variable names.")
-        independent_vars = tuple(independent_vars)
-        if (not independent_vars or len(set(independent_vars)) != len(independent_vars)
-                or any(var not in signature(model_func).parameters for var in independent_vars)):
-            raise ValueError("independent_vars must name unique arguments of the decorated function.")
+    independent_vars = _model_independent_vars(model_func, independent_vars)
 
     class _ModelDecorator(Model):  # pylint: disable=abstract-method
         __doc__ = model_func.__doc__
@@ -266,6 +272,40 @@ def _ini_csv_options(config, overrides):
     return options
 
 
+def _read_data_config(inifile):
+    """Read and validate the measurement section without taking stream ownership."""
+    if SafeConfigParser is None:
+        raise RuntimeError("Need to have ConfigParser module installed for this to work.")
+    config = SafeConfigParser()
+    if isinstance(inifile, string_types):
+        config.read(inifile)
+    elif isinstance(inifile, IOBase):
+        if inifile.seekable():
+            inifile.seek(0)
+        config.read_file(inifile)
+    if not config.has_section("Data"):
+        raise RuntimeError("Configuration file lacks a [Data] section to describe data.")
+    return config
+
+
+def _configured_data_columns(config):
+    """Resolve optional configured coordinate and uncertainty column selectors."""
+    cols = {"x": 0, "y": 1, "e": None}  # Defaults
+
+    for c in ["x", "y", "e"]:
+        if not config.has_option("Data", c):
+            pass
+        else:
+            try:
+                cols[c] = config.get("Data", c)
+                cols[c] = int(cols[c])
+            except ValueError:
+                pass
+        if cols[c] is None:
+            del cols[c]
+    return cols
+
+
 def cfg_data_from_ini(inifile, filename=None, **kwargs):
     r"""Load a measurement and assign its fitting columns from an INI file.
 
@@ -311,17 +351,7 @@ def cfg_data_from_ini(inifile, filename=None, **kwargs):
         Explicit loader keywords override the corresponding normalised INI
         value. CSV layout entries are ignored for other loader types.
     """
-    if SafeConfigParser is None:
-        raise RuntimeError("Need to have ConfigParser module installed for this to work.")
-    config = SafeConfigParser()
-    if isinstance(inifile, string_types):
-        config.read(inifile)
-    elif isinstance(inifile, IOBase):
-        if inifile.seekable():
-            inifile.seek(0)
-        config.read_file(inifile)
-    if not config.has_section("Data"):
-        raise RuntimeError("Configuration file lacks a [Data] section to describe data.")
+    config = _read_data_config(inifile)
 
     if config.has_option("Data", "type"):
         typ = config.get("Data", "type").split(".")
@@ -342,19 +372,7 @@ def cfg_data_from_ini(inifile, filename=None, **kwargs):
             if filename in ["False", "True"]:
                 filename = bool(filename)
     data = data.__class__.load(filename, auto_load=False, filetype=typ, **layout)
-    cols = {"x": 0, "y": 1, "e": None}  # Defaults
-
-    for c in ["x", "y", "e"]:
-        if not config.has_option("Data", c):
-            pass
-        else:
-            try:
-                cols[c] = config.get("Data", c)
-                cols[c] = int(cols[c])
-            except ValueError:
-                pass
-        if cols[c] is None:
-            del cols[c]
+    cols = _configured_data_columns(config)
 
     data.setas(**cols)  # pylint: disable=not-callable
     return data

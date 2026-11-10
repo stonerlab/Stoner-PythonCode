@@ -31,35 +31,35 @@ def test_table_lossless_roundtrip(table):
     """Retain hidden integers, explicit metadata types, roles and duplicate IDs."""
     package = table.export_storage()
     restored = Table.from_storage(package)
-    assert restored.column_ids == table.column_ids
-    assert restored.to_numpy().dtype == np.dtype("int16")
-    assert restored.metadata["run"] == "001"
-    assert restored.metadata.type("run") == table.metadata.type("run")
-    assert restored[1, 1] is np.ma.masked
+    assert restored.column_ids == table.column_ids  # nosec B101  # pytest check.
+    assert restored.to_numpy().dtype == np.dtype("int16")  # nosec B101  # pytest check.
+    assert restored.metadata["run"] == "001"  # nosec B101  # pytest check.
+    assert restored.metadata.type("run") == table.metadata.type("run")  # nosec B101  # pytest check.
+    assert restored[1, 1] is np.ma.masked  # nosec B101  # pytest check.
     restored.mask[1, 1] = False
-    assert restored[1, 1] == 100 and table.mask[1, 1]
+    assert restored[1, 1] == 100 and table.mask[1, 1]  # nosec B101  # pytest check.
     restored.metadata["nested"]["history"].append(3)
-    assert table.metadata["nested"]["history"] == [1, 2]
+    assert table.metadata["nested"]["history"] == [1, 2]  # nosec B101  # pytest check.
     package.values.iloc[0, 0] = 900
-    assert restored[0, 0] == table[0, 0] == 0
+    assert restored[0, 0] == table[0, 0] == 0  # nosec B101  # pytest check.
 
 
 def test_structural_identity_and_accessor(table):
     """Move masks/roles with both duplicates and allocate IDs for repetition."""
     order = [2, 0, 1]
     selected = table.select(order)
-    assert order == [2, 0, 1]
-    assert "".join(col.role for col in selected._state.schema) == "yxy"
-    assert selected.mask[1, 2]
-    assert selected.column_ids == tuple(table.column_ids[i] for i in order)
+    assert order == [2, 0, 1]  # nosec B101  # pytest check.
+    assert "".join(col.role for col in selected._state.schema) == "yxy"  # nosec B101  # pytest check.
+    assert selected.mask[1, 2]  # nosec B101  # pytest check.
+    assert selected.column_ids == tuple(table.column_ids[i] for i in order)  # nosec B101  # pytest check.
     repeated = table.select([1, 1])
-    assert repeated.column_ids[0] == table.column_ids[1]
-    assert len(set(repeated.column_ids)) == 2
+    assert repeated.column_ids[0] == table.column_ids[1]  # nosec B101  # pytest check.
+    assert len(set(repeated.column_ids)) == 2  # nosec B101  # pytest check.
     package = table.export_storage()
     output = package.values.stoner_prototype.column(re.compile("Moment"), schema=package.schema)
-    assert output.shape == (2, 2)
+    assert output.shape == (2, 2)  # nosec B101  # pytest check.
     output.iloc[0, 0] = -1
-    assert table[0, 1] == 10
+    assert table[0, 1] == 10  # nosec B101  # pytest check.
     with pytest.raises(ValueError):
         package.values.iloc[:, ::-1].stoner_prototype.column("Moment", schema=package.schema)
 
@@ -68,7 +68,7 @@ def test_structural_identity_and_accessor(table):
                                                 (-1, 2), (slice(None, None, -1), [2, 1, 0])])
 def test_resolver(table, selector, expected):
     """Keep exact-name precedence and distinct compiled-pattern positions."""
-    assert resolve(table._state.schema, selector) == expected
+    assert resolve(table._state.schema, selector) == expected  # nosec B101  # pytest check.
 
 
 @pytest.mark.parametrize("selector, error", [("3", KeyError), ("-1", KeyError), (-4, IndexError),
@@ -92,20 +92,20 @@ def test_transaction_independence_rollback_and_locks(table):
             with table.edit_numpy():
                 pass
     draft[1, 1] = 17
-    assert table[1, 1] == 99
+    assert table[1, 1] == 99  # nosec B101  # pytest check.
     with pytest.raises(RuntimeError, match="cancel"):
         with table.edit_pandas() as frame:
             frame.iloc[0, 2] = 999
             raise RuntimeError("cancel")
-    assert table[0, 2] == 11
+    assert table[0, 2] == 11  # nosec B101  # pytest check.
     with pytest.raises(ValueError):
         with table.edit_pandas() as frame:
             frame.columns = ["bad", "axes", "here"]
-    assert table[0, 2] == 11
+    assert table[0, 2] == 11  # nosec B101  # pytest check.
     with table.edit_pandas() as frame:
         frame.iloc[0, 2] = 12
     frame.iloc[0, 2] = 13
-    assert table[0, 2] == 12
+    assert table[0, 2] == 12  # nosec B101  # pytest check.
 
 
 @pytest.mark.parametrize("defect", ["version", "mask", "ids", "roles", "index", "dtype"])
@@ -127,7 +127,7 @@ def test_malformed_table_packages(table, defect):
         package.values = package.values.astype(str)
     with pytest.raises((ValueError, TypeError)):
         Table.from_storage(package)
-    assert table.mask[1, 1]
+    assert table.mask[1, 1]  # nosec B101  # pytest check.
 
 
 def test_native_import_and_numeric_boundaries():
@@ -136,17 +136,17 @@ def test_native_import_and_numeric_boundaries():
     with pytest.raises(ValueError):
         Table.from_pandas(frame)
     table = Table.from_pandas(frame, index="discard", setas="xy")
-    assert table._state.values.index.equals(pd.RangeIndex(2))
+    assert table._state.values.index.equals(pd.RangeIndex(2))  # nosec B101  # pytest check.
     mixed = pd.DataFrame({"x": [1, 2], "y": [1.5, 2.5]})
     with pytest.raises(TypeError):
         Table.from_pandas(mixed)
-    assert Table.from_pandas(mixed, dtype=float).to_numpy().dtype == float
+    assert Table.from_pandas(mixed, dtype=float).to_numpy().dtype == float  # nosec B101  # pytest check.
     with pytest.raises(TypeError):
         Table.from_pandas(pd.DataFrame({"x": pd.array([1, None], dtype="Int64")}))
     nan = Table(np.array([[np.nan, 2.0]]))
-    assert not nan.to_numpy().mask.any() and np.isnan(nan.to_numpy().mean())
+    assert not nan.to_numpy().mask.any() and np.isnan(nan.to_numpy().mean())  # nosec B101  # pytest check.
     nan.mask[:] = True
-    assert nan.to_numpy().mean() is np.ma.masked
+    assert nan.to_numpy().mean() is np.ma.masked  # nosec B101  # pytest check.
 
 
 @pytest.mark.parametrize("shape", [(0, 3), (3, 0), (0, 0)])
@@ -154,37 +154,37 @@ def test_empty_table_shapes(shape):
     """Keep empty dimensions through package round trips."""
     table = Table(np.zeros(shape, dtype=np.int16))
     result = Table.from_storage(table.export_storage()).to_numpy()
-    assert result.shape == shape
-    assert result.dtype == np.dtype("int16")
+    assert result.shape == shape  # nosec B101  # pytest check.
+    assert result.dtype == np.dtype("int16")  # nosec B101  # pytest check.
 
 
 def test_assignment_promotion_and_hidden_values():
     """Avoid integer overflow, float truncation and accidental mask destruction."""
     table = Table(np.array([[1, 2]], dtype=np.int8))
     table[0, 0] = 1000
-    assert table[0, 0] == 1000
+    assert table[0, 0] == 1000  # nosec B101  # pytest check.
     table[0, 1] = 2.5
-    assert table[0, 1] == 2.5
+    assert table[0, 1] == 2.5  # nosec B101  # pytest check.
     table[0, 1] = np.ma.masked
-    assert table.to_numpy(masked=False)[0, 1] == 2.5
+    assert table.to_numpy(masked=False)[0, 1] == 2.5  # nosec B101  # pytest check.
     table.mask[0, 1] = False
-    assert table[0, 1] == 2.5
+    assert table[0, 1] == 2.5  # nosec B101  # pytest check.
     with pytest.raises(TypeError):
         table[0, 0] = "bad"
-    assert table[0, 0] == 1000
+    assert table[0, 0] == 1000  # nosec B101  # pytest check.
     unsigned = Table(np.array([[1]], dtype=np.uint16))
     unsigned[0, 0] = -2
-    assert unsigned[0, 0] == -2
+    assert unsigned[0, 0] == -2  # nosec B101  # pytest check.
     complex_table = Table(np.array([[1 + 2j]]))
-    assert Table.from_storage(complex_table.export_storage())[0, 0] == 1 + 2j
+    assert Table.from_storage(complex_table.export_storage())[0, 0] == 1 + 2j  # nosec B101  # pytest check.
 
 
 def test_append_keeps_exclusions(table):
     """Append positional observations without aligning repeated scan values."""
-    assert table.append([[0, 120, 121]]) is table
-    assert table.to_numpy().shape == (3, 3)
-    assert table.mask[1, 1]
-    assert not table.mask[2, 1]
+    assert table.append([[0, 120, 121]]) is table  # nosec B101  # pytest check.
+    assert table.to_numpy().shape == (3, 3)  # nosec B101  # pytest check.
+    assert table.mask[1, 1]  # nosec B101  # pytest check.
+    assert not table.mask[2, 1]  # nosec B101  # pytest check.
 
 
 def test_real_fixture_multi_y_weighted_fit():
@@ -204,7 +204,7 @@ def test_real_fixture_multi_y_weighted_fit():
         return a * x**2 + b * x + c
 
     for ycol, error in [(1, 2), (3, 4)]:
-        baseline = np.ma.array(legacy.data, copy=True)
+        baseline = legacy.to_numpy()
         converted = Table.from_storage(table.export_storage()).to_numpy()
         outputs = []
         for array in (baseline, converted):
@@ -215,20 +215,22 @@ def test_real_fixture_multi_y_weighted_fit():
         np.testing.assert_allclose(outputs[0][1], outputs[1][1], rtol=1e-12, atol=1e-12)
     legacy_frame = source.to_pandas()
     imported = Table.from_pandas(legacy_frame)
-    np.testing.assert_array_equal(imported.to_numpy().data, source.data.data)
-    assert "".join(col.role for col in imported._state.schema) == "xy"
+    np.testing.assert_array_equal(imported.to_numpy().data, source.to_numpy(masked=False))
+    assert "".join(col.role for col in imported._state.schema) == "xy"  # nosec B101  # pytest check.
 
 
 def test_absolute_error_positions_and_vector_roles():
     """Retain the second x group's error and repeated dependent role families."""
     table = Table(np.zeros((2, 8)), roles="xdyexdye")
     second = role_groups(table._state.schema)[1]
-    assert second["xcol"] == 4 and second["xerr"] == 5
-    assert second["ycol"] == [6] and second["yerr"] == [7]
+    assert second["xcol"] == 4 and second["xerr"] == 5  # nosec B101  # pytest check.
+    assert second["ycol"] == [6] and second["yerr"] == [7]  # nosec B101  # pytest check.
     table = Table(np.zeros((2, 10)), roles="xdyezfuvwy")
     group = role_groups(table._state.schema)[0]
-    assert group["ycol"] == [2, 9]
-    assert [group[key] for key in ("zcol", "zerr", "ucol", "vcol", "wcol")] == [[4], [5], [6], [7], [8]]
+    assert group["ycol"] == [2, 9]  # nosec B101  # pytest check.
+    assert (  # nosec B101  # pytest check.
+        [group[key] for key in ("zcol", "zerr", "ucol", "vcol", "wcol")] == [[4], [5], [6], [7], [8]]
+    )
 
 
 @pytest.fixture
@@ -242,27 +244,27 @@ def stack():
 def test_stack_roundtrip_padding_and_handles(stack):
     """Exclude padding and preserve writeback by identity across structural edits."""
     restored = Stack.from_storage(stack.export_storage())
-    assert restored.to_numpy().count() == 18
-    assert restored.to_numpy().mean() == 1
+    assert restored.to_numpy().count() == 18  # nosec B101  # pytest check.
+    assert restored.to_numpy().mean() == 1  # nosec B101  # pytest check.
     dataset = restored.export_storage().dataset
-    assert dataset.stoner_prototype.mean() == 1
-    assert dataset.intensity.mean() == 0.75
+    assert dataset.stoner_prototype.mean() == 1  # nosec B101  # pytest check.
+    assert dataset.intensity.mean() == 0.75  # nosec B101  # pytest check.
     item = restored["small"]
-    assert item.to_numpy().shape == (2, 3)
+    assert item.to_numpy().shape == (2, 3)  # nosec B101  # pytest check.
     item[1, 2] = 77
-    assert restored["small"][1, 2] == 77
-    assert stack["small"][1, 2] == 1
+    assert restored["small"][1, 2] == 77  # nosec B101  # pytest check.
+    assert stack["small"][1, 2] == 1  # nosec B101  # pytest check.
     item.mask[1, 2] = True
     copied = Stack.from_storage(restored.export_storage())
     copied["small"].mask[1, 2] = False
-    assert copied["small"][1, 2] == 77
-    assert restored["small"].mask[1, 2]
+    assert copied["small"][1, 2] == 77  # nosec B101  # pytest check.
+    assert restored["small"].mask[1, 2]  # nosec B101  # pytest check.
     restored.reorder([1, 0])
-    assert item.metadata["Field"] == 10
+    assert item.metadata["Field"] == 10  # nosec B101  # pytest check.
     item[0, 0] = 12
-    assert restored[1][0, 0] == 12
+    assert restored[1][0, 0] == 12  # nosec B101  # pytest check.
     restored.insert(0, np.full((4, 5), 8, np.uint16))
-    assert item[0, 0] == 12
+    assert item[0, 0] == 12  # nosec B101  # pytest check.
     restored.reorder([0, 1])
     with pytest.raises(ReferenceError):
         item.to_numpy()
@@ -297,24 +299,24 @@ def test_stack_context_rollback_and_parent_lock(stack):
         with pytest.raises(RuntimeError):
             stack.insert(0, np.ones((2, 2)))
     draft[0, 0] = 11
-    assert stack[0][0, 0] == 8
+    assert stack[0][0, 0] == 8  # nosec B101  # pytest check.
     with pytest.raises(ValueError):
         with stack.edit_xarray() as dataset:
             dataset.excluded.values[:] = False
-    assert stack.to_numpy().count() == 18
+    assert stack.to_numpy().count() == 18  # nosec B101  # pytest check.
     with pytest.raises(ValueError):
         with stack.edit_xarray() as dataset:
             dataset.coords["x"] = [8, 9, 10, 11]
     with stack.edit_xarray() as dataset:
         dataset.intensity.values[1, 0, 0] = 20
     dataset.intensity.values[1, 0, 0] = 21
-    assert stack[1][0, 0] == 20
+    assert stack[1][0, 0] == 20  # nosec B101  # pytest check.
 
 
 def test_real_image_with_explicit_calibration():
     """Retain real fixture intensity and supplied calibration through interchange."""
     image = ImageFile(ROOT / "tests/Stoner/Image/coretestdata/im1_annotated.png")
-    array = np.ma.array(image.image, copy=True)
+    array = image.to_numpy()
     stack = Stack([array])
     package = stack.export_storage()
     height, width = array.shape
@@ -324,7 +326,7 @@ def test_real_image_with_explicit_calibration():
     for coord in ("physical_y", "physical_x"):
         package.dataset[coord].attrs["units"] = "um"
     restored = Stack.from_storage(package)
-    assert restored.export_storage().dataset.identical(package.dataset)
+    assert restored.export_storage().dataset.identical(package.dataset)  # nosec B101  # pytest check.
     with pytest.raises(NotImplementedError):
         restored.insert(0, array)
     np.testing.assert_array_equal(restored[0].to_numpy().data, array.data)
@@ -333,10 +335,10 @@ def test_real_image_with_explicit_calibration():
 
 def test_empty_stack_and_fill_values():
     """Retain empty stacks and dtype-compatible fill sentinels."""
-    assert Stack.from_storage(Stack([]).export_storage()).to_numpy().shape == (0, 0, 0)
+    assert Stack.from_storage(Stack([]).export_storage()).to_numpy().shape == (0, 0, 0)  # nosec B101  # pytest check.
     values = np.ma.array([[1, 2]], mask=[[False, True]], fill_value=-9)
     stack = Stack([values])
-    assert Stack.from_storage(stack.export_storage())[0].to_numpy().fill_value == -9
+    assert Stack.from_storage(stack.export_storage())[0].to_numpy().fill_value == -9  # nosec B101  # pytest check.
 
 
 def test_uncopyable_metadata_reports_key():

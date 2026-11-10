@@ -17,10 +17,6 @@ from ..tools.widgets import RangeSelect
 from .selection import _reject_where
 from .storage_bridge import _copy_rows
 
-try:
-    import pandas as pd
-except ImportError:
-    pd = None
 from .column_selection import _single_column
 
 
@@ -116,8 +112,8 @@ def closest(datafile, value, xcol=None):
             A single row of data as a :py:class:`numpy.ma.MaskedArray`.
 
     Notes:
-        To find which row it is that has been returned, use the explicitly prepared ``i`` annotation. It does not propagate
-        through subsequent NumPy slicing or arithmetic.
+        To find which row it is that has been returned, use the explicitly prepared ``i`` annotation.
+        It does not propagate through subsequent NumPy slicing or arithmetic.
     """
     _ = datafile._col_args(xcol=xcol, single=("xcol",))
     xdata = np.abs(datafile // _.xcol - value)
@@ -674,6 +670,8 @@ def sort(datafile, *order, reverse=False):
         comparator does not commit a permutation. Retained native frame references
         are retired by the owner commit; reacquire ``data`` after sorting.
     """
+    # Defer owner/factory dependencies until the package has initialised.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from . import storage_operations
 
     return storage_operations.sort(datafile, *order, reverse=reverse)
@@ -853,6 +851,8 @@ def add_column(datafile, column_data, header=None, index=None, func_args=None, r
         Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies
         the original DataFile Instance as well as returning it.
     """
+    # Defer owner/factory dependencies until the package has initialised.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from . import storage_operations
 
     return storage_operations.add_column(
@@ -913,6 +913,8 @@ def del_column(datafile, col=None, duplicates=False):
         - If col is None and duplicates is None, then all columns with at least one elelemtn masked
                 will be deleted
     """
+    # Defer owner/factory dependencies until the package has initialised.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from . import storage_operations
 
     return storage_operations.del_column(datafile, col, duplicates=duplicates)
@@ -958,6 +960,8 @@ def del_rows(datafile, col=None, val=None, invert=False):
         are deleted.
 
     """
+    # Defer owner/factory dependencies until the package has initialised.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from . import storage_operations
 
     return storage_operations.del_rows(datafile, col, val, invert=invert)
@@ -1024,6 +1028,8 @@ def insert_rows(datafile, row, new_data):
         datafile:
             A copy of the modified :py:class:`DataFile` object
     """
+    # Defer owner/factory dependencies until the package has initialised.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from . import storage_operations
 
     return storage_operations.insert_rows(datafile, row, new_data)
@@ -1074,6 +1080,8 @@ def reorder_columns(datafile, cols, headers_too=True, setas_too=True):
         datafile:
             A copy of the modified :py:class:`DataFile` object
     """
+    # Defer owner/factory dependencies until the package has initialised.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from . import storage_operations
 
     return storage_operations.reorder_columns(datafile, cols, headers_too=headers_too, setas_too=setas_too)
@@ -1134,6 +1142,8 @@ def swap_column(datafile, *swp, headers_too=True, **kwargs):
         lists of lists of tuples
     """
     _reject_where(kwargs, "swap_column")
+    # Defer owner/factory dependencies until the package has initialised.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from . import storage_operations
 
     return storage_operations.swap_column(datafile, *swp, headers_too=headers_too, **kwargs)

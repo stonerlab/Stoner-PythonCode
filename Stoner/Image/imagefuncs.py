@@ -67,23 +67,33 @@ from .util import _supported_types, dtype_range, prec_loss, sign_loss
 from .widgets import LineSelect
 
 try:
+    # Preserve lazy image adapters and avoid owner/accessor import cycles.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from PyQt5.QtGui import QImage
+    # Preserve lazy image adapters and avoid owner/accessor import cycles.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from PyQt5.QtWidgets import QApplication
 except ImportError:
     QImage = None
     QApplication = None
 
 try:  # Make OpenCV an optional import
+    # Preserve lazy image adapters and avoid owner/accessor import cycles.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     import cv2
 except ImportError:
     cv2 = None
 
 try:  # Make imreg_dfft2 optional
+    # Preserve lazy image adapters and avoid owner/accessor import cycles.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     import imreg_dft
 except ImportError:
     imreg_dft = None
 
 try:  # image_registration module
+    # Preserve lazy image adapters and avoid owner/accessor import cycles.
+    # pylint: disable-next=import-outside-toplevel,cyclic-import
     from image_registration import chi2_shift
 except ImportError:
     chi2_shift = None
@@ -369,61 +379,10 @@ def convert(image, dtype, force_copy=False, uniform=False, normalise=True):
         imax_in = np.iinfo(dtype_in).max
 
     if dtypeobj_in.kind == "f":
-        if np.min(image) < -1.0 or np.max(image) > 1.0:
-            raise ValueError("Images of type float must be between -1 and 1.")
-        if dtypeobj.kind == "f":
-            # floating point -> floating point
-            if dtypeobj_in.itemsize > dtypeobj.itemsize:
-                prec_loss(dtypeobj_in, dtypeobj)
-            return image.astype(dtype)
-
-        # floating point -> integer
-        prec_loss(dtypeobj_in, dtypeobj)
-        # use float type that can represent output integer type
-        image = np.array(image, _dtype(dtypeobj.itemsize, dtype_in, np.float32, np.float64))
-        if not uniform:
-            if dtypeobj.kind == "u":
-                image *= imax
-            elif (
-                dtypeobj_in.itemsize <= dtypeobj.itemsize and dtypeobj.itemsize == 8
-            ):  # f64->int64 needs care to avoid overruns!
-                image *= 2**54  # float64 has 52bits of mantissa, so this will avoid precision loss for a +/-1 range
-                np.rint(image, out=image)
-                image = image.astype(dtype)
-                np.clip(image, -(2**54), 2**54 - 1, out=image)
-                image *= 512
-            else:
-                image *= imax - imin
-                image -= 1.0
-                image /= 2.0
-                np.rint(image, out=image)
-                np.clip(image, imin, imax, out=image)
-        elif dtypeobj.kind == "u":
-            image *= imax + 1
-            np.clip(image, 0, imax, out=image)
-        else:
-            image *= (imax - imin + 1.0) / 2.0
-            np.floor(image, out=image)
-            np.clip(image, imin, imax, out=image)
-        return image.astype(dtype)
+        return _convert_float(image, dtypeobj_in, dtypeobj, uniform, imin, imax)
 
     if dtypeobj.kind == "f":
-        # integer -> floating point
-        if dtypeobj_in.itemsize >= dtypeobj.itemsize:
-            prec_loss(dtypeobj_in, dtypeobj)
-        # use float type that can exactly represent input integers
-        image = np.array(image, _dtype(dtypeobj_in.itemsize, dtype, np.float32, np.float64))
-        if normalise:  # normalise floats by maximum value of int type
-            if dtypeobj_in.kind == "u":
-                image /= imax_in
-                # DirectX uses this conversion also for signed ints
-                # if imin_in:
-                #    np.maximum(image, -1.0, out=image)
-            else:
-                image *= 2.0
-                image += 1.0
-                image /= imax_in - imin_in
-        return image.astype(dtype)
+        return _integer_to_float(image, dtypeobj_in, dtypeobj, normalise, imin_in, imax_in)
 
     if dtypeobj_in.kind == "u":
         if dtypeobj.kind == "i":
@@ -674,18 +633,7 @@ def imshow(
     if isinstance(cmap, string_types):
         cmap = getattr(cm, cmap)
     im_data = im
-    if figure is not None and isinstance(figure, int):
-        fig = plt.figure(figure)
-    elif figure is not None and figure == "new":
-        fig = plt.figure()
-    elif figure is not None:  # matplotlib.figure instance
-        fig = plt.figure(figure.number)
-    else:
-        fig = plt.figure()
-    if ax is not None:
-        plt.sca(ax)
-    else:
-        ax = plt.gca()
+    fig, ax = _legacy_figure(figure, ax)
     ax.imshow(im_data.view(np.ndarray), cmap=cmap, **kwargs)
     if np.ma.is_masked(im):
         mask_col = list(to_rgba(mask_col))
@@ -694,15 +642,7 @@ def imshow(
         mask_data[im.mask] = mask_col
         ax.imshow(mask_data)
 
-    if title is None:
-        if "filename" in im.metadata.keys():
-            title = os.path.split(im.metadata["filename"])[1]
-        elif hasattr(im, "filename"):
-            title = os.path.split(im.filename)[1]
-        else:
-            title = " "
-    elif isinstance(title, bool) and not title:
-        title = ""
+    title = _legacy_title(im, title)
 
     txt = ax.set_title(title, **title_args)
     if not title_args.get("fontdict", {}).get("fontsize", False):
@@ -941,8 +881,8 @@ def profile_line(img, src=None, dst=None, linewidth=1, order=1, mode="constant",
             points = np.vstack((np.arange(img.shape[1]), np.ones(img.shape[1]) * src[0]))
     else:
         result = measure.profile_line(img, src, dst, linewidth, order, mode, cval)
-        profile_coordinates = sys.modules["skimage.measure.profile"]._line_profile_coordinates
-        points = profile_coordinates(src, dst, linewidth)[:, :, 0]
+        line_coordinates = sys.modules["skimage.measure.profile"]._line_profile_coordinates
+        points = line_coordinates(src, dst, linewidth)[:, :, 0]
     ret = make_Data()
     ret.data = points.T
     ret.setas = "xy"
@@ -1699,3 +1639,97 @@ def save_tiff(image, filename, forcetype=False):
         ext = ".tiff"
     tiffname = os.path.splitext(filename)[0] + ext
     im.save(tiffname, tiffinfo=ifd)
+
+
+def _convert_float(image, dtypeobj_in, dtypeobj, uniform, imin, imax):
+    """Apply the established float range, rounding and integer-overflow rules."""
+    dtype, dtype_in = dtypeobj.type, dtypeobj_in.type
+    if np.min(image) < -1.0 or np.max(image) > 1.0:
+        raise ValueError("Images of type float must be between -1 and 1.")
+    if dtypeobj.kind == "f":
+        # floating point -> floating point
+        if dtypeobj_in.itemsize > dtypeobj.itemsize:
+            prec_loss(dtypeobj_in, dtypeobj)
+        return image.astype(dtype)
+
+    # floating point -> integer
+    prec_loss(dtypeobj_in, dtypeobj)
+    # use float type that can represent output integer type
+    image = np.array(image, _dtype(dtypeobj.itemsize, dtype_in, np.float32, np.float64))
+    if not uniform:
+        if dtypeobj.kind == "u":
+            image *= imax
+        elif (
+            dtypeobj_in.itemsize <= dtypeobj.itemsize and dtypeobj.itemsize == 8
+        ):  # f64->int64 needs care to avoid overruns!
+            image *= 2**54  # float64 has 52bits of mantissa, so this will avoid precision loss for a +/-1 range
+            np.rint(image, out=image)
+            image = image.astype(dtype)
+            np.clip(image, -(2**54), 2**54 - 1, out=image)
+            image *= 512
+        else:
+            image *= imax - imin
+            image -= 1.0
+            image /= 2.0
+            np.rint(image, out=image)
+            np.clip(image, imin, imax, out=image)
+    elif dtypeobj.kind == "u":
+        image *= imax + 1
+        np.clip(image, 0, imax, out=image)
+    else:
+        image *= (imax - imin + 1.0) / 2.0
+        np.floor(image, out=image)
+        np.clip(image, imin, imax, out=image)
+    return image.astype(dtype)
+
+
+def _legacy_figure(figure, ax):
+    """Resolve the legacy Figure-return display target without changing its lifecycle."""
+    if figure is not None and isinstance(figure, int):
+        fig = plt.figure(figure)
+    elif figure is not None and figure == "new":
+        fig = plt.figure()
+    elif figure is not None:  # matplotlib.figure instance
+        fig = plt.figure(figure.number)
+    else:
+        fig = plt.figure()
+    if ax is not None:
+        plt.sca(ax)
+    else:
+        ax = plt.gca()
+    return fig, ax
+
+
+def _legacy_title(im, title):
+    """Resolve the retained legacy image filename and Boolean-title conventions."""
+    if title is None:
+        if "filename" in im.metadata.keys():
+            title = os.path.split(im.metadata["filename"])[1]
+        elif hasattr(im, "filename"):
+            title = os.path.split(im.filename)[1]
+        else:
+            title = " "
+    elif isinstance(title, bool) and not title:
+        title = ""
+
+    return title
+
+
+def _integer_to_float(image, dtypeobj_in, dtypeobj, normalise, imin_in, imax_in):
+    """Convert integer intensities using the retained normalisation and precision rules."""
+    dtype = dtypeobj.type
+    if dtypeobj_in.itemsize >= dtypeobj.itemsize:
+        prec_loss(dtypeobj_in, dtypeobj)
+    # use float type that can exactly represent input integers
+    image = np.array(image, _dtype(dtypeobj_in.itemsize, dtype, np.float32, np.float64))
+    if normalise:  # normalise floats by maximum value of int type
+        if dtypeobj_in.kind == "u":
+            image /= imax_in
+            # DirectX uses this conversion also for signed ints
+            # if imin_in:
+            #    np.maximum(image, -1.0, out=image)
+        else:
+            image *= 2.0
+            image += 1.0
+            image /= imax_in - imin_in
+    return image.astype(dtype)

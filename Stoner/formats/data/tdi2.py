@@ -141,6 +141,7 @@ def _inverse_flatten_metadata(entries: list[str]) -> Any:
         tokens = _parse_path(path)
 
         current = root
+        # Parent is a built-in container; each write below is guarded by isinstance.
         parent = None
         parent_key = None
 
@@ -152,9 +153,9 @@ def _inverse_flatten_metadata(entries: list[str]) -> Any:
                 if not isinstance(current, dict):
                     new_dict = {}
                     if isinstance(parent, list):
-                        parent[parent_key] = new_dict
+                        parent[parent_key] = new_dict  # pylint: disable=unsupported-assignment-operation
                     elif isinstance(parent, dict):
-                        parent[parent_key] = new_dict
+                        parent[parent_key] = new_dict  # pylint: disable=unsupported-assignment-operation
                     else:
                         root = new_dict
                     current = new_dict
@@ -174,9 +175,9 @@ def _inverse_flatten_metadata(entries: list[str]) -> Any:
                 if not isinstance(current, list):
                     new_list = []
                     if isinstance(parent, dict):
-                        parent[parent_key] = new_list
+                        parent[parent_key] = new_list  # pylint: disable=unsupported-assignment-operation
                     elif isinstance(parent, list):
-                        parent[parent_key] = new_list
+                        parent[parent_key] = new_list  # pylint: disable=unsupported-assignment-operation
                     else:
                         root = new_list
                     current = new_list

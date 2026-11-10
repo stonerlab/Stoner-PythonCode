@@ -104,8 +104,7 @@ class _Metadata(MutableMapping):
         prepared[key] = value
         metadata = self._owner._state.metadata
         for name, item in prepared.items():
-            super(TypeHintedDict, metadata).__setitem__(name, item)
-            metadata.types[name] = prepared.type(name)
+            metadata._set_prepared(name, item, prepared.type(name))
 
     def __delitem__(self, key):
         self._owner._check_writable()
@@ -139,15 +138,23 @@ class _Metadata(MutableMapping):
             return getattr(self.copy(), name)
         if name in {"import_key", "import_all"}:
 
-            def import_metadata(*args, **kwargs):
-                self._owner._check_writable()
-                draft = self.copy()
-                result = getattr(draft, name)(*args, **kwargs)
-                self._owner._state.metadata = draft
-                return result
-
-            return import_metadata
+            return self._metadata_importer(name, self._store_import)
         raise AttributeError(name)
+
+    def _store_import(self, draft):
+        """Publish imported metadata directly to a table or standalone owner."""
+        self._owner._state.metadata = draft
+
+    def _metadata_importer(self, name, publish):
+        """Apply a typed import to a detached draft before owner-specific publication."""
+        def import_metadata(*args, **kwargs):
+            self._owner._check_writable()
+            draft = self.copy()
+            result = getattr(draft, name)(*args, **kwargs)
+            publish(draft)
+            return result
+
+        return import_metadata
 
     def __xor__(self, other):
         self._check_readable()
@@ -279,6 +286,8 @@ class DataOwner:
     def __init__(self, package):
         if not isinstance(package, DataStorage):
             raise TypeError("DataOwner requires a DataStorage package")
+        self._state: _TableState
+        self._native_frame_id = None
         self._publish_storage(package.copy())
         self._editing = False
 

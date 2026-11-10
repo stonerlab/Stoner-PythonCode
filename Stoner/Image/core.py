@@ -4,8 +4,8 @@
 __all__ = ["ImageFile"]
 import urllib
 from copy import copy, deepcopy
-from io import BytesIO as StreamIO
 from pathlib import Path
+from typing import TYPE_CHECKING, Callable
 from warnings import warn
 
 import matplotlib.pyplot as plt
@@ -28,7 +28,6 @@ from skimage import (
 
 from ..compat import (  # Some things to help with Python2 and Python3 compatibility
     int_types,
-    np_version,
     path_types,
     string_types,
 )
@@ -44,6 +43,7 @@ from ..tools.decorators import (
 )
 from ..tools.file import (
     URL_SCHEMES,
+    _apply_loader_options,
     auto_load_classes,
     file_dialog,
     get_file_name_type,
@@ -53,40 +53,12 @@ from ..tools.file import (
 from . import imagefuncs
 from .numerical import numerical_image, box
 from .attrs import DrawProxy, MaskProxy
+from .util import _figure_png, dtype_range as _dtype_range
 
 IMAGE_FILES = [("Tiff File", "*.tif;*.tiff"), ("PNG files", "*.png", "Numpy Files", "*.npy")]
 
-if np_version.major == 1 and np_version.minor < 24:
-    dtype_range = {
-        np.bool_: (False, True),
-        np.bool8: (False, True),
-        np.uint8: (0, 255),
-        np.uint16: (0, 65535),
-        np.int8: (-128, 127),
-        np.int16: (-32768, 32767),
-        np.int64: (-(2**63), 2**63 - 1),
-        np.uint64: (0, 2**64 - 1),
-        np.int32: (-(2**31), 2**31 - 1),
-        np.uint32: (0, 2**32 - 1),
-        np.float16: (-1, 1),
-        np.float32: (-1, 1),
-        np.float64: (-1, 1),
-    }
-else:
-    dtype_range = {
-        np.bool_: (False, True),
-        np.uint8: (0, 255),
-        np.uint16: (0, 65535),
-        np.int8: (-128, 127),
-        np.int16: (-32768, 32767),
-        np.int64: (-(2**63), 2**63 - 1),
-        np.uint64: (0, 2**64 - 1),
-        np.int32: (-(2**31), 2**31 - 1),
-        np.uint32: (0, 2**32 - 1),
-        np.float16: (-1, 1),
-        np.float32: (-1, 1),
-        np.float64: (-1, 1),
-    }
+# Retain an independent mapping while sharing the supported numeric ranges.
+dtype_range = _dtype_range.copy()
 
 
 def _add_core_(result, other):
@@ -246,6 +218,20 @@ class ImageFile(metadataObject):
     """
 
     # pylint: disable=no-member
+    if TYPE_CHECKING:
+        # Installed by storage_bridge and class_modifier after class creation.
+        shape: tuple[int, int]
+        size: int
+        clone: "ImageFile"
+        export_storage: Callable
+        from_storage: Callable
+        to_numpy: Callable
+        normalise: Callable
+        threshold_otsu: Callable
+        mean: Callable
+        imshow: Callable
+        asfloat: Callable
+
     filename = ""
     _protected_attrs = []
     _patterns = ["*.png", "*.tif", "*.jpeg", "*.jpg"]
@@ -321,6 +307,8 @@ class ImageFile(metadataObject):
     @property
     def draw(self):
         """Access the DrawProxy object for accessing the skimage draw sub module."""
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .storage_bridge import owner_of, OwnerDraw
 
         return OwnerDraw(self) if owner_of(self) is not None else DrawProxy(self.imarray, self)
@@ -333,6 +321,8 @@ class ImageFile(metadataObject):
         draws an image and returns Axes; named methods, contexts and property
         forwarding follow Data.plot. Legacy imshow retains its Figure return.
         """
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .plotting import ImagePlotter
 
         return ImagePlotter(self)
@@ -344,6 +334,8 @@ class ImageFile(metadataObject):
         ROI setters return this image and never alter pixels or exclusions.
         Geometry defaults to local pixel coordinates; native mode is explicit.
         """
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .roi import ImageROI
 
         return ImageROI(self)
@@ -355,6 +347,8 @@ class ImageFile(metadataObject):
         Calling defaults to lmfit. Plane and quadratic_surface shortcuts estimate
         selected backgrounds; evaluate and flatten operate over the whole grid.
         """
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .fitting import ImageFitter
 
         return ImageFitter(self)
@@ -362,6 +356,8 @@ class ImageFile(metadataObject):
     @property
     def image(self):
         """Return native intensity/exclusions, or a borrowed view for a shared handle."""
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .storage_bridge import owner_of
 
         owner = owner_of(self)
@@ -370,12 +366,16 @@ class ImageFile(metadataObject):
     @property
     def imarray(self):
         """Return a detached read-only masked numerical image."""
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .storage_bridge import owner_of, snapshot
 
         return snapshot(self) if owner_of(self) is not None else self.__dict__["_image"]
 
     @image.setter
     def image(self, value):
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .storage_bridge import replace_image
 
         if self.__dict__.get("_image_initialising", False):
@@ -393,11 +393,15 @@ class ImageFile(metadataObject):
     )
     flip_h = property(lambda self: self._permutation("flip_h"))
     flip_v = property(lambda self: self._permutation("flip_v"))
-    CW = property(lambda self: self._permutation("CW"))
-    CCW = property(lambda self: self._permutation("CCW"))
+    CW = property(lambda self: self._permutation("CW"))  # pylint: disable=invalid-name
+    CCW = property(lambda self: self._permutation("CCW"))  # pylint: disable=invalid-name
 
     def _permutation(self, name):
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .storage_transforms import permute
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .roi import copy_roi
 
         result = type(self).from_storage(permute(self.export_storage(), name))
@@ -416,6 +420,8 @@ class ImageFile(metadataObject):
             value = value.imarray
         if isinstance(value, MaskProxy):
             value = value._mask
+        # Preserve lazy image adapters and avoid owner/accessor import cycles.
+        # pylint: disable-next=import-outside-toplevel,cyclic-import
         from .storage_bridge import owner_of
 
         owner = owner_of(self)
@@ -460,15 +466,11 @@ class ImageFile(metadataObject):
 
     def __add__(self, other):
         """Implement the subtract operator."""
-        result = self.clone
-        result = _add_core_(result, other)
-        return result
+        return _add_core_(self.clone, other)
 
     def __iadd__(self, other):
         """Implement the inplace subtract operator."""
-        result = self
-        result = _add_core_(result, other)
-        return result
+        return _add_core_(self, other)
 
     def __floordiv__(self, other):
         """Implement a // operator to do XMCD calculations on a whole image."""
@@ -512,15 +514,11 @@ class ImageFile(metadataObject):
 
     def __sub__(self, other):
         """Implement the subtract operator."""
-        result = self.clone
-        result = _sub_core_(result, other)
-        return result
+        return _sub_core_(self.clone, other)
 
     def __isub__(self, other):
         """Implement the inplace subtract operator."""
-        result = self
-        result = _sub_core_(result, other)
-        return result
+        return _sub_core_(self, other)
 
     def __neg__(self):
         """Intelliegent negate function that handles unsigned integers."""
@@ -605,13 +603,7 @@ class ImageFile(metadataObject):
         """Provide a display function for iPython/Jupyter."""
         fig = self.imarray.imshow(mask_color=self.mask.colour)
         plt.title(self.filename)
-        data = StreamIO()
-        fig.savefig(data, format="png")
-        plt.close(fig)
-        data.seek(0)
-        ret = data.read()
-        data.close()
-        return ret
+        return _figure_png(fig)
 
     def _where_attr(self, n):
         """Get the object that has the named attribute."""
@@ -710,10 +702,7 @@ class ImageFile(metadataObject):
             except StonerLoadError as err:
                 raise ValueError(f"Unable to load {filename}") from err
 
-        for k, i in kwargs.items():
-            if not callable(getattr(ret, k, lambda x: False)):
-                setattr(ret, k, i)
-        ret._kwargs = kwargs
+        _apply_loader_options(ret, kwargs)
         return ret
 
     def save(self, filename=None, **kwargs):
@@ -741,6 +730,8 @@ class ImageFile(metadataObject):
         self.imarray.save(filename, **kwargs)
 
 
+# Storage installation follows numerical class decoration and must remain last.
+# pylint: disable-next=wrong-import-position
 from .storage_bridge import install as _install_image_storage
 
 _install_image_storage(ImageFile)
