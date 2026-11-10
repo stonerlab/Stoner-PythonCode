@@ -80,7 +80,9 @@ def test_bnl_splitter_real_scan_and_single_point(tmp_path):
     split = load_script("BNL_FileSplitter.py")["split_file"]
     original = (SAMPLES / "BNL-data.txt").read_text()
     single = original.replace("#S 3 ", "#S 8 ")
-    single = "\n".join(line for line in single.splitlines() if line.startswith("#") or line.strip().startswith("700.00"))
+    single = "\n".join(
+        line for line in single.splitlines() if line.startswith("#") or line.strip().startswith("700.00")
+    )
     source = tmp_path / "combined.txt"
     source.write_text("#C ignored\n" + original + "\n" + single)
     original_directory = Path.cwd()
@@ -354,3 +356,53 @@ def test_genx_loader_unassigned_columns_do_not_conflict_with_error_role(genx_plu
     np.testing.assert_array_equal(dataset.x_raw, [1, 2])
     np.testing.assert_array_equal(dataset.y_raw, [2, 4])
     np.testing.assert_array_equal(dataset.error_raw, [2, 4])
+
+
+def test_genx_missing_configured_columns_warn_without_replacing_data(genx_plugin, monkeypatch):
+    """Leave the destination untouched when configured column names are absent."""
+    data = Data(np.array([[1., 2.], [2., 4.]]), column_headers=["Other", "Value"])
+    globals_ = genx_plugin["Plugin"].LoadData.__globals__
+    warnings = []
+    monkeypatch.setitem(globals_, "Data", lambda *args, **kwargs: data)
+    monkeypatch.setitem(globals_, "ShowWarningDialog", lambda *args: warnings.append(args))
+    original = np.array([7.])
+    commands = []
+    dataset = types.SimpleNamespace(x_raw=original, run_command=lambda: commands.append(True))
+
+    genx_plugin["Plugin"](None).LoadData(dataset, "test")
+
+    assert len(warnings) == 1
+    assert dataset.x_raw is original and not commands
+
+
+def test_genx_unexpected_column_failure_propagates(genx_plugin, monkeypatch):
+    """Do not misreport an internal Stoner failure as a missing configured column."""
+    data = Data(np.array([[1., 2.], [2., 4.]]), column_headers=["Angle", "Counts"])
+    monkeypatch.setitem(genx_plugin["Plugin"].LoadData.__globals__, "Data", lambda *args, **kwargs: data)
+
+    def broken_column(*args, **kwargs):
+        raise RuntimeError("internal column failure")
+
+    monkeypatch.setattr(Data, "column", broken_column)
+    dataset = types.SimpleNamespace(run_command=lambda: None)
+
+    with pytest.raises(RuntimeError, match="internal column failure"):
+        genx_plugin["Plugin"](None).LoadData(dataset, "test")
+
+
+def test_vsm_v2_cli_saves_selected_real_measurement(tmp_path, monkeypatch):
+    """Exercise legacy prompts using a native text export of a real VSM measurement."""
+    script = load_script("VSManalysis_v2.py")
+    source = SAMPLES / "VSM-Data.fld"
+    input_file = tmp_path / "measurement.dat"
+    Data(source).save(input_file)
+    expected = Data(input_file).column("m (emu)").copy()
+    monkeypatch.chdir(tmp_path)
+    answers = iter([str(tmp_path), "0", "0", ""])
+    monkeypatch.setattr("builtins.input", lambda *args: next(answers))
+
+    assert script["main"]() is None
+
+    saved = Data(tmp_path / "EditedFiles" / "measurement_edit.txt")
+    np.testing.assert_allclose(saved.column("m (emu)"), expected)
+    assert "Original m (emu)" in saved.column_headers

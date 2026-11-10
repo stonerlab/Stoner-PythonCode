@@ -68,7 +68,7 @@ class Plugin(Template):
                         if columns["yerr"]
                         else np.ones(len(datafile))
                     )
-            except Exception as e:
+            except (AttributeError, IndexError, KeyError, TypeError, ValueError) as e:
                 ShowWarningDialog(
                     self.parent,
                     f"The data file does not contain all the columns specified in the opions\n{e}",

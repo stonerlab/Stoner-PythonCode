@@ -175,10 +175,8 @@ def edit_data(data, operations):
     return data
 
 
-if __name__ == "__main__":
-    plot.ion()
-    print("Analysis program for VSM files")
-    # Set up a directory and determine files to be processed
+def _choose_files():
+    """Prompt for the working directory and the first file in the legacy CLI workflow."""
     directory_name = input(
         "Enter path to directory in which files are stored:   "
     )
@@ -195,76 +193,97 @@ if __name__ == "__main__":
     )
     if "EditedFiles" not in filenames:
         os.mkdir("EditedFiles")
+    return filenames, f_counter
+
+
+def _load_for_edit(path, timeout):
+    """Clean one selected file and retain the existing read-retry behaviour."""
+    with open(path, "r", encoding="utf-8") as fr:
+        data = fr.readlines()  # Get the file into an array
+    pathsplit = split_filename(path)
+    with open(  # pylint: disable=unspecified-encoding
+        "EditedFiles/" + pathsplit[0] + "_edit.txt",
+        "w",
+        encoding="utf-8",
+    ) as fw:
+        data = delete_corrupt_lines(data)
+        fw.writelines(
+            data
+        )  # put the uncorrupted lines into the file so that Stoner can open it
+    while True:  # open the file
+        try:
+            data = Stoner.Data("EditedFiles/" + pathsplit[0] + "_edit.txt")
+            break
+        except ValueError:
+            try:
+                data = Stoner.Data(
+                    "EditedFiles/" + pathsplit[0] + "_edit.txt"
+                )
+                break
+            except ValueError:
+                timeout += 1  # if get 5 files unreadable in a row then finish the program
+                print("Could not read file ", path)
+                if timeout <= 5:
+                    break
+    fw.close()
+    return data, pathsplit, timeout
+
+
+def _edit_measurement(data, pathsplit):
+    """Run the existing plot/edit/restart/save interaction for one measurement."""
+    while True:
+        plot_m_h(data)
+        if "Original m (emu)" not in data.column_headers:
+            data.add_column(data.column("m (emu)"), "Original m (emu)")
+        print(
+            "\nOK you have 5 options here, have a look at the plot and please tell me which ones ",
+            'you would like by entering a string eg "125" for options 1, 2 and 5\n',
+        )
+        print(
+            "0. Do nothing \n",
+            "1.  Give true m from R (if theta is not zeroed in your data this will give you true m) \n",
+            "2.  Remove a drift in m with time \n",
+            "3.  Remove a diamagnetic background \n",
+            "4.  Remove an overall shift in m \n",
+            "5.  Reflect graph in y axis \n",
+        )
+
+        str_op = input("")
+        operations = []  # array of options selected
+        for i in range(len(str_op.strip())):
+            operations.append(int(str_op[i]))
+        t = data.clone  # edit a copied array.
+        t = edit_data(t, operations)
+        plot_m_h(t)
+        what_next = input(
+            "Press enter to save changes, r to restart or q to quit the program:  "
+        )
+        if what_next == "r":
+            continue
+        if what_next == "q":
+            break
+        data = t
+        data.save(
+            "EditedFiles/" + pathsplit[0] + "_edit.txt"
+        )  # overwrite the file created earlier
+        break
+    return data, what_next
+
+
+def main():
+    """Run the legacy interactive VSM editing workflow."""
+    plot.ion()
+    print("Analysis program for VSM files")
+    # Set up a directory and determine files to be processed
+    filenames, f_counter = _choose_files()
 
     timeout = 0
     # Main program loop, cycle through selected files
     while True:
         path = filenames[f_counter]
         f_counter += 1
-        with open(path, "r", encoding="utf-8") as fr:
-            data = fr.readlines()  # Get the file into an array
-        pathsplit = split_filename(path)
-        with open(  # pylint: disable=unspecified-encoding
-            "EditedFiles/" + pathsplit[0] + "_edit.txt",
-            "w",
-            encoding="utf-8",
-        ) as fw:
-            data = delete_corrupt_lines(data)
-            fw.writelines(
-                data
-            )  # put the uncorrupted lines into the file so that Stoner can open it
-        while True:  # open the file
-            try:
-                data = Stoner.Data("EditedFiles/" + pathsplit[0] + "_edit.txt")
-                break
-            except ValueError:
-                try:
-                    data = Stoner.Data(
-                        "EditedFiles/" + pathsplit[0] + "_edit.txt"
-                    )
-                    break
-                except ValueError:
-                    timeout += 1  # if get 5 files unreadable in a row then finish the program
-                    print("Could not read file ", path)
-                    if timeout <= 5:
-                        break
-        fw.close()
-        while True:
-            plot_m_h(data)
-            if "Original m (emu)" not in data.column_headers:
-                data.add_column(data.column("m (emu)"), "Original m (emu)")
-            print(
-                "\nOK you have 5 options here, have a look at the plot and please tell me which ones ",
-                'you would like by entering a string eg "125" for options 1, 2 and 5\n',
-            )
-            print(
-                "0. Do nothing \n",
-                "1.  Give true m from R (if theta is not zeroed in your data this will give you true m) \n",
-                "2.  Remove a drift in m with time \n",
-                "3.  Remove a diamagnetic background \n",
-                "4.  Remove an overall shift in m \n",
-                "5.  Reflect graph in y axis \n",
-            )
-
-            str_op = input("")
-            operations = []  # array of options selected
-            for i in range(len(str_op.strip())):
-                operations.append(int(str_op[i]))
-            t = data.clone  # edit a copied array.
-            t = edit_data(t, operations)
-            plot_m_h(t)
-            what_next = input(
-                "Press enter to save changes, r to restart or q to quit the program:  "
-            )
-            if what_next == "r":
-                continue
-            if what_next == "q":
-                break
-            data = t
-            data.save(
-                "EditedFiles/" + pathsplit[0] + "_edit.txt"
-            )  # overwrite the file created earlier
-            break
+        data, pathsplit, timeout = _load_for_edit(path, timeout)
+        data, what_next = _edit_measurement(data, pathsplit)
         if (
             what_next == "q"
             or f_counter >= len(filenames)
@@ -276,3 +295,7 @@ if __name__ == "__main__":
             break
     plot.close()
     plot.ioff()
+
+
+if __name__ == "__main__":
+    main()

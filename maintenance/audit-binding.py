@@ -30,6 +30,8 @@ def _binding_record(instance, name, source):
     try:
         typing.get_type_hints(source)
         annotation_error = None
+    # Record arbitrary annotation-evaluation failures so the audit can report every method.
+    # pylint: disable-next=broad-exception-caught
     except Exception as error:
         annotation_error = f'{type(error).__name__}: {error}'
     required_names = [p.name for p in list(signature.parameters.values())[1:]] + ['return']

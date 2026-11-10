@@ -76,6 +76,8 @@ def _native_matrix(original, backend):
                                else "reject re-entry")
             if operation in {"concat_rows_conflict", "concat_rows_ordinary"} and row["schema"] == "valid":
                 row["boundary"] = "unsupported native combination: valid-looking left schema is insufficient"
+        # Record arbitrary native-operation failures; one failed case must not abort the comparison.
+        # pylint: disable-next=broad-exception-caught
         except Exception as error:
             row = dict(backend=backend, operation=operation, boundary="native operation rejected",
                        error=type(error).__name__, detail=str(error))

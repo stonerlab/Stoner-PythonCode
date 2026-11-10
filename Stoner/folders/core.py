@@ -10,6 +10,7 @@ from itertools import islice
 from os import path
 
 import numpy as np
+from pandas.api.types import is_numeric_dtype
 
 from ..compat import _pattern_type, int_types, string_types
 from ..core.base import RegexpDict, metadataObject
@@ -19,7 +20,6 @@ from . import functions, methods
 from .each import Item as EachItem
 from .groups import GroupsDict
 from .metadata import MetadataProxy
-from pandas.api.types import is_numeric_dtype
 
 regexp_type = (_pattern_type,)
 

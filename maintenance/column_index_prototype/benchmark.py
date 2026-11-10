@@ -22,12 +22,12 @@ import tracemalloc
 
 import numpy as np
 import pandas as pd
+import pytest_timeout
 from packaging.version import Version
 
 from Stoner.core.column_schema import _assign_roles
 from Stoner.core.storage_owner import DataOwner
 from .model import IndexOwner, fixture
-import pytest_timeout
 
 ROOT = Path(__file__).resolve().parents[2]
 

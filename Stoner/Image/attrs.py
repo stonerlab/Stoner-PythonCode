@@ -7,13 +7,12 @@ __all__ = ["DrawProxy", "MaskProxy"]
 from functools import wraps
 
 import numpy as np
-
-from .util import _figure_png
 from skimage import draw
 
 from ..tools import fix_signature
 from ..tools.decorators import class_modifier
 from .imagefuncs import imshow
+from .util import _figure_png
 from .widgets import ShapeSelect
 
 

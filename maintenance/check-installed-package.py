@@ -50,18 +50,18 @@ def check_image_plotting():
         figure = image.plot.new_figure()
         with image.plot.MultiPanel((1, 2), figure=figure) as axes:
             ax = image.plot(ax=axes[0], coordinates=CoordinateMode.PIXEL, mask_color='red')
-            if not (ax is axes[0] and len(ax.images) == 2):
+            if ax is not axes[0] or len(ax.images) != 2:
                 raise RuntimeError('Installed-package check failed: ax is axes[0] and len(ax.images) == 2')
-            if not (image.plot.hist(ax=axes[1], bins=4) is axes[1]):
+            if image.plot.hist(ax=axes[1], bins=4) is not axes[1]:
                 raise RuntimeError('Installed-package check failed: image.plot.hist(ax=axes[1], bins=4) is axes[1]')
         image.plot.title = 'Installed image'
         # Assignment forwards to Matplotlib; reading still returns a callable property proxy.
         # pylint: disable-next=not-callable,comparison-with-callable
-        if not (image.plot.title() == 'Installed image'):
+        if image.plot.title() != 'Installed image':
             raise RuntimeError("Installed-package check failed: image.plot.title() == 'Installed image'")
         figure.canvas.draw()
     xr.testing.assert_identical(image.image, before.dataset)
-    if not (isinstance(image.imshow(), matplotlib.figure.Figure)):
+    if not isinstance(image.imshow(), matplotlib.figure.Figure):
         raise RuntimeError('Installed-package check failed: isinstance(image.imshow(), matplotlib.figure.Figure)')
     plt.close('all')
     print('Image plotting accessor/property/context checks passed')
@@ -81,9 +81,9 @@ def check_image_fitting():
     np.testing.assert_allclose(image.fit.evaluate(report).to_numpy(), background, atol=1e-9)
     corrected = image.fit.flatten(report)
     np.testing.assert_allclose(corrected.to_numpy(), values - background, atol=1e-9)
-    if not (corrected.dtype == np.float64):
+    if corrected.dtype != np.float64:
         raise RuntimeError('Installed-package check failed: corrected.dtype == np.float64')
-    if not (np.asarray(report.image_fit.to_dict()['covariance']).shape == (6, 6)):
+    if np.asarray(report.image_fit.to_dict()['covariance']).shape != (6, 6):
         raise RuntimeError("Surface covariance does not have six physical coefficients")
     np.testing.assert_array_equal(image.to_numpy(), before)
     print('Image fitting surface/covariance/replay/correction checks passed')
@@ -96,24 +96,24 @@ def check_image_roi():
     image.mask[1, 1] = True
     before = image.export_storage()
     image.roi.box(1, 4, 1, 3)
-    if not (image.roi.active and not image.roi.stale):
+    if not image.roi.active or image.roi.stale:
         raise RuntimeError('Installed-package check failed: image.roi.active and not image.roi.stale')
-    if not (int(image.roi.resolve().sum()) == 6):
+    if int(image.roi.resolve().sum()) != 6:
         raise RuntimeError('Installed-package check failed: int(image.roi.resolve().sum()) == 6')
-    if not (image.mean() == np.mean([7., 8., 11., 12., 13.])):
+    if image.mean() != np.mean([7.0, 8.0, 11.0, 12.0, 13.0]):
         raise RuntimeError('Installed-package check failed: image.mean() == np.mean([7., 8., 11., 12., 13.])')
     region = ROI.from_dict(image.roi.current.to_dict())
     image.roi.set(region - ROI.circle((2, 2), 0.5))
-    if not (int(image.roi.resolve().sum()) == 5):
+    if int(image.roi.resolve().sum()) != 5:
         raise RuntimeError('Installed-package check failed: int(image.roi.resolve().sum()) == 5')
     ax = image.plot()
-    if not (image.plot.roi(ax=ax) is ax):
+    if image.plot.roi(ax=ax) is not ax:
         raise RuntimeError('Installed-package check failed: image.plot.roi(ax=ax) is ax')
     image.plot.hist(bins=3)
-    if not (image.mean(where=ROI.all()) == np.mean(np.delete(np.arange(20.), 6))):
+    if image.mean(where=ROI.all()) != np.mean(np.delete(np.arange(20.0), 6)):
         raise RuntimeError('Explicit all-pixel selection did not bypass the current ROI')
     image.roi.clear()
-    if not (not image.roi.active):
+    if image.roi.active:
         raise RuntimeError('Installed-package check failed: not image.roi.active')
     xr.testing.assert_identical(image.image, before.dataset)
     plt.close('all')
@@ -209,17 +209,17 @@ def check_reviewed_wrappers():
         preview = method(2)
         np.testing.assert_array_equal(preview.to_numpy().data, data.to_numpy().data[rows])
         np.testing.assert_array_equal(preview.mask, np.asarray(data.mask)[rows])
-        if not (preview.column_ids == data.column_ids and preview.setas == 'xy'):
+        if preview.column_ids != data.column_ids or preview.setas != 'xy':
             raise RuntimeError("Preview changed column identity or scientific roles")
-        if not (preview.metadata['run'] == '001' and preview.metadata.type('run') == 'String'):
+        if preview.metadata['run'] != '001' or preview.metadata.type('run') != 'String':
             raise RuntimeError("Preview did not preserve explicitly typed metadata")
-        if not (preview.metadata['parent'] is preview):
+        if preview.metadata['parent'] is not preview:
             raise RuntimeError("Installed-package check failed: preview.metadata['parent'] is preview")
         preview[0, 1] = -99.
-        if not (not (data.data.iloc[:, 1] == -99.).any()):
+        if (data.data.iloc[:, 1] == -99.0).any():
             raise RuntimeError('Installed-package check failed: not (data.data.iloc[:, 1] == -99.).any()')
     original = data.to_numpy()
-    if not (data.sort(0, reverse=True) is data):
+    if data.sort(0, reverse=True) is not data:
         raise RuntimeError('Installed-package check failed: data.sort(0, reverse=True) is data')
     positions = [3, 0, 2, 1]
     np.testing.assert_array_equal(data.to_numpy().data, original.data[positions])

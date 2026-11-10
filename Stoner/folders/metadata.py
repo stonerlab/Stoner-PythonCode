@@ -7,11 +7,11 @@ from collections.abc import MutableMapping
 
 import numpy as np
 from lmfit import Model
+from pandas.api.types import is_numeric_dtype
 
 from ..compat import string_types
 from ..core import TypeHintedDict, metadataObject
 from ..tools import isiterable, islistlike, make_Data
-from pandas.api.types import is_numeric_dtype
 
 
 def _fmt_as_list(results):
