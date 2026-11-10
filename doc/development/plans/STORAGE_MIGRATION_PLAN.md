@@ -187,7 +187,8 @@ necessary. Complete its evidence before moving to dependent work.
   Reuse current tests and real scientific fixtures. Record the verified environment,
   baseline commands and outcomes. Gate: preserved behaviours and proposed changes
   are distinguishable; no production storage changes.
-  See [STORAGE_CONTRACTS.md](../STORAGE_CONTRACTS.md) for the inventory, test map and
+  See [STORAGE_CONTRACTS.md](../STORAGE_CONTRACTS.md) for the inventory, test
+  map and
   explicitly separated legacy defects/API decisions.
 - [x] **2. Specify interchange and ownership.** Settle values/mask/schema ownership,
   duplicate-column identity, row identity, dtype policy, metadata conflict rules,
@@ -318,12 +319,14 @@ necessary. Complete its evidence before moving to dependent work.
       superseded by this removal requirement; useful functions may remain.
     - [x] **6e.4. Stage 6 exit gate.** Verify no runtime imports, exports, constructors,
       inheritance or fallback paths use the removed classes. Update public API docs,
-      examples and intentional-change contracts; run focused consumer checks and the
+      examples and intentional-change contracts; run focused consumer checks and
+      the
       complete suite after removal. Record the audited code state, removal evidence,
       full-suite command and successful result together in the handover. Preserve
       historical evidence and fixtures without importing removed production classes.
       Both class removal and the full-suite pass are verified on the code state
-      recorded below. Stage 7 may proceed; release readiness still requires Stage 7.
+      recorded below. Stage 7 may proceed; release readiness still requires
+      Stage 7.
 - [x] **7. Validate migration and prepare compatibility release.** Run appropriate
   full-suite, platform, dependency, documentation and installed-package checks;
   repeat representative benchmarks. Reconcile dependency specifications, including
@@ -377,7 +380,8 @@ necessary. Complete its evidence before moving to dependent work.
     implementing the agreed labels, exclusions, schema and mutation contract.
     Migrate affected Data consumers in bounded batches; retain explicit NumPy
     interchange and deliberate masked-array export. Gate: named/positional access,
-    duplicate headers, roles, structural edits, retained references and rollback pass;
+    duplicate headers, roles, structural edits, retained references and rollback
+    pass;
     reading `.data` does not construct a NumPy export or a substitute DataFrame.
     - [x] **8c.1. Owner labels and lossless package boundary.** Store displayed
       headers on the authoritative owner frame, including duplicates; retain
@@ -395,17 +399,20 @@ necessary. Complete its evidence before moving to dependent work.
       public property once its dependent contracts pass. Keep masked exports,
       duplicate-name resolution and mutation/return conventions explicit.
       - [x] **8c.3a. Numerical extraction, search and equality.** Move `asarray`,
-        `column`, `search_index`, `search`, `columns` and the equality operator off
+        `column`, `search_index`, `search`, `columns` and the equality operator
+        off
         public `.data` reads. Retain explicit NumPy result contracts, verify a
         test-only native getter, and preserve masks through rectangular searches.
       - [x] **8c.3b. Rolling-window boundary.** Migrate rolling windows with
         explicit masks, wrapping/centre-exclusion geometry and iterator-lifetime
         rules before moving on to selection/splitting and remaining consumers.
-  - [x] **8d. Expose image and stack storage.** Switch `.image` and `.stack` to the
+  - [x] **8d. Expose image and stack storage.** Switch `.image` and `.stack` to
+    the
     chosen native xarray objects. Define the relation to numerical `.imarray` and
     the representation of channel data, exclusions, valid extents and coordinates.
     Preserve frame/crop ownership, coordinate maps and Maximus/Attocube shared grids.
-    Gate: regional calculations, native coordinate selection, stack/frame edits and
+    Gate: regional calculations, native coordinate selection, stack/frame edits
+    and
     lossless export pass on real calibrated, multichannel and ragged fixtures.
   - [x] **8e. Complete consumer and compatibility migration.** Audit remaining
     fitting, analysis, plotting, image filters, folders, loaders and examples.
@@ -413,7 +420,8 @@ necessary. Complete its evidence before moving to dependent work.
     required for this interface switch. Document `.mask` compatibility, public
     attribute types, direct editing restrictions and selected/full-data result scope.
     Gate: no consumer relies accidentally on implicit masked-array behaviour;
-    broad wrapper simplification and unrelated backend conveniences remain Stage 9.
+    broad wrapper simplification and unrelated backend conveniences remain Stage
+    9.
   - [x] **8f. Native-interface exit gate.** Run the complete suite, supported/lower
     dependency CI, installed-package checks and documentation audit on the final
     interface. Repeat integrated benchmarks against the recorded legacy comparison
@@ -426,17 +434,18 @@ necessary. Complete its evidence before moving to dependent work.
 ### Stage 8 selection and masking contract
 
 Stage 8 implements this contract through the documented supported operations. The
-motivating workflow is to fit a background using part of a measurement, then evaluate and apply that model
+motivating workflow is to fit a background using part of a measurement, then
+evaluate and apply that model
 over the complete measurement. Original values stay available throughout; clearing
 a temporary selection must never require reconstructing or restoring values.
 
-| Concept              | Meaning and proposed rule                                                     |
-| -------------------- | ----------------------------------------------------------------------------- |
-| Stored values        | Complete native measurements, including recoverable excluded values.          |
-| Persistent exclusion | Boolean state: true means excluded, retaining the corresponding raw value.    |
-| Operation selection  | Boolean region: true means included in this operation; default is all.        |
-| Missing/invalid data | NaN, missing readings or invalid inputs handled by the operation's policy.    |
-| Stack padding        | Outside the valid frame extent; never becomes a measurement by clearing flags. |
+| Concept | Meaning and proposed rule |
+| --- | --- |
+| Stored values | Complete native measurements, including recoverable excluded values. |
+| Persistent exclusion | Boolean state: true means excluded, retaining the corresponding raw value. |
+| Operation selection | Boolean region: true means included in this operation; default is all. |
+| Missing/invalid data | NaN, missing readings or invalid inputs handled by the operation's policy. |
+| Stack padding | Outside the valid frame extent; never becomes a measurement by clearing flags. |
 
 The effective input is the operation selection intersected with non-excluded,
 valid observations inside the stored extent. Clearing an exclusion reveals the
@@ -458,7 +467,8 @@ they do not automatically apply Stoner exclusions or an active selection.
 
 **Rows, cells and channels.** Preserve existing cell-level exclusions, rather than
 reducing all masks permanently to whole-row flags. For a fit, combine exclusions
-and required-input validity across the actual x, y and uncertainty columns used by
+and required-input validity across the actual x, y and uncertainty columns used
+by
 that fit. An excluded unrelated channel must not discard an otherwise usable row.
 For multiple fitted y channels, document whether fits resolve inputs separately.
 An image-region selection may intentionally apply to several channels/frames only
@@ -497,7 +507,8 @@ design choices. Worked examples and failure contracts are recorded in
 [STORAGE_CONTRACTS.md](../STORAGE_CONTRACTS.md#stage-8a-selection-and-native-access-acceptance).
 
 - **Native representation:** `Data.data` is an actual DataFrame. Choose DataArray
-  versus Dataset for `.image` and `.stack`, including where exclusion variables and
+  versus Dataset for `.image` and `.stack`, including where exclusion variables
+  and
   multichannel values live. Prefer a cohesive Dataset when several variables must
   transform together; demonstrate the single-channel ergonomic cost before deciding.
   Do not recreate custom numerical subclasses or return a disguised snapshot.
@@ -505,7 +516,8 @@ design choices. Worked examples and failure contracts are recorded in
   positional row index. Decide how native headers, duplicate labels, row labels,
   column roles and stable identity coexist so ordinary named indexing is useful.
   Cover rename, reorder, insertion, deletion, selection and duplicate-label sorting.
-- **Mutation and alignment:** a raw DataFrame cannot notify Stoner of every edit to
+- **Mutation and alignment:** a raw DataFrame cannot notify Stoner of every edit
+  to
   an external mask/schema. Define a supported direct-edit subset and the owner
   operation or explicit edit/replacement route for other changes. Same-shaped
   permutations can desynchronise side state without an obvious shape change;
@@ -549,14 +561,16 @@ Acceptance coverage must include:
   backend delegation and select new backend methods worth exposing. Deliver small,
   independently tested wrapper batches as below.
   Gate: a predictable documented API with equivalent retained scientific behaviour.
-  Review labelled row access through the pandas index and `.loc` exposed in Stage 8;
+  Review labelled row access through the pandas index and `.loc` exposed in
+  Stage 8;
   add Stoner conveniences only where useful. Define label versus position selection,
   duplicate-label behaviour, result type and mutation semantics consistently with
   that interface. Distinguish selecting rows by index label from looking up named
   columns within a row; do not recreate either through a custom array class.
   This is an API enhancement batch, not additional Stage 6 removal work.
   - [x] **9a. Inventory delegation boundaries and add row previews.** Add only
-    `Data.head(n=5)` and `Data.tail(n=5)` using pandas positional row selection and
+    `Data.head(n=5)` and `Data.tail(n=5)` using pandas positional row selection
+    and
     the existing clone/owner selection path. Retain exclusions, raw values, schema,
     dtype/fill, typed metadata and concrete class; return independent objects.
   - [x] **9b. Review numeric row sorting.** Characterise the existing `Data.sort`
@@ -629,7 +643,8 @@ For both new wrappers:
   retain the original path. These remain detached previews, not lazy views.
 - **Alignment:** positional rows only, in original order; no label alignment,
   broadcasting or column-name lookup. Reset the result to a positional RangeIndex.
-- **Exclusions/schema/metadata:** do not drop excluded rows or materialise NaNs in
+- **Exclusions/schema/metadata:** do not drop excluded rows or materialise NaNs
+  in
   place of recoverable measurements. Apply the same positions to raw values and
   exclusions, retain dtype/fill and complete column schema (including duplicate
   headers, roles and IDs), and deep-copy typed metadata with cycles/aliases intact.
@@ -741,7 +756,8 @@ For both new wrappers:
    remote and working-tree changes; preserve unrelated work.
 2. Select the next incomplete batch or its recorded sub-batch. Read only the
    relevant implementation/tests; do not repeat the initial whole-package survey.
-3. Explain the concrete scope, risks and validation for that session. Implement only
+3. Explain the concrete scope, risks and validation for that session. Implement
+   only
    that cohesive slice when implementation is requested; planning tasks do not
    authorise beginning production migration.
 4. Run the relevant checks from a verified supported environment. Update examples
@@ -762,7 +778,8 @@ Initial inspection was on `devel` at `812690bf0`; these are starting points, not
 claims that a future checkout has unchanged implementations.
 
 - [Column resolver and roles](../../../Stoner/core/setas.py),
-  historical DataArray slicing/descriptors (`Stoner/core/array.py`, removed in stage 6e),
+  historical DataArray slicing/descriptors (`Stoner/core/array.py`, removed in
+  stage 6e),
   [Data properties](../../../Stoner/core/property.py),
   [indexing and iteration](../../../Stoner/core/interfaces.py),
   [operators](../../../Stoner/core/operators.py).
@@ -797,7 +814,8 @@ matches the selected environment.
   dimensions, real numeric/Boolean intensities, coordinate state, canonical frame
   IDs and record order, integer extents, compatible fills and excluded-zero padding.
   Native xarray exports warn about omitted typed metadata; package copies preserve
-  nested metadata and hints. Ordinary arrays and uncalibrated image packages can be
+  nested metadata and hints. Ordinary arrays and uncalibrated image packages can
+  be
   packed into ragged stacks with fresh IDs. Mixed integer promotion must be lossless.
 - **Internal owner:** `Stoner/Image/storage_owner.py` owns a detached package and
   provides guarded metadata/mask interfaces, direct numerical writes and atomic
@@ -860,7 +878,11 @@ matches the selected environment.
   and competing-write guards. The scripted mask-selection example plus public-owner
   regressions passed **13 tests, three warnings**, in 15.94 seconds
   (`maintenance/runs/20260913-160457-focused-d98c91e4`); reproduce with
-  `./maintenance/run-baseline.ps1 -Check focused -Environment py314 -TestPaths tests/Stoner/test_doc_samples.py,tests/Stoner/Image/test_storage_bridge.py,-k,'ImageFolder_mask_select or storage_bridge'`.
+
+  ```powershell
+  ./maintenance/run-baseline.ps1 -Check focused -Environment py314 -TestPaths tests/Stoner/test_doc_samples.py,tests/Stoner/Image/test_storage_bridge.py,-k,'ImageFolder_mask_select or storage_bridge'
+  ```
+
   The final loader-handoff refinement preserves filename/public attributes from
   the prepared input array rather than a snapshot of the placeholder. Its complete
   TIFF round-trip and public-owner gate passed **13 tests, three warnings**, in
@@ -875,7 +897,8 @@ matches the selected environment.
   verified by the final 13-test gate above. Warnings include existing SciPy/Pillow
   deprecations, headless plotting, deliberate lossy exports and numerical-domain
   warnings; no blanket suppression was added. Whitespace/repository-content checks
-  pass and all 243 cached plots remain. This completes Stage 6a, not all of Stage 6.
+  pass and all 243 cached plots remain. This completes Stage 6a, not all of
+  Stage 6.
 - **Dependency boundary:** xarray is now a required runtime import and is declared
   consistently in pyproject.toml, requirements.txt, recipe/meta.yaml, the test and
   documentation Conda environments and doc/requirements.txt. The build-tools-only
@@ -1173,10 +1196,12 @@ matches the selected environment.
   `e703a0e9023b3f428c781a1427f2404fc6913f9c05053c520c7ce2da86881e07`:
   hash each relative POSIX path, NUL, file bytes with CRLF normalised to LF, NUL;
   exclude `__pycache__`. Plan/prose updates do not change this runtime/test state.
-- **Historical Stage 6 documentation boundary (resolved in Stage 7):** public source documentation was updated,
+- **Historical Stage 6 documentation boundary (resolved in Stage 7):** public
+  source documentation was updated,
   but the attempted cached Sphinx build could not write an autosummary source
   stub under the execution filesystem restrictions. No successful complete build
-  is claimed. Repeat in a suitable isolated documentation checkout during Stage 7;
+  is claimed. Repeat in a suitable isolated documentation checkout during Stage
+  7;
   generated API stubs and the retained plot cache were not refreshed here.
 - **Lower-bound CI correction:** run `34784426200` failed during imports because
   `tests/minimum-env.yml` omitted the now-required xarray dependency while package
@@ -1246,7 +1271,8 @@ matches the selected environment.
   as the main masking workflow: fit a selected background, then apply it to the
   complete measurement. Stage 8 now separates raw values, persistent exclusions
   and per-operation selections, with explicit native-mutation and alignment rules.
-  Batches 8a-8f and their acceptance cases are specified above. Named/scoped selection conveniences
+  Batches 8a-8f and their acceptance cases are specified above. Named/scoped
+  selection conveniences
   are optional follow-ups after the explicit per-operation interface works.
 - **Stage 8a complete (2026-09-20):** audited shared fitting assembly, full-axis
   model evaluation, result masks, stack reductions and owner editing boundaries.
@@ -1257,7 +1283,8 @@ matches the selected environment.
   row indexes and existing channel/frame geometry remain; arbitrary row labels and
   channel-axis redesign are deferred. Fixed-schema native edits are supported under
   the documented lifetime rules; structural edits use owners or package import.
-  Two regression cases protect disjoint background fitting/full-axis correction and
+  Two regression cases protect disjoint background fitting/full-axis correction
+  and
   exact excluded integer recovery. Focused consumer tests: **11 passed, 1 warning
   in 5.94 s**, Miniforge `py314`; the warning is existing SciPy ODR deprecation.
   Evidence: `maintenance/runs/20260920-185014-focused-7f823ce2/pytest.xml`.
@@ -1326,7 +1353,8 @@ matches the selected environment.
 - **Stage 8c.1 Python 3.12 validation:** after the maintainer supplied xarray,
   Miniforge py312 was verified as Python 3.12.14, NumPy 2.5.3, pandas 3.0.5,
   SciPy 1.18.1, xarray 2026.7.0 and pytest 9.1.1. The same focused command above,
-  substituting `-Environment py312`, passed **272 tests, five warnings in 47.62 s**
+  substituting `-Environment py312`, passed **272 tests, five warnings in 47.62
+  s**
   (`maintenance/runs/20261016-223251-focused-0d8931fd`). This validates the focused
   owner/consumer boundary on Python 3.12 with current dependencies; it is not a
   pandas 2.2/xarray 2024.10 lower-bound run or a full Python 3.12 suite.
@@ -1380,7 +1408,8 @@ matches the selected environment.
   at `721ee3db7`; this batch does not commit, push, tag or publish.
 - **Stage 8c.2 focused validation:** after the shared-proxy correction, the expanded
   py314 core/selection-consumer/real-image gate passed **309 tests, five warnings
-  in 60.36 s** (`maintenance/runs/20261016-224859-focused-3056d114`). Reproduce with
+  in 60.36 s** (`maintenance/runs/20261016-224859-focused-3056d114`). Reproduce
+  with
   `./maintenance/run-baseline.ps1 -Check focused -Environment py314
   -TestPaths tests/Stoner/core,tests/Stoner/analysis/test_operation_selection.py,tests/Stoner/analysis/test_storage_consumers.py,tests/Stoner/test_FileFormats.py::test_ImageAutoLoad`,
   substituting `py312` for that interpreter. Verified py314 versions remain Python
@@ -1399,7 +1428,8 @@ matches the selected environment.
   accessor lifecycle; no new skip or expected failure was added. All new native
   owner/reference tests run on both pandas 2.2 and 3.0. Reproduce with the same
   focused command and
-  `-EnvironmentPrefix D:\PythonCode\maintenance\runs\stage8c2-minimum-env` instead of
+  `-EnvironmentPrefix D:\PythonCode\maintenance\runs\stage8c2-minimum-env`
+  instead of
   `-Environment py314`. Environment creation used
   `conda env create --prefix D:\PythonCode\maintenance\runs\stage8c2-minimum-env
   --file tests/minimum-env.yml`; its log is `maintenance/runs/stage8c2-minimum-env-create.log`.
@@ -1521,13 +1551,18 @@ matches the selected environment.
   All pre-existing migration work is retained. The maintainer authorised committing
   and pushing the accumulated migration to `devel` after local validation in this
   session, so hosted final-interface and installed-distribution checks can run.
-- **Stage 8f initial native-interface validation (2026-10-17, `a6235d922`):** runtime fingerprint
+- **Stage 8f initial native-interface validation (2026-10-17, `a6235d922`):**
+  runtime fingerprint
   `cae0153e76d7a1babf73f92e4d57680e9166566dacd3b70ab633aad1ac0cfdf0`.
   `./maintenance/run-baseline.ps1 -Check parallel -Environment py314` passed
   **898 tests**, 708 warnings, **81% coverage**, 260.51 s with two workers.
   Evidence: `maintenance/runs/20261016-235733-parallel-42fd0791`.
   The final focused command uses
-  `-Check focused -EnvironmentPrefix D:\PythonCode\maintenance\runs\stage8c2-minimum-env -TestPaths tests/Stoner/core,tests/Stoner/Image,tests/Stoner/analysis/test_operation_selection.py,tests/Stoner/analysis/test_storage_consumers.py`:
+
+  ```powershell
+  -Check focused -EnvironmentPrefix D:\PythonCode\maintenance\runs\stage8c2-minimum-env -TestPaths tests/Stoner/core,tests/Stoner/Image,tests/Stoner/analysis/test_operation_selection.py,tests/Stoner/analysis/test_storage_consumers.py
+  ```
+
   **583 passed, 1 existing pandas-3-specific skip**, 342 warnings, 88.27 s.
   Evidence: `maintenance/runs/20261016-235732-focused-79ec2298`. Runtime dependency
   versions remain those recorded in 8c.3a; no environment/dependency changes were
@@ -1644,7 +1679,8 @@ matches the selected environment.
   `stage8-complete-hosted-minimum.log`, `stage8-complete-hosted-packages.log`,
   `stage8-complete-hosted-docs.log` and
   `stage8-complete-hosted-doc-warning-audit.json`.
-  These hosted gates and the matching local runtime fingerprint above close Stage 8.
+  These hosted gates and the matching local runtime fingerprint above close
+  Stage 8.
   The subsequent completion record changes only the two Markdown plans; validation
   remains attached to this exact runtime revision, with no source, test or dependency
   changes in the completion record.
@@ -1720,7 +1756,8 @@ matches the selected environment.
   -EnvironmentPrefix D:\PythonCode\maintenance\runs\stage8c2-minimum-env
   -TestPaths tests/Stoner/core/test_numeric_sorting.py,tests/Stoner/core/test_storage_structural.py`
   passed **88 tests**, 13 warnings, 6.89 s
-  (`maintenance/runs/20261017-190110-focused-d30d7d12`). Float16 fixtures now import an explicit
+  (`maintenance/runs/20261017-190110-focused-d30d7d12`). Float16 fixtures now
+  import an explicit
   valid fill value, avoiding unrelated constructor-default overflow warnings.
   Final `maintenance/run-baseline.ps1 -Check parallel -Environment py314` passed
   **1,033 tests**, 708 warnings, **81% coverage**, 214.82 s with two workers
@@ -1793,15 +1830,19 @@ matches the selected environment.
   all 243 tracked plot-cache files unchanged. No new benchmark claim is made:
   this batch leaves the executable uniqueness path unchanged. Validation is local;
   previous hosted Stage 8 runs are not evidence for Stage 9c.
-- **Stage 9d implementation (2026-10-17):** replaced preview clone-then-trim on the
+- **Stage 9d implementation (2026-10-17):** replaced preview clone-then-trim on
+  the
   standard path with selected-row frame/mask copies and a pre-seeded deepcopy memo.
   Changed `Stoner/core/methods.py`, `storage_bridge.py` and the two numerical-leaf
-  copies in `_TableState.__deepcopy__` in `storage_owner.py`. Custom hooks retain the
-  old wrapper path. Existing preview/scientific contracts pass; twelve new tests in
+  copies in `_TableState.__deepcopy__` in `storage_owner.py`. Custom hooks
+  retain the
+  old wrapper path. Existing preview/scientific contracts pass; twelve new tests
+  in
   `tests/Stoner/core/test_row_previews.py` protect shared attribute/typed metadata
   cycles, source-independent frame/mask aliases, inherited subclass attributes,
   absence of full-frame copying/NumPy exports/owner trimming, custom clone/deepcopy
-  transformations, failure atomicity and the canonical result-frame policy. Full raw
+  transformations, failure atomicity and the canonical result-frame policy. Full
+  raw
   frame/mask backups in metadata/attributes remain full independent snapshots, with
   their shared aliases intact. The guide/docstrings explain selected-row
   copying and the retained ancillary/custom-hook costs. No new public API added.
@@ -1899,7 +1940,8 @@ matches the selected environment.
   closure in a documentation-only commit; hosted runtime evidence remains pinned
   to `4525bf7d593788ef4d4e0d2d5afcba3f6ca85ca9` and its fingerprint above.
 - **Next step:** follow the separate release-preparation checklist in
-  `maintenance/MAINTENANCE_PLAN.md` when release work is authorised. No release, tag, publication
+  `maintenance/MAINTENANCE_PLAN.md` when release work is authorised. No release,
+  tag, publication
   or Conda deployment is part of this batch. Retain scientific fixtures and all
   243 cached plots. Additional wrapper families, labelled-row APIs and lazy or
   broader coordinate-aware interfaces require independent bounded proposals;
@@ -2033,7 +2075,8 @@ is rejected for this consolidation. CS6 documentation and local validation are
 complete; final-revision hosted validation and overall closure remain open.
 This is a follow-on to completed Stages 1-9. Matching
 precedence, all-match defaults and explicit first selection are agreed directions.
-The [caller inventory](../../../maintenance/column-schema-audit.md) records the implemented
+The [caller inventory](../../../maintenance/column-schema-audit.md) records the
+implemented
 matching/cardinality contracts, composed ownership, CS4 evidence and the CS5 decision.
 
 ### Outcome and ownership
@@ -2178,7 +2221,8 @@ occurrence and creates fresh IDs for extra occurrences, as current tests require
   clone independence, reset/clear, rollback and multiple-x error grouping. Gate:
   one authoritative schema, no persistent duplicate role state and equivalent
   scientific behaviour apart from CS2's documented matching changes. Gate met:
-  1,613 full-suite passes; see the CS3 handover for ownership and compatibility proof.
+  1,613 full-suite passes; see the CS3 handover for ownership and compatibility
+  proof.
 - [x] **CS4 - Prototype custom Index.** Add a runnable isolated experiment under
   `maintenance/column_index_prototype/`, following the existing storage prototype
   convention. Production Stoner must not import it. Compare CS3 composition with
@@ -2268,7 +2312,8 @@ integration is outside the accepted scope.
 
 ### CS1 handover (2026-10-27)
 
-The [active audit](../../../maintenance/column-schema-audit.md) covers 130 production call
+The [active audit](../../../maintenance/column-schema-audit.md) covers 130
+production call
 sites in 87 enclosing functions: 75 `find_col`, 28 `_col_args`, 16 `_get_cols` and
 11 shared/plot `resolve_columns` calls. Source searches also cover dynamic method
 attachment, direct schema access, numerical annotations, folders and loader role
@@ -2333,7 +2378,8 @@ lower-dependency execution or hosted CI in this CS1 batch.
 
 Matching and caller migration are implemented on `devel`, preserving the existing
 CS1 planning/audit edits. There is no schema-ownership replacement or custom Index
-in production. The [active inventory](../../../maintenance/column-schema-audit.md) retains
+in production. The [active
+inventory](../../../maintenance/column-schema-audit.md) retains
 the CS1 call-site snapshot and records CS2 closure for the next consolidation.
 
 Implemented behaviour:
@@ -2499,15 +2545,16 @@ SciPy 1.18.0, pytest 9.1.1, stonerplots 1.9.8):
 - Ruff F821/F401 passes for the extracted schema/facade/owner modules and new
   tests. CRLF-aware `git diff --check` passes without repository configuration or
   indexed-mode changes. Three final line wraps were verified AST-identical to the
-  tested modules. No lower-dependency, separate Python 3.12 or hosted-CI result is
+  tested modules. No lower-dependency, separate Python 3.12 or hosted-CI result
+  is
   claimed; no commit, push or release is part of this batch.
 
-The [active audit](../../../maintenance/column-schema-audit.md) now records this composed
+The [active audit](../../../maintenance/column-schema-audit.md) now records this
+composed
 baseline and the discovered fitting publication path. Next bounded task: CS4.
 Build the isolated custom Index experiment against this schema/role interface,
 using the same masks, IDs, matching/cardinality and lifecycle tests. Compare total
 ownership/propagation complexity before any production Index decision in CS5.
-
 
 ### CS4 handover (2026-10-27)
 
@@ -2571,7 +2618,7 @@ index-backed state (36), field view (7) and owner (53), in addition to the share
 production schema and owner machinery. Two private pandas methods are overridden,
 `_view` and `_getitem_slice`; construction uses `_simple_new` and `_values`.
 Public copy/take/indexing and pickle reduction also need special handling.
-Unknown pandas constructors bypass __new__ and may create a subclass with no
+Unknown pandas constructors bypass `__new__` and may create a subclass with no
 records; access fails closed, with ordinary-Index fallbacks for native temporary
 label computations. Inspected `_shallow_copy`, `_concat` and constructor/copy
 paths do not supply a universal propagation hook. More native support requires
@@ -2668,7 +2715,6 @@ rules, while many native transforms still need explicit boundaries. This is the
 recommendation for **CS5**, not a production adoption/rejection decision silently
 applied by CS4. Next bounded task: record adopt/defer/reject explicitly against
 the agreed criteria, then scope CS6 validation/documentation for that decision.
-
 
 ### CS5 decision (2026-10-28)
 
@@ -2790,7 +2836,6 @@ Next bounded task: once the changes are committed and published for review,
 observe the configured hosted matrix/lower-line, docs and package checks for
 that exact revision, then close the remaining CS6 and parent checklist items.
 
-
 ### CS6 local handover (2026-10-28)
 
 Documentation and executable examples now describe the retained composed schema.
@@ -2834,7 +2879,8 @@ Local evidence (commands, JUnit/logs and environment/source hashes remain ignore
   pandas 3.0.5, NumPy 2.5.2, Qt5 available. Includes all 83 documentation scripts,
   fitting/scientific scripts, formats, folders/images and numerical consumers.
   `maintenance/runs/cs6-full-current/{pytest.xml,run.log,source-environment.json}`.
-- **Final lower pandas-line full suite:** **1,613 passed**, zero failures/errors/xfails, one
+- **Final lower pandas-line full suite:** **1,613 passed**, zero
+  failures/errors/xfails, one
   expected skip for the pandas-3-only accessor-lifecycle test, 324 warnings,
   210.49 seconds with two workers. Miniforge py312: Python 3.12.14, pandas
   2.2.3, NumPy 2.5.3 and the optional Qt5 overlay. Evidence:

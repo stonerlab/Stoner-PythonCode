@@ -126,7 +126,8 @@ $env:PYTHONPATH = 'D:/PythonCode/maintenance/runs/cs4-overlay;D:/PythonCode'
 
 For the lower run, substitute `py312` in the three commands above and use a
 separate output directory. Afterwards restore
-`$env:PYTHONPATH = $cs4PreviousPythonPath`. The recorded lower tests select the prototype and production
+`$env:PYTHONPATH = $cs4PreviousPythonPath`. The recorded lower tests select the
+prototype and production
 `test_column_schema.py`, `test_column_matching.py`, `test_column_cardinality.py`.
 The rest of that environment is unchanged Conda; the JSON reports distinguish
 effective overlays from Conda records. This checks the pandas 2.2 line, not every

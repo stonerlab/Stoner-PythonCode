@@ -22,7 +22,8 @@ This reuses the prototype benchmark's public-API workloads with production Stone
 from each checkout in separate processes. It verifies import provenance and source
 hashes, records runtime versions and all samples, and applies the agreed migration
 time/allocation thresholds. A nonzero exit means at least one measured gate failed;
-do not reinterpret that as release readiness. Keep the sources unchanged during a run.
+do not reinterpret that as release readiness. Keep the sources unchanged during
+a run.
 
 ```powershell
 ./maintenance/run-baseline.ps1 -Check focused -TestPaths tests/Stoner/test_Core.py

@@ -109,8 +109,10 @@ publishes result columns/metadata only after every fit and draft update succeeds
   remain in force. Unsupported methods must reject `where`, not forward it to a
   backend accidentally. Neighbourhood methods get individual policies in 8e.
   Audited table transforms also reject unsupported `where` before work or mutation.
-  Pass a row callback's own `where` argument through `Data.apply(..., _extra={"where": value})`
-  rather than as a top-level selection keyword. `Data.select` retains its distinct column-query
+  Pass a row callback's own `where` argument through
+  `Data.apply(..., _extra={"where": value})`
+  rather than as a top-level selection keyword. `Data.select` retains its
+  distinct column-query
   namespace: `select(where=value)` queries a column named `where`, not an operation
   selection. Plotting backend keywords likewise do not imply a Stoner input selection.
 
@@ -152,7 +154,8 @@ publishes result columns/metadata only after every fit and draft update succeeds
 
 Root native getters return the stored object, without a NumPy conversion or a
 substitute DataFrame/Dataset. Supported direct edits assign existing values without
-changing axes, variable sets, shape or dtype (for example `data.data.iloc[2, 1] = 5`).
+changing axes, variable sets, shape or dtype (for example
+`data.data.iloc[2, 1] = 5`).
 For images, existing intensity and Boolean exclusion cells may be edited; valid
 extents, frame IDs and calibration are owner-managed. Use the parent object for
 assignment, never rely on mutation of a pandas-selected Series writing back.
@@ -428,8 +431,10 @@ consumers must use the masked adapter instead.
 Editing contexts yield writable detached drafts. On normal exit they validate
 and atomically copy the draft into the owner; exceptions roll back. Drafts retained
 after exit cannot change the committed owner. NumPy editing includes values and
-masks but forbids shape or dtype changes. Pandas editing exposes header-labelled raw
-values (Stage 8c.1); it retains the original mask/schema/metadata and forbids axis or dtype
+masks but forbids shape or dtype changes. Pandas editing exposes header-labelled
+raw
+values (Stage 8c.1); it retains the original mask/schema/metadata and forbids
+axis or dtype
 changes. It is for positional cell updates only: users must not sort or permute
 values independently of the mask. Structural backend transforms instead require
 an explicit storage package with consistently transformed state. Xarray editing
@@ -508,9 +513,11 @@ attrs across input images; it never selects one conflicting description silently
 All images supply the same auxiliary scalar coordinate names and dtypes. These
 become frame coordinates and extract back to image scalars. Missing coordinates,
 reserved stack names and one-dimensional spatial auxiliary coordinates are rejected
-until an explicit y/x map is supplied. Two-dimensional maps pack as `(frame, y, x)`
+until an explicit y/x map is supplied. Two-dimensional maps pack as
+`(frame, y, x)`
 with NaN padding. Optional `index_y(frame, y)` and `index_x(frame, x)` retain cropped
-dimension labels separately from physical maps. Physical coordinate promotion to a
+dimension labels separately from physical maps. Physical coordinate promotion to
+a
 NaN-capable dtype must preserve integer values exactly. Empty stacks retaining
 calibration attributes apply those compatibility checks when repopulated.
 

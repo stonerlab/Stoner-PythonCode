@@ -46,7 +46,8 @@ replaced by resolved numerical positions and ordinary structured-field indexing.
 Calculated row angles use NumPy; Data's owner-level angle properties remain.
 Masked scalar checks use `numpy.ma.is_masked`, preserving the stored raw value.
 
-Real image, TIFF, Kerr/OCR, scan, stack, peak-finding and widget tests continue to
+Real image, TIFF, Kerr/OCR, scan, stack, peak-finding and widget tests continue
+to
 exercise the migrated public owners. Existing TIFF `ImageArray.dtype` metadata
 keys remain readable as historical format labels, without importing any removed
 class. Useful numerical functions remain ordinary helpers, not storage classes.
@@ -90,7 +91,8 @@ tests are not xfails and should not be used to demand reproduction of data loss.
 | Kerr and format consumers  | Existing Kerr operations, OCR boundaries and scientific file fixtures      | Image/test_kerr.py; test_FileFormats.py                   |
 | Persistence                | Existing metadata save, HDF5 and loader failure/cleanup conventions        | test_Core.py; test_HDF5.py; core/test_loader_cleanup.py   |
 
-Test paths in the table are relative to `tests/Stoner/`. Tracked capitalisation is
+Test paths in the table are relative to `tests/Stoner/`. Tracked capitalisation
+is
 `tests/Stoner/Image`, even though Windows may display `tests/stoner/image`.
 
 These are representative boundaries, not exhaustive coverage of every operation
@@ -115,9 +117,11 @@ For headers `['Field', 'Moment', 'Moment error', 'Moment', '2', '[']`:
 - Integer `-7` on six columns wraps to 5. Decide whether indices beyond the normal
   negative range should instead raise `IndexError`.
 - Selecting columns `[3, 0, 2]` from roles `xyey..` moves values and headers but
-  produces roles `xye`, not `yxe`. This is a propagation defect; the new schema must
+  produces roles `xye`, not `yxe`. This is a propagation defect; the new schema
+  must
   associate roles with selected columns.
-- With roles `xdyexdye`, `_get_cols(startx=4)` returns x=4, y=[6], y-error=[7], but
+- With roles `xdyexdye`, `_get_cols(startx=4)` returns x=4, y=[6], y-error=[7],
+  but
   x-error=1 rather than absolute column 5. Correcting this requires a regression
   with the intended absolute error-column index.
 
@@ -147,7 +151,8 @@ editing APIs. Settle signatures and the compatibility window in batch 2.
 
 A masked Data scalar returns its fill value without a mask flag; its hidden value
 remains stored. Decide the new scalar policy explicitly rather than accidentally
-substituting pandas missing-value semantics. The image mask proxy also requires an
+substituting pandas missing-value semantics. The image mask proxy also requires
+an
 array mask before indexed edits on a freshly constructed image whose mask is a
 scalar false; the recovery test explicitly initialises that mask.
 
@@ -311,7 +316,8 @@ corrected = dataset['intensity'] - level
 Use calibrated integer pixels with one excluded extreme value. Check the mean
 against the explicitly eligible physical region and the correction over the full
 image. Raw integers and coordinate maps remain unchanged. Clear the exclusion and
-recover the exact extreme value; do not expect clearing an exclusion to recover a
+recover the exact extreme value; do not expect clearing an exclusion to recover
+a
 genuine missing value. An empty region returns NaN. For a stack, explicitly
 broadcast the selector to `(frame, y, x)` and verify per-pixel counts/averages;
 outside valid extents remains excluded even after user masks are cleared. A pixel

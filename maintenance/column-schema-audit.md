@@ -233,7 +233,8 @@ pytest 9.1.1), satisfying all 39 `tests/test-env.yml` Conda specifications.
 Full local run: **1,573 passed**, with no failures, errors, skips or expected
 failures. JUnit: ignored `maintenance/runs/cs2-full/pytest.xml`. After private-helper
 import cleanup, the final affected suite passed **1,101 tests** with no failures,
-errors, skips or expected failures (`maintenance/runs/cs2-final/pytest.xml`). No hosted CI
+errors, skips or expected failures (`maintenance/runs/cs2-final/pytest.xml`). No
+hosted CI
 or lower-pandas-bound pass is claimed. The available py312 environment has pandas
 3.0.5 and lacks pytest-timeout, so it is not used as minimum-dependency evidence.
 
@@ -315,7 +316,6 @@ API removals compared with the clean CS2 inventory. Evidence is under ignored
 specifications are satisfied in py314. Ruff F821/F401 on the extracted modules and
 CRLF-aware whitespace checks pass. No lower-dependency or hosted-CI pass is claimed.
 
-
 ## CS4 isolated Index comparison
 
 The [runnable experiment](column_index_prototype/README.md) owns ColumnSchema on
@@ -340,12 +340,13 @@ records environment overlays, source fingerprints, private hooks, performance
 and compatibility boundaries. CS5 now records the decision below; production
 Index use remains disabled.
 
-
 ## CS5 decision (2026-10-28)
 
 Retain CS3 composition and reject custom pandas Index adoption for this
 consolidation, as accepted by the maintainer. The migration plan's
-[CS5 decision](../doc/development/plans/STORAGE_MIGRATION_PLAN.md#cs5-decision-2026-10-28) records each
+[CS5
+decision](../doc/development/plans/STORAGE_MIGRATION_PLAN.md#cs5-decision-2026-10-28)
+records each
 adoption criterion against the CS4 ownership, propagation, compatibility and
 performance evidence. Moving header consistency into an Index and adding private
 hooks/provenance adapters does not simplify the complete owner lifecycle.
@@ -358,7 +359,6 @@ combination policies are not production API commitments. CS6 must reconcile the
 existing docs/examples, review these contracts and record focused/full local,
 Sphinx and final-revision hosted validation. CS5 verified the existing CS4 report
 counts only; no new runtime test or hosted pass is claimed.
-
 
 ### CS6 local handover (2026-10-28)
 

@@ -25,7 +25,8 @@ commands in [the developer guide](../doc/UserGuide/developer.rst).
   changes. Use real scientific fixtures where format interpretation is involved.
   Fixture paths must match the capitalisation in `git ls-files`.
 - Update docstrings and examples with public behaviour changes. Follow
-  [DOCSTRING_STYLE.md](../doc/development/DOCSTRING_STYLE.md), including British English prose.
+  [DOCSTRING_STYLE.md](../doc/development/DOCSTRING_STYLE.md), including British
+  English prose.
 - Inspect the diff and whitespace, then stage only intended changes. Record tests
   and any limits of validation in the commit or pull request. Check hosted results
   after pushing; local passes do not establish remote or physical compatibility.
@@ -37,7 +38,8 @@ commands in [the developer guide](../doc/UserGuide/developer.rst).
 - Check the lower-dependency job and installed-distribution jobs, including final
   test-result publishing. Do not treat a successful test step as success for a job
   whose reporting or packaging steps failed.
-- Collect coverage on Ubuntu Python 3.14 only. Keep all matrix jobs running the full
+- Collect coverage on Ubuntu Python 3.14 only. Keep all matrix jobs running the
+  full
   suite. Verify Coveralls and Codacy uploads where applicable; investigate a drop
   in coverage instead of suppressing it.
 - Diagnose failures from logs, JUnit results and resolved environment versions.
@@ -75,7 +77,8 @@ commands in [the developer guide](../doc/UserGuide/developer.rst).
 - Build cached HTML with `READTHEDOCS=True`, retaining the warning log. Run
   headless builds with `MPLBACKEND=Agg` and `QT_QPA_PLATFORM=offscreen`; importing
   the package can initialise Qt even when plotting uses Matplotlib's Agg backend.
-  Run `maintenance/audit-docs.py` against the platform's reviewed warning baseline in
+  Run `maintenance/audit-docs.py` against the platform's reviewed warning
+  baseline in
   `maintenance/docs`. New or increased warnings need investigation; never increase
   the ceiling solely to make a build pass.
 - Verify all five primary classes and dynamically attached Data methods remain
@@ -106,7 +109,8 @@ commands in [the developer guide](../doc/UserGuide/developer.rst).
   on pushes and pull requests. Record successful results for the release commit;
   do not repeat those builds locally or reuse old files from `dist`.
 - Review metadata, licences, URLs, dependency declarations and archive size where
-  automated checks do not cover them. Check runtime assets including OCR data and dependency-provided plot styles
+  automated checks do not cover them. Check runtime assets including OCR data
+  and dependency-provided plot styles
   and OCR tessdata. Keep GPLv3 declarations consistent.
 - Publish the matching GitHub release only when authorised. Verify the release
   jobs build that tag, reject a version mismatch, and complete PyPI/Conda publication
@@ -120,17 +124,24 @@ commands in [the developer guide](../doc/UserGuide/developer.rst).
 
 ## Planned API work
 
-- [ ] Follow [RELEASE_0_12_PLAN.md](../doc/development/plans/RELEASE_0_12_PLAN.md): API lock before beta,
+- [ ] Follow
+  [RELEASE_0_12_PLAN.md](../doc/development/plans/RELEASE_0_12_PLAN.md): API
+  lock before beta,
   allowing only small compatible additions, then full API freeze/bug fixes only
   for RC. Review cumulative 0.11 breakage, migration and the final version series
   before the lock. Existing alpha tags remain immutable.
-- [ ] Follow [STRING_ENUM_PLAN.md](../doc/development/plans/STRING_ENUM_PLAN.md) for public string-valued
+- [ ] Follow [STRING_ENUM_PLAN.md](../doc/development/plans/STRING_ENUM_PLAN.md)
+  for public string-valued
   choice arguments. Start with fitting outputs, retain supported string calls,
   and audit unrelated domains in bounded compatibility-preserving batches.
-- [ ] Follow [DATA_ACCESSOR_PLAN.md](../doc/development/plans/DATA_ACCESSOR_PLAN.md) for the reviewed
+- [ ] Follow
+  [DATA_ACCESSOR_PLAN.md](../doc/development/plans/DATA_ACCESSOR_PLAN.md) for
+  the reviewed
   candidate accessor groups and their ownership boundaries. Fitting is the first
   implemented group; the other groups remain future-work proposals.
-- [ ] Implement [FIT_ACCESSOR_PLAN.md](../doc/development/plans/FIT_ACCESSOR_PLAN.md) in bounded batches:
+- [ ] Implement
+  [FIT_ACCESSOR_PLAN.md](../doc/development/plans/FIT_ACCESSOR_PLAN.md) in
+  bounded batches:
   snake_case model registry, registration through the existing `make_model`
   decorator, `Data.fit`, consumer/folder migration, documentation and validation.
   Settle the explicitly proposed compatibility/default choices before coding them.
@@ -153,7 +164,8 @@ physical coefficient covariance. Combined correction preserves source scientific
 state; transient legacy plotting handles are not cloned into results.
 In-place correction and folder dispatch remain deferred; level_image is unchanged.
 
-Local Windows Conda py314 (Python 3.14.7) passed 1,937 offline tests, including all
+Local Windows Conda py314 (Python 3.14.7) passed 1,937 offline tests, including
+all
 86 offline examples, and the network example separately. All 67 scientific tests
 also passed on QtAgg/offscreen, including near-singular and legacy-Figure checks.
 New-code Ruff passes. Cached Sphinx passed with 62 baseline warnings and
@@ -581,7 +593,8 @@ reviewed inference/test-utility advisories did not block the alpha.
   on its actual release impact rather than its complexity score.
 
 - [x] **Native storage wrappers on `devel` (Stages 1-9 complete):** see
-  [STORAGE_MIGRATION_PLAN.md](../doc/development/plans/STORAGE_MIGRATION_PLAN.md) for the agreed pandas/xarray
+  [STORAGE_MIGRATION_PLAN.md](../doc/development/plans/STORAGE_MIGRATION_PLAN.md)
+  for the agreed pandas/xarray
   architecture, validation gates and current handover. Stages 1-8 are complete:
   `Data.data` exposes its actual DataFrame; `ImageFile.image` and `ImageStack.stack`
   expose native Datasets with explicit numerical exports, selection, exclusion,

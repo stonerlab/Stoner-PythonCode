@@ -3,7 +3,8 @@
 Date: 2026-10-29. Target checkout: `devel`.
 Status: batches 1-3 implemented. The registry, decorators, `FitOutput`, `Data.fit`
 and `folder.each.fit` are available, and internal package fitting calls are migrated.
-Batch 4 documentation/sample/script migration is implemented; compatibility warning timing and removal policy remain undecided.
+Batch 4 documentation/sample/script migration is implemented; compatibility
+warning timing and removal policy remain undecided.
 The earlier `annotate_fit` edits are preserved.
 
 See [DATA_ACCESSOR_PLAN.md](DATA_ACCESSOR_PLAN.md) for other candidate groups and
@@ -139,7 +140,8 @@ Proposed registry contract:
 
 ### Canonical spelling example
 
-The physical name is **BlochÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“GrÃƒÆ’Ã‚Â¼neisen**. Use `bloch_grueneisen` for the ASCII
+The physical name is **BlochÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“GrÃƒÆ’Ã‚Â¼neisen**. Use
+`bloch_grueneisen` for the ASCII
 registry key, mapped to the existing `BlochGrueneisen` class. The earlier
 `bloch_gruneisen` conversation spelling was a typo, not an approved alias.
 The existing callable `blochGrueneisen` remains unchanged.
@@ -295,7 +297,8 @@ selectors. Do not reserve model names as top-level `Data` attributes.
 - [x] Update the fitting learning path (`curve_fitting`, `fitting_simple`,
   `fitting_options`, `fitting_methods`), model/decorator docs and migration guide.
 - [x] Audit all `doc/samples`, `scripts` and internal consumers using the
-  tracked file list; retain direct-method tests as compatibility coverage. Preserve generated/historical content and `doc/plot_cache`.
+  tracked file list; retain direct-method tests as compatibility coverage.
+  Preserve generated/historical content and `doc/plot_cache`.
 - [x] Give dynamic built-in shortcuts stable generated documentation and inventory
   targets through the registry; do not rely only on runtime `__getattr__` for Sphinx.
 - [x] Add folder examples, compatibility/removal notes and release notes.
@@ -432,7 +435,8 @@ fitting calls across tracked samples and scripts, all using `.fit` with accessor
 coordinate keywords. Guides, fitting API cross-references, TeX fitting snippets,
 release notes and migration instructions are updated. The numerical algorithm
 reference now provides working links to the full options from each accessor
-method and explains the owner and coordinate-keyword translation. The 83 offline documentation
+method and explains the owner and coordinate-keyword translation. The 83 offline
+documentation
 examples and the network example passed. Interactive/file-dependent analysis
 scripts were syntax-checked and audited, not run against laboratory data.
 The full local suite passed 1,759 tests (network/OCR excluded), and the
@@ -443,7 +447,8 @@ unexpected warnings, missing dynamic Data methods or removed API objects; all
 five accessor and numerical algorithm inventory targets are present. Whitespace
 checks pass. OCR and hosted CI were not run. Current validation logs are under `maintenance/runs/fit-migration/`.
 
-Next bounded batch: agree the compatibility warning timing and removal policy. The registry remains process-local; bulk fitting sends
+Next bounded batch: agree the compatibility warning timing and removal policy.
+The registry remains process-local; bulk fitting sends
 only the chosen definition with each call. Choose warning timing and a removal
 release before introducing deprecations. Preserve the pending `annotate_fit` edits.
 Do not expand to other accessors or

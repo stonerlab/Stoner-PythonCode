@@ -9,7 +9,8 @@ review remains separate.
 
 See [maintenance guidance](../../../maintenance/MAINTENANCE_PLAN.md), the
 [accessor roadmap](DATA_ACCESSOR_PLAN.md), and the maintained
-[plot](../../UserGuide/image_plotting.rst), [ROI](../../UserGuide/image_roi.rst) and
+[plot](../../UserGuide/image_plotting.rst), [ROI](../../UserGuide/image_roi.rst)
+and
 [fit](../../UserGuide/image_fitting.rst) guides.
 
 ## 1. Intended stable-release scope
@@ -48,7 +49,8 @@ No larger version is selected here. Existing published alphas, including
 | Release candidate | Bug fixes and verification; documentation corrections supporting existing contracts | Full API freeze: no API additions or breaking changes |
 | Stable | Publish the validated frozen candidate | Must satisfy the RC contracts and exact-source release gates |
 
-Published and planned alpha milestones, with future versions subject to release preparation:
+Published and planned alpha milestones, with future versions subject to release
+preparation:
 
 | Milestone | Candidate version | Required evidence |
 | --- | --- | --- |
@@ -108,12 +110,14 @@ changes must be necessary fixes and revalidated, not a route to new features.
 - [ ] Review the three accessors' names/defaults/return/reference/selection/
   coordinate/ownership contracts in the maintained guides and executable examples.
 - [ ] Review cumulative 0.11 -> candidate breaking changes with a migration table:
-  old call, replacement, changed semantics, retained compatibility and remaining limits.
+  old call, replacement, changed semantics, retained compatibility and remaining
+  limits.
 - [ ] Decide the stable version series, compatibility/deprecation policy and the
   status of direct Data fitting, legacy image.imshow and level_image. Do not allow
   a beta/RC removal merely because an older planning document mentioned it.
 - [ ] Audit all supported consumers, including folder/stack adapters, image selectors,
-  repr hooks, notebooks if tracked, examples and scripts; record excluded/deferred work.
+  repr hooks, notebooks if tracked, examples and scripts; record
+  excluded/deferred work.
 - [ ] Freeze a reviewed public signature/inventory and behavioural baseline;
   explicitly classify internal versus public names and versioned stored records.
 - [ ] Document supported image calibration/ROI/frame/uncertainty limits and manual
