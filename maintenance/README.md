@@ -2,7 +2,7 @@
 
 Run these commands from the repository root in a supported Conda environment.
 The recurring checklist and current release work are in
-[MAINTENANCE_PLAN.md](../MAINTENANCE_PLAN.md). Local output belongs under ignored
+[MAINTENANCE_PLAN.md](MAINTENANCE_PLAN.md). Local output belongs under ignored
 `maintenance/runs/`; completed investigation records belong in Git history.
 
 ## Tests and source checks

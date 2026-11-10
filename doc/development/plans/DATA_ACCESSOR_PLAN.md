@@ -14,12 +14,11 @@ The selected first group is fitting. Its implementation, registry, compatibility
 documentation and test plan is in [FIT_ACCESSOR_PLAN.md](FIT_ACCESSOR_PLAN.md).
 The other groups below are candidates, not commitments to implement or remove APIs.
 
-ImageFile has companion plans for a matching accessor experience, implemented
-in this agreed order: [image plotting](IMAGE_PLOT_ACCESSOR_PLAN.md),
-[current ROI management and reusable selections](IMAGE_ROI_ACCESSOR_PLAN.md),
-then [image fitting and background flattening](IMAGE_FIT_ACCESSOR_PLAN.md).
-Standalone image plotting and ROI accessors are published in 0.12.0a6 and
-0.12.0a7. Image fitting is implemented for the 0.12.0a8 alpha. Their callable defaults,
+ImageFile provides a matching accessor experience through
+[image plotting](../../UserGuide/image_plotting.rst),
+[current ROI management and reusable selections](../../UserGuide/image_roi.rst),
+and [image fitting and background flattening](../../UserGuide/image_fitting.rst).
+All three accessors are published through 0.12.0a8. Their callable defaults,
 explicit methods, model shortcuts, result choices and plotting targets should
 follow the Data accessors while preserving image coordinate, exclusion and
 ownership rules. ROI state is distinct from the persistent image mask.
@@ -109,10 +108,10 @@ accessors for them. Do not introduce an unrestricted pandas attribute proxy.
 ## Future work checklist
 
 - [x] Migrate fitting consumers in the package, folders, documentation, samples
-  and scripts; validation evidence is recorded in `FIT_ACCESSOR_PLAN.md`.
+  and scripts; validation evidence is recorded in `doc/development/plans/FIT_ACCESSOR_PLAN.md`.
 - [ ] Agree fitting compatibility warning timing and removal policy before adding
   deprecation wrappers or removing the direct methods.
-- [ ] Implement ImageFile.plot, then ImageFile.roi, then ImageFile.fit/flattening,
+- [x] Publish ImageFile.plot, ImageFile.roi and ImageFile.fit/flattening,
   with a separate alpha for each and shared API/coordinate contracts with Data.
 - [ ] Complete the release API-lock review before beta and full API-freeze review
   before RC, including cumulative 0.11 migration and final version-series choice.

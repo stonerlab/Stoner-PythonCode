@@ -1,7 +1,7 @@
 # Column selection and schema audit
 
 CS1-CS5, updated 2026-10-28, `devel`. This is the active caller inventory for
-[the column schema plan](../STORAGE_MIGRATION_PLAN.md#column-schema-and-setas-consolidation-2026-10-27).
+[the column schema plan](../doc/development/plans/STORAGE_MIGRATION_PLAN.md#column-schema-and-setas-consolidation-2026-10-27).
 The tables retain the CS1 source snapshot and line numbers used to migrate CS2;
 their descriptions of previous defects are historical starting points. Matching
 and caller cardinality are implemented; the CS2 closure below records those
@@ -345,7 +345,7 @@ Index use remains disabled.
 
 Retain CS3 composition and reject custom pandas Index adoption for this
 consolidation, as accepted by the maintainer. The migration plan's
-[CS5 decision](../STORAGE_MIGRATION_PLAN.md#cs5-decision-2026-10-28) records each
+[CS5 decision](../doc/development/plans/STORAGE_MIGRATION_PLAN.md#cs5-decision-2026-10-28) records each
 adoption criterion against the CS4 ownership, propagation, compatibility and
 performance evidence. Moving header consistency into an Index and adding private
 hooks/provenance adapters does not simplify the complete owner lifecycle.

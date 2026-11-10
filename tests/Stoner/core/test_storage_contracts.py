@@ -1,7 +1,7 @@
 """Characterise storage boundaries before replacing DataArray.
 
 Tests named ``legacy`` record observed quirks, not requirements to reproduce those
-quirks in the new backend. See STORAGE_CONTRACTS.md for the migration decisions.
+quirks in the new backend. See doc/development/STORAGE_CONTRACTS.md for the migration decisions.
 """
 
 from pathlib import Path

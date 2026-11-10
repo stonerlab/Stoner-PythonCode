@@ -1,7 +1,7 @@
 # Storage contract inventory
 
 This is the executable baseline for batch 1 of
-[STORAGE_MIGRATION_PLAN.md](STORAGE_MIGRATION_PLAN.md), characterised on `devel`
+[STORAGE_MIGRATION_PLAN.md](plans/STORAGE_MIGRATION_PLAN.md), characterised on `devel`
 starting at `9d36d0460`. It distinguishes behaviours to retain from observed
 defects and API decisions. It is a migration specification, not a promise to keep
 every current implementation quirk. The observations below describe the original

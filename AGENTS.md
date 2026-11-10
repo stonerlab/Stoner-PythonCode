@@ -55,7 +55,7 @@ Before editing or committing:
 
 Use Windows Git for this checkout with repository-local `core.fileMode=false` and `core.autocrlf=false`. These settings were approved by the maintainer and tested on a disposable clone. They preserve the existing mixed line endings and indexed executable bits; do not run repository-wide normalization or `git add --renormalize` as routine maintenance. Review `git diff --ignore-space-at-eol` to distinguish semantic changes from the pre-existing one-line CRLF/LF difference in `Stoner/formats/utils/__init__.py`. Stage only intended changes.
 
-Cygwin contributors should use a separate checkout rather than alternate clients in this working directory. Cygwin is not installed here and was not live-tested. Historical checkout validation is retained in Git history; current maintenance guidance is in `MAINTENANCE_PLAN.md`.
+Cygwin contributors should use a separate checkout rather than alternate clients in this working directory. Cygwin is not installed here and was not live-tested. Historical checkout validation is retained in Git history; current maintenance guidance is in `maintenance/MAINTENANCE_PLAN.md`.
 
 ## Behaviour and compatibility expectations
 
@@ -93,16 +93,20 @@ For visual verification, serve the generated Sphinx HTML directory over localhos
 
 ## Docstring standard
 
-Follow [DOCSTRING_STYLE.md](DOCSTRING_STYLE.md) when writing or revising docstrings. It defines the expected Google-style
+Follow [DOCSTRING_STYLE.md](doc/development/DOCSTRING_STYLE.md) when writing or revising docstrings. It defines the expected Google-style
 sections, Sphinx markup, argument and return descriptions, and scientific behaviour documentation. Use British English
 spellings for prose while preserving the exact spelling of API identifiers, keyword arguments and literal values.
 
 ## Maintenance plan
 
+Developer guidance, storage specifications and active design plans are indexed in
+[doc/development/README.md](doc/development/README.md). Keep this root file as the
+entry point for coding agents; place detailed developer documents in that directory.
+
 For the planned pandas/xarray storage migration on `devel`, read
-[STORAGE_MIGRATION_PLAN.md](STORAGE_MIGRATION_PLAN.md). It is the working
+[STORAGE_MIGRATION_PLAN.md](doc/development/plans/STORAGE_MIGRATION_PLAN.md). It is the working
 specification and session handover: take the next bounded batch and update its
 checklist and handover with validation and the next step. Keep later backend
 method wrappers separate from the initial storage replacement.
 
-`MAINTENANCE_PLAN.md` describes recurring maintenance, release preparation and current follow-ups. Keep its active checklist current; record completed work in commits, pull requests, release notes and CI runs. The initial Phase 0-7 records are historical and remain available in Git history. Retain reusable maintenance tools and reviewed documentation warning baselines, but do not accumulate completed phase reports in the live tree. See `maintenance/README.md` for tool usage.
+`maintenance/MAINTENANCE_PLAN.md` describes recurring maintenance, release preparation and current follow-ups. Keep its active checklist current; record completed work in commits, pull requests, release notes and CI runs. The initial Phase 0-7 records are historical and remain available in Git history. Retain reusable maintenance tools and reviewed documentation warning baselines, but do not accumulate completed phase reports in the live tree. See `maintenance/README.md` for tool usage.

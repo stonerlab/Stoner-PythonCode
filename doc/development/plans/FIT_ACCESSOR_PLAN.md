@@ -7,8 +7,8 @@ Batch 4 documentation/sample/script migration is implemented; compatibility warn
 The earlier `annotate_fit` edits are preserved.
 
 See [DATA_ACCESSOR_PLAN.md](DATA_ACCESSOR_PLAN.md) for other candidate groups and
-[AGENTS.md](AGENTS.md), [DOCSTRING_STYLE.md](DOCSTRING_STYLE.md) and
-[MAINTENANCE_PLAN.md](MAINTENANCE_PLAN.md) for repository requirements.
+[AGENTS.md](../../../AGENTS.md), [DOCSTRING_STYLE.md](../DOCSTRING_STYLE.md) and
+[MAINTENANCE_PLAN.md](../../../maintenance/MAINTENANCE_PLAN.md) for repository requirements.
 
 ## 1. Agreed intent and scope
 

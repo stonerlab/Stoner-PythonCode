@@ -155,7 +155,7 @@ see `LICENSE.md`_. Please cite the package using its `Zenodo DOI`_.
 .. _sample data: https://github.com/stonerlab/Stoner-PythonCode/tree/stable/sample-data
 .. _contributor guide: https://stoner-pythoncode.readthedocs.io/en/stable/UserGuide/developer.html
 .. _AGENTS.md: https://github.com/stonerlab/Stoner-PythonCode/blob/stable/AGENTS.md
-.. _maintenance plan: https://github.com/stonerlab/Stoner-PythonCode/blob/stable/MAINTENANCE_PLAN.md
+.. _maintenance plan: https://github.com/stonerlab/Stoner-PythonCode/blob/stable/maintenance/MAINTENANCE_PLAN.md
 .. _issue tracker: https://github.com/stonerlab/Stoner-PythonCode/issues
 .. _LICENSE.md: https://github.com/stonerlab/Stoner-PythonCode/blob/stable/LICENSE.md
 .. _Zenodo DOI: https://zenodo.org/badge/latestdoi/10057055

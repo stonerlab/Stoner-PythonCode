@@ -128,9 +128,9 @@ Notes:
 ## Basis and enforcement
 
 The source survey covered 1,443 docstrings in 87 package files. Representative examples include
-[SG_Filter](Stoner/analysis/filtering.py), [rolling_window](Stoner/core/methods.py), the
-[Data class](Stoner/core/data.py), [property and descriptor documentation](Stoner/core/property.py), and
-[stitch](Stoner/analysis/functions.py). Parser settings are in [doc/conf.py](doc/conf.py).
+[SG_Filter](../../Stoner/analysis/filtering.py), [rolling_window](../../Stoner/core/methods.py), the
+[Data class](../../Stoner/core/data.py), [property and descriptor documentation](../../Stoner/core/property.py), and
+[stitch](../../Stoner/analysis/functions.py). Parser settings are in [doc/conf.py](../conf.py).
 
 The existing lint configurations are not a consistent formal specification of this style. This document is the writing
 standard; reconcile tooling with it when updating lint configuration. Typographical errors, stale names, missing

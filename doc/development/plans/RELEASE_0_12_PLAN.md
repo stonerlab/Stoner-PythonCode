@@ -7,10 +7,10 @@ ImageFitter is published in the final planned feature alpha, 0.12.0a8. All three
 image feature milestones have passed their release gates. API lock/migration
 review remains separate.
 
-See [maintenance guidance](MAINTENANCE_PLAN.md), the
-[accessor roadmap](DATA_ACCESSOR_PLAN.md), and the detailed
-[plot](IMAGE_PLOT_ACCESSOR_PLAN.md), [ROI](IMAGE_ROI_ACCESSOR_PLAN.md) and
-[fit](IMAGE_FIT_ACCESSOR_PLAN.md) implementation/testing plans.
+See [maintenance guidance](../../../maintenance/MAINTENANCE_PLAN.md), the
+[accessor roadmap](DATA_ACCESSOR_PLAN.md), and the maintained
+[plot](../../UserGuide/image_plotting.rst), [ROI](../../UserGuide/image_roi.rst) and
+[fit](../../UserGuide/image_fitting.rst) guides.
 
 ## 1. Intended stable-release scope
 
@@ -105,8 +105,8 @@ changes must be necessary fixes and revalidated, not a route to new features.
 - [ ] Each accessor alpha's minimum deliverable and focused/full/hosted gates pass.
 - [ ] Real user workflows cover display, ROI create/edit/clear/reuse, reduction/
   histogram, fit, whole-image correction and inspection with common Data conventions.
-- [ ] The three accessor plans' open names/defaults/return/reference/selection/
-  coordinate/ownership decisions are settled and reflected in executable docs.
+- [ ] Review the three accessors' names/defaults/return/reference/selection/
+  coordinate/ownership contracts in the maintained guides and executable examples.
 - [ ] Review cumulative 0.11 -> candidate breaking changes with a migration table:
   old call, replacement, changed semantics, retained compatibility and remaining limits.
 - [ ] Decide the stable version series, compatibility/deprecation policy and the

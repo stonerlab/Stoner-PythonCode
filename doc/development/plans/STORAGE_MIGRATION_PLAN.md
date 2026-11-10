@@ -4,13 +4,13 @@ Agreed direction: 2026-09-13. Target branch: `devel`.
 Status: Stages 1-9 complete, including the Stage 9e cumulative wrapper exit gate.
 Release: [`0.12.0a1`](https://github.com/stonerlab/Stoner-PythonCode/releases/tag/v0.12.0a1)
 (GitHub prerelease, PyPI and Conda published; release CI passed). Read the Docs
-tag activation remains a follow-up in `MAINTENANCE_PLAN.md`.
+tag activation remains a follow-up in `maintenance/MAINTENANCE_PLAN.md`.
 Target Python support: Python 3.12 and newer; Python 3.11 support ends with this
 new version. Python 3.15 support is conditional on its public release and support
 from the required dependencies, followed by successful project validation.
 
 This is the working specification for a migration across several separate
-sessions. Read this file and [AGENTS.md](AGENTS.md) before starting a batch.
+sessions. Read this file and [AGENTS.md](../../../AGENTS.md) before starting a batch.
 Update the checklist and handover below in the same change as the work. The
 original conversation is not required to resume the project.
 
@@ -187,14 +187,14 @@ necessary. Complete its evidence before moving to dependent work.
   Reuse current tests and real scientific fixtures. Record the verified environment,
   baseline commands and outcomes. Gate: preserved behaviours and proposed changes
   are distinguishable; no production storage changes.
-  See [STORAGE_CONTRACTS.md](STORAGE_CONTRACTS.md) for the inventory, test map and
+  See [STORAGE_CONTRACTS.md](../STORAGE_CONTRACTS.md) for the inventory, test map and
   explicitly separated legacy defects/API decisions.
 - [x] **2. Specify interchange and ownership.** Settle values/mask/schema ownership,
   duplicate-column identity, row identity, dtype policy, metadata conflict rules,
   pandas/xarray import/export and writable-view transition. Define conversion and
   editing signatures. Gate: concrete round-trip examples and an explicit API-change
   list; unresolved choices and their implications are recorded.
-  See [STORAGE_INTERCHANGE.md](STORAGE_INTERCHANGE.md) for target signatures,
+  See [STORAGE_INTERCHANGE.md](../STORAGE_INTERCHANGE.md) for target signatures,
   versioned in-memory packages, acceptance examples and deliberate API changes.
 - [x] **3. Prototype and measure.** Exercise an isolated composition prototype with
   duplicate columns, multi-y fitting/errors, masked integers, unequal frame sizes
@@ -203,7 +203,7 @@ necessary. Complete its evidence before moving to dependent work.
   fitting, row appends, stack insertion and image reductions. Gate: correctness
   evidence and agreed performance tolerances before production replacement.
   - [x] **3a. Isolated prototype and correctness evidence.** See
-    [the prototype guide](maintenance/storage_prototype/README.md).
+    [the prototype guide](../../../maintenance/storage_prototype/README.md).
   - [x] **3b. Paired time/memory measurements and accessor comparison.** All 19
     workload/size pairs meet the proposed thresholds below.
   - [x] **3c. Agree performance tolerances.** Accepted on 2026-09-13 by the
@@ -491,10 +491,10 @@ These conveniences are not required to close the initial Stage 8 interface gate.
 ### Stage 8 native-access decisions and acceptance examples
 
 Stage 8a resolves the following design questions in
-[STORAGE_INTERCHANGE.md](STORAGE_INTERCHANGE.md#stage-8a-decisions-2026-09-20-implementation-follows-in-8b-8e).
+[STORAGE_INTERCHANGE.md](../STORAGE_INTERCHANGE.md#stage-8a-decisions-2026-09-20-implementation-follows-in-8b-8e).
 The list remains the implementation review checklist; it is not a list of open
 design choices. Worked examples and failure contracts are recorded in
-[STORAGE_CONTRACTS.md](STORAGE_CONTRACTS.md#stage-8a-selection-and-native-access-acceptance).
+[STORAGE_CONTRACTS.md](../STORAGE_CONTRACTS.md#stage-8a-selection-and-native-access-acceptance).
 
 - **Native representation:** `Data.data` is an actual DataFrame. Choose DataArray
   versus Dataset for `.image` and `.stack`, including where exclusion variables and
@@ -761,20 +761,20 @@ Suggested resumption request:
 Initial inspection was on `devel` at `812690bf0`; these are starting points, not
 claims that a future checkout has unchanged implementations.
 
-- [Column resolver and roles](Stoner/core/setas.py),
-  [DataArray slicing/descriptors](Stoner/core/array.py),
-  [Data properties](Stoner/core/property.py),
-  [indexing and iteration](Stoner/core/interfaces.py),
-  [operators](Stoner/core/operators.py).
-- [Pandas import](Stoner/core/data.py),
-  [to_pandas and core methods](Stoner/core/methods.py),
-  [typed metadata and existing pandas accessor](Stoner/core/base.py).
-- [ImageFile/ImageArray](Stoner/Image/core.py),
-  [mask and drawing proxies](Stoner/Image/attrs.py),
-  [stack storage](Stoner/Image/stack.py), [Kerr classes](Stoner/Image/kerr.py).
-- [Core tests](tests/Stoner/core), [image tests](tests/Stoner/Image),
-  [analysis](Stoner/analysis), [formats](Stoner/formats),
-  [public examples](doc/samples).
+- [Column resolver and roles](../../../Stoner/core/setas.py),
+  historical DataArray slicing/descriptors (`Stoner/core/array.py`, removed in stage 6e),
+  [Data properties](../../../Stoner/core/property.py),
+  [indexing and iteration](../../../Stoner/core/interfaces.py),
+  [operators](../../../Stoner/core/operators.py).
+- [Pandas import](../../../Stoner/core/data.py),
+  [to_pandas and core methods](../../../Stoner/core/methods.py),
+  [typed metadata and existing pandas accessor](../../../Stoner/core/base.py).
+- [ImageFile/ImageArray](../../../Stoner/Image/core.py),
+  [mask and drawing proxies](../../../Stoner/Image/attrs.py),
+  [stack storage](../../../Stoner/Image/stack.py), [Kerr classes](../../../Stoner/Image/kerr.py).
+- [Core tests](../../../tests/Stoner/core), [image tests](../../../tests/Stoner/Image),
+  [analysis](../../../Stoner/analysis), [formats](../../../Stoner/formats),
+  [public examples](../../samples).
 - [Pandas extension guidance](https://pandas.pydata.org/docs/development/extending.html):
   composition/accessors and extension dtype alternatives.
 - [Pandas Copy-on-Write](https://pandas.pydata.org/docs/user_guide/copy_on_write.html):
@@ -1899,7 +1899,7 @@ matches the selected environment.
   closure in a documentation-only commit; hosted runtime evidence remains pinned
   to `4525bf7d593788ef4d4e0d2d5afcba3f6ca85ca9` and its fingerprint above.
 - **Next step:** follow the separate release-preparation checklist in
-  `MAINTENANCE_PLAN.md` when release work is authorised. No release, tag, publication
+  `maintenance/MAINTENANCE_PLAN.md` when release work is authorised. No release, tag, publication
   or Conda deployment is part of this batch. Retain scientific fixtures and all
   243 cached plots. Additional wrapper families, labelled-row APIs and lazy or
   broader coordinate-aware interfaces require independent bounded proposals;
@@ -2033,7 +2033,7 @@ is rejected for this consolidation. CS6 documentation and local validation are
 complete; final-revision hosted validation and overall closure remain open.
 This is a follow-on to completed Stages 1-9. Matching
 precedence, all-match defaults and explicit first selection are agreed directions.
-The [caller inventory](maintenance/column-schema-audit.md) records the implemented
+The [caller inventory](../../../maintenance/column-schema-audit.md) records the implemented
 matching/cardinality contracts, composed ownership, CS4 evidence and the CS5 decision.
 
 ### Outcome and ownership
@@ -2161,7 +2161,7 @@ occurrence and creates fresh IDs for extra occurrences, as current tests require
   multi-column, exactly-one, intentional-first or structural insertion point.
   Protect role groups, masks, IDs and return contracts with focused tests; record
   final API shapes and exceptions above. Treat insertion positions separately
-  from selecting existing columns. Gate met: [caller inventory and contracts](maintenance/column-schema-audit.md)
+  from selecting existing columns. Gate met: [caller inventory and contracts](../../../maintenance/column-schema-audit.md)
   plus `tests/Stoner/core/test_column_cardinality.py`; see the CS1 handover below.
 - [x] **CS2 - Matching and caller migration.** Implement matching and `first`
   once; route Data and detached Setas through it. Update audited callers in the
@@ -2268,7 +2268,7 @@ integration is outside the accepted scope.
 
 ### CS1 handover (2026-10-27)
 
-The [active audit](maintenance/column-schema-audit.md) covers 130 production call
+The [active audit](../../../maintenance/column-schema-audit.md) covers 130 production call
 sites in 87 enclosing functions: 75 `find_col`, 28 `_col_args`, 16 `_get_cols` and
 11 shared/plot `resolve_columns` calls. Source searches also cover dynamic method
 attachment, direct schema access, numerical annotations, folders and loader role
@@ -2333,7 +2333,7 @@ lower-dependency execution or hosted CI in this CS1 batch.
 
 Matching and caller migration are implemented on `devel`, preserving the existing
 CS1 planning/audit edits. There is no schema-ownership replacement or custom Index
-in production. The [active inventory](maintenance/column-schema-audit.md) retains
+in production. The [active inventory](../../../maintenance/column-schema-audit.md) retains
 the CS1 call-site snapshot and records CS2 closure for the next consolidation.
 
 Implemented behaviour:
@@ -2502,7 +2502,7 @@ SciPy 1.18.0, pytest 9.1.1, stonerplots 1.9.8):
   tested modules. No lower-dependency, separate Python 3.12 or hosted-CI result is
   claimed; no commit, push or release is part of this batch.
 
-The [active audit](maintenance/column-schema-audit.md) now records this composed
+The [active audit](../../../maintenance/column-schema-audit.md) now records this composed
 baseline and the discovered fitting publication path. Next bounded task: CS4.
 Build the isolated custom Index experiment against this schema/role interface,
 using the same masks, IDs, matching/cardinality and lifecycle tests. Compare total
@@ -2511,7 +2511,7 @@ ownership/propagation complexity before any production Index decision in CS5.
 
 ### CS4 handover (2026-10-27)
 
-The runnable [isolated prototype](maintenance/column_index_prototype/README.md)
+The runnable [isolated prototype](../../../maintenance/column_index_prototype/README.md)
 compares the actual CS3 `DataOwner` with `IndexOwner`, using the same immutable
 ColumnSchema algorithms, CS2 resolver, fixture packages and production numerical
 owner machinery. `ColumnIndex` is a real pandas Index subclass installed on

@@ -1,5 +1,5 @@
 {
-  "reason": "Stage 5 removes legacy Data plot methods, PlotMixin and template classes; see PLOTTING_REFACTOR_PLAN.md.",
+  "reason": "The plotting redesign removed legacy Data plot methods, PlotMixin and template classes; see doc/UserGuide/plot_migration.rst.",
   "objects": [
     "Stoner.core.data.Data.colormap_xyz",
     "Stoner.core.data.Data.contour_xyz",

@@ -8,8 +8,8 @@ reports in the source tree.
 The initial repository repair programme is complete. Its Phase 0-7 records are
 available in Git history at `0e52ec459`; for example,
 `git show 0e52ec459:MAINTENANCE_PLAN.md`. The current release preparation is listed
-below. Repository conventions remain in [AGENTS.md](AGENTS.md), with contributor
-commands in [the developer guide](doc/UserGuide/developer.rst).
+below. Repository conventions remain in [AGENTS.md](../AGENTS.md), with contributor
+commands in [the developer guide](../doc/UserGuide/developer.rst).
 
 ## For each change
 
@@ -25,7 +25,7 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
   changes. Use real scientific fixtures where format interpretation is involved.
   Fixture paths must match the capitalisation in `git ls-files`.
 - Update docstrings and examples with public behaviour changes. Follow
-  [DOCSTRING_STYLE.md](DOCSTRING_STYLE.md), including British English prose.
+  [DOCSTRING_STYLE.md](../doc/development/DOCSTRING_STYLE.md), including British English prose.
 - Inspect the diff and whitespace, then stage only intended changes. Record tests
   and any limits of validation in the commit or pull request. Check hosted results
   after pushing; local passes do not establish remote or physical compatibility.
@@ -56,7 +56,7 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
 - Review pinned GitHub Actions, runner availability, permissions and build tools.
   Update `maintenance/check-ci-config.py` when an agreed CI policy changes.
 - Run the CI and repository-content checks described in
-  [maintenance/README.md](maintenance/README.md). Review package discovery after
+  [maintenance/README.md](README.md). Review package discovery after
   changing layout, resources or packaging configuration.
 - Check source-tree growth. Keep runtime assets, scientific fixtures and
   `doc/plot_cache`; keep local logs, environment snapshots, builds and profiling
@@ -120,17 +120,17 @@ commands in [the developer guide](doc/UserGuide/developer.rst).
 
 ## Planned API work
 
-- [ ] Follow [RELEASE_0_12_PLAN.md](RELEASE_0_12_PLAN.md): API lock before beta,
+- [ ] Follow [RELEASE_0_12_PLAN.md](../doc/development/plans/RELEASE_0_12_PLAN.md): API lock before beta,
   allowing only small compatible additions, then full API freeze/bug fixes only
   for RC. Review cumulative 0.11 breakage, migration and the final version series
   before the lock. Existing alpha tags remain immutable.
-- [ ] Follow [STRING_ENUM_PLAN.md](STRING_ENUM_PLAN.md) for public string-valued
+- [ ] Follow [STRING_ENUM_PLAN.md](../doc/development/plans/STRING_ENUM_PLAN.md) for public string-valued
   choice arguments. Start with fitting outputs, retain supported string calls,
   and audit unrelated domains in bounded compatibility-preserving batches.
-- [ ] Follow [DATA_ACCESSOR_PLAN.md](DATA_ACCESSOR_PLAN.md) for the reviewed
+- [ ] Follow [DATA_ACCESSOR_PLAN.md](../doc/development/plans/DATA_ACCESSOR_PLAN.md) for the reviewed
   candidate accessor groups and their ownership boundaries. Fitting is the first
   implemented group; the other groups remain future-work proposals.
-- [ ] Implement [FIT_ACCESSOR_PLAN.md](FIT_ACCESSOR_PLAN.md) in bounded batches:
+- [ ] Implement [FIT_ACCESSOR_PLAN.md](../doc/development/plans/FIT_ACCESSOR_PLAN.md) in bounded batches:
   snake_case model registry, registration through the existing `make_model`
   decorator, `Data.fit`, consumer/folder migration, documentation and validation.
   Settle the explicitly proposed compatibility/default choices before coding them.
@@ -463,8 +463,8 @@ reviewed inference/test-utility advisories did not block the alpha.
 ## Known limitations and follow-ups
 
 - [ ] **Column schema and setas consolidation:** implement the staged
-  [follow-on plan](STORAGE_MIGRATION_PLAN.md#column-schema-and-setas-consolidation-2026-10-27).
-  CS1's [caller/cardinality audit](maintenance/column-schema-audit.md) and CS2's
+  [follow-on plan](../doc/development/plans/STORAGE_MIGRATION_PLAN.md#column-schema-and-setas-consolidation-2026-10-27).
+  CS1's [caller/cardinality audit](column-schema-audit.md) and CS2's
   all-match selection, explicit `first=True`, matching precedence and caller
   migrations and CS3's composed schema/shared role logic are complete locally.
   CS4's isolated Index comparison is complete on pandas 2.2.3 and 3.0.5.
@@ -500,7 +500,7 @@ reviewed inference/test-utility advisories did not block the alpha.
 
 - [x] **Scientific script API alignment:** all eleven Python scripts now use
   current plotting/storage interfaces and import-safe entry points where
-  standalone. See [the script guide](scripts/README.md). Real-data and controlled
+  standalone. See [the script guide](../scripts/README.md). Real-data and controlled
   regressions cover fitting, masks, reductions, GenX handoff and one-point BNL
   import. Local py314 validation passes 1,359 tests with three expected failures
   for issue #41 below. Fresh cached docs have 62 reviewed warnings, zero unexpected
@@ -522,8 +522,8 @@ reviewed inference/test-utility advisories did not block the alpha.
   Historical release results above retain their original expected-failure counts.
 
 - [x] **Plotting redesign (stages 0-6 complete):** see
-  [PLOTTING_REFACTOR_PLAN.md](PLOTTING_REFACTOR_PLAN.md) and the
-  [release notes](doc/release-notes.rst). Stage 5 is committed as `8d6b49b93`;
+  [plot migration guide](../doc/UserGuide/plot_migration.rst) and the
+  [release notes](../doc/release-notes.rst). Stage 5 is committed as `8d6b49b93`;
   stage 6 fixes as `855f37010` and `33b36ec81` on the pushed feature branch.
   The full Linux 3.12-3.14/macOS 3.14 matrix passes 1,327 tests per job; lower
   dependencies pass 1,326 with one expected skip. Both installed wheel/sdist
@@ -538,21 +538,21 @@ reviewed inference/test-utility advisories did not block the alpha.
   Audit runnable samples/scripts and correct guide FFT/semilog calls, cookbook
   vector descriptions and FMR annotation coordinates. Include the previously
   skipped main-guarded FMR workflow in rendered-example tests. See the
-  [post-migration handover](PLOTTING_REFACTOR_PLAN.md#post-migration-extension-offsetplots-25-october-2026)
-  for validation and the local preview; released in 0.12.0a3.
+  [layout guide](../doc/UserGuide/plot_layouts.rst) for usage and the release
+  results above for validation; released in 0.12.0a3.
 
 - [x] **DoubleXAxis/DoubleXYAxis integration (25 October 2026):** expose the
   stonerplots 1.9.8 contexts alongside DoubleYAxis, with aligned dependency
   manifests, guide/API documentation, a cached example and integration tests.
-  See the [plotting handover](PLOTTING_REFACTOR_PLAN.md#post-migration-extension-doublexaxis-and-doublexyaxis-25-october-2026).
+  See the [layout guide](../doc/UserGuide/plot_layouts.rst).
   Released in 0.12.0a3 with the OffsetPlots changes.
 
 - [x] **Style wrapper and examples (25 October 2026):** `Data.plot.style` now
   accepts SavedFigure-style comma-separated names and `extra=` overrides,
   retaining native dictionaries, mixed lists, files and `after_reset`. Update
   eleven examples and the guide/API documentation. See the
-  [plotting handover](PLOTTING_REFACTOR_PLAN.md#post-migration-extension-style-names-and-overrides-25-october-2026)
-  for validation; released in 0.12.0a3.
+  [layout guide](../doc/UserGuide/plot_layouts.rst) for usage and the release
+  results above for validation; released in 0.12.0a3.
 
 - [x] **Attocube frame metadata cost:** removed the numerical export when rebinding
   the metadata owner in `ScanMetadataMixin._instantiate`, shared with MAXIMUS.
@@ -568,7 +568,7 @@ reviewed inference/test-utility advisories did not block the alpha.
   The 1024 x 1024 metadata-access benchmark
   falls from 16.068 to 0.820 ms and 20,234,538 to 195,855 traced peak bytes; these
   are operation measurements, not whole-loader/macOS timings or process RSS.
-  See [the storage handover](STORAGE_MIGRATION_PLAN.md#post-migration-scan-frame-access-2026-10-18)
+  See [the storage handover](../doc/development/plans/STORAGE_MIGRATION_PLAN.md#post-migration-scan-frame-access-2026-10-18)
   for the bounded contract, exact-revision hosted links and documentation-warning
   review. This optimisation is validated independently of the earlier plotting gates.
 
@@ -581,7 +581,7 @@ reviewed inference/test-utility advisories did not block the alpha.
   on its actual release impact rather than its complexity score.
 
 - [x] **Native storage wrappers on `devel` (Stages 1-9 complete):** see
-  [STORAGE_MIGRATION_PLAN.md](STORAGE_MIGRATION_PLAN.md) for the agreed pandas/xarray
+  [STORAGE_MIGRATION_PLAN.md](../doc/development/plans/STORAGE_MIGRATION_PLAN.md) for the agreed pandas/xarray
   architecture, validation gates and current handover. Stages 1-8 are complete:
   `Data.data` exposes its actual DataFrame; `ImageFile.image` and `ImageStack.stack`
   expose native Datasets with explicit numerical exports, selection, exclusion,

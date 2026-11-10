@@ -3,8 +3,8 @@
 This isolated experiment compares the composed CS3 `DataOwner` with an actual
 `pandas.Index` subclass installed on `DataFrame.columns`. Production Stoner never
 imports this package. The findings and measured results live in
-[the migration plan](../../STORAGE_MIGRATION_PLAN.md#cs4-handover-2026-10-27).
-[CS5 records the decision](../../STORAGE_MIGRATION_PLAN.md#cs5-decision-2026-10-28)
+[the migration plan](../../doc/development/plans/STORAGE_MIGRATION_PLAN.md#cs4-handover-2026-10-27).
+[CS5 records the decision](../../doc/development/plans/STORAGE_MIGRATION_PLAN.md#cs5-decision-2026-10-28)
 to retain CS3 composition and reject custom Index adoption for this consolidation.
 Retain this prototype as executable evidence; it does not enable a backend,
 define production concatenation policy or create an integration backlog.

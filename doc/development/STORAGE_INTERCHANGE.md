@@ -1,9 +1,9 @@
 # Storage interchange and ownership specification
 
-Batch 2 of [the migration plan](STORAGE_MIGRATION_PLAN.md), specified on
+Batch 2 of [the migration plan](plans/STORAGE_MIGRATION_PLAN.md), specified on
 2026-09-13. This document defines the target contract for the batch 3 prototype
 and subsequent migration. Batch 3 exercised their ownership rules in an isolated
-[prototype](maintenance/storage_prototype/README.md). Stages 4-6 now implement
+[prototype](../../maintenance/storage_prototype/README.md). Stages 4-6 now implement
 the production owners: ordinary Data construction uses pandas storage, while
 images and stacks use xarray storage. Exported packages preserve stable identities.
 Stage 6e removes the old array subclasses and their storage fallback paths.
@@ -11,7 +11,7 @@ Current behaviour remains recorded in [STORAGE_CONTRACTS.md](STORAGE_CONTRACTS.m
 Completion of this specification does not establish backend correctness or speed.
 
 Stage 7 validation is complete. The expanded
-[Stage 8 plan](STORAGE_MIGRATION_PLAN.md#stage-8-selection-and-masking-contract)
+[Stage 8 plan](plans/STORAGE_MIGRATION_PLAN.md#stage-8-selection-and-masking-contract)
 defines native public storage, explicit per-operation selections and persistent
 recoverable exclusions. Stage 8a below settles labels, alignment and direct
 mutation rules. Stage 8c/8d now expose actual ordinary backend objects at

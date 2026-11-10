@@ -122,8 +122,8 @@ public choice enum and should not be changed merely because its name matches.
 
 ## Planned image accessor choices
 
-The image sequence is [plot](IMAGE_PLOT_ACCESSOR_PLAN.md), then
-[ROI](IMAGE_ROI_ACCESSOR_PLAN.md), then [fit](IMAGE_FIT_ACCESSOR_PLAN.md).
+The implemented image accessors are [plot](../../UserGuide/image_plotting.rst),
+[ROI](../../UserGuide/image_roi.rst) and [fit](../../UserGuide/image_fitting.rst).
 Plotting establishes `CoordinateMode` (native coordinates or explicit pixel
 indices) for all three. Fitting adds `BackgroundReference` (zero or fitted-region
 mean, with a finite numeric reference as a separate accepted argument type).

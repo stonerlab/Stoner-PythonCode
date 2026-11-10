@@ -14,7 +14,8 @@ Storage migration primitives
 On the migration branch, ``Stoner.core.storage`` supplies ``Column``,
 ``DataStorage`` and ``resolve_columns``. Ordinary ``Data(...)``, ``Data.load``
 and the explicit import factories now construct frame-backed objects. Consult
-``STORAGE_MIGRATION_PLAN.md`` and ``STORAGE_INTERCHANGE.md`` in the repository
+``doc/development/plans/STORAGE_MIGRATION_PLAN.md`` and
+``doc/development/STORAGE_INTERCHANGE.md`` in the repository
 for the current integration gate.
 
 ``Stoner.core.column_schema.ColumnSchema`` is the internal immutable, ordered
@@ -301,9 +302,9 @@ General contribution checks
 Start with the repository's `AGENTS.md
 <https://github.com/stonerlab/Stoner-PythonCode/blob/stable/AGENTS.md>`_,
 `maintenance plan
-<https://github.com/stonerlab/Stoner-PythonCode/blob/stable/MAINTENANCE_PLAN.md>`_
+<https://github.com/stonerlab/Stoner-PythonCode/blob/stable/maintenance/MAINTENANCE_PLAN.md>`_
 and `docstring standard
-<https://github.com/stonerlab/Stoner-PythonCode/blob/stable/DOCSTRING_STYLE.md>`_.
+<https://github.com/stonerlab/Stoner-PythonCode/blob/stable/doc/development/DOCSTRING_STYLE.md>`_.
 They describe the checkout conventions, current work and expected Google-style
 docstrings. Preserve the scientific fixtures and the committed ``doc/plot_cache``.
 

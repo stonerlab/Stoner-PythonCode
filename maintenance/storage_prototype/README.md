@@ -1,8 +1,8 @@
 # Storage composition prototype
 
-This is batch 3 of [the storage migration plan](../../STORAGE_MIGRATION_PLAN.md).
+This is batch 3 of [the storage migration plan](../../doc/development/plans/STORAGE_MIGRATION_PLAN.md).
 It is outside `Stoner` and is not imported by production classes. `Table` and
-`Stack` exercise [the ownership specification](../../STORAGE_INTERCHANGE.md),
+`Stack` exercise [the ownership specification](../../doc/development/STORAGE_INTERCHANGE.md),
 rather than reproducing the entire public API. Retain this experiment until the
 production migration has equivalent regression and benchmark coverage.
 
