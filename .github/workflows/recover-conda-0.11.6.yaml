@@ -1,0 +1,68 @@
+name: Publish tested Conda 0.11.6 archive
+
+on:
+  push:
+    branches: [codex/conda-0.11.6-upload]
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  upload-conda:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download the tested archive
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: stoner-conda-v0.11.6
+          run-id: '46070365860'
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/verified-conda
+      - name: Verify the archive checksum
+        shell: bash
+        run: |
+          printf '%s  %s\n' adc75938eb3046dbbb36bfac3a226ac1cf651842952ada6ece46722aa7720e60 \
+            "$RUNNER_TEMP/verified-conda/stoner-0.11.6-py_1.conda" | sha256sum --check -
+      - name: Install Anaconda client
+        uses: mamba-org/setup-micromamba@f457c30a868e4760d3a6fcea5f25dc655b8edf39 # v3.2.1
+        with:
+          environment-name: conda-upload
+          create-args: >-
+            python=3.12 anaconda-client --override-channels --channel conda-forge
+          init-shell: bash
+      - name: Publish to phygbu main
+        shell: bash -l {0}
+        env:
+          ANACONDA_API_TOKEN: ${{ secrets.ANACONDA }}
+        run: |
+          set -euo pipefail
+          python - "$RUNNER_TEMP/verified-conda/stoner-0.11.6-py_1.conda" <<'PY'
+          import os
+          import sys
+          from urllib.parse import urlsplit
+
+          import requests
+          from binstar_client.scripts.cli import main
+
+          token = os.environ["ANACONDA_API_TOKEN"]
+          if not token:
+              raise SystemExit("The ANACONDA workflow secret is empty.")
+
+          send = requests.Session.send
+
+          def log_status(session, request, **kwargs):
+              response = send(session, request, **kwargs)
+              if urlsplit(request.url).hostname == "api.anaconda.org":
+                  print(f"Anaconda API {request.method} returned HTTP {response.status_code}", flush=True)
+              return response
+
+          requests.Session.send = log_status
+          try:
+              main(["--verbose", "--token", token, "upload", "--user", "phygbu", "--label", "main",
+                    sys.argv[1]], allow_plugin_main=False)
+          except Exception as error:
+              message = str(error).replace(token, "[redacted]")
+              print(f"{type(error).__name__}: {message}", file=sys.stderr)
+              raise SystemExit(1) from None
+          PY
