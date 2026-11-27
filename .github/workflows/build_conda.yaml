@@ -10,7 +10,7 @@ on:
 
 jobs:
   conda_deployment_with_new_tag:
-    name: Conda deployment of package for platform ${{ matrix.os }} with Python ${{ matrix.python-version }}
+    name: Conda deployment (Python 3.12)
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -31,15 +31,34 @@ jobs:
         env:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: python maintenance/check-release-version.py --tag "$RELEASE_TAG"
-      - name: Build and upload the conda packages
-        uses: uibcdf/action-build-and-upload-conda-packages@aac1ccb14aa0d4d43a0b10c18b17c5285a746544 # v1.5.0
-        with:
-          meta_yaml_dir: recipe
-          overwrite: true
-          python-version: "3.12"
-          user: phygbu
-          label: main
-          token: ${{ secrets.ANACONDA }} # Replace with the right name of your secret
+      - name: Build and test Conda package
+        id: conda_build
+        shell: bash -l {0}
+        run: |
+          set -euo pipefail
+          conda build recipe --python=3.12 --no-anaconda-upload \
+            --override-channels --channel phygbu --channel conda-forge \
+            --output-folder "$RUNNER_TEMP/stoner-conda"
+          shopt -s nullglob
+          packages=("$RUNNER_TEMP/stoner-conda/noarch/"*.conda)
+          if [[ "${#packages[@]}" -ne 1 ]]; then
+            echo "::error::Expected one Conda archive, found ${#packages[@]}."
+            exit 1
+          fi
+          if [[ ! -s "${packages[0]}" ]]; then
+            echo "::error::The Conda archive is empty."
+            exit 1
+          fi
+          printf 'archive=%s\n' "${packages[0]}" >> "$GITHUB_OUTPUT"
+      - name: Upload Conda package
+        shell: bash -l {0}
+        env:
+          ANACONDA_API_TOKEN: ${{ secrets.ANACONDA }}
+          CONDA_ARCHIVE: ${{ steps.conda_build.outputs.archive }}
+        run: |
+          set -euo pipefail
+          test -s "$CONDA_ARCHIVE"
+          anaconda upload --user phygbu --label main --force "$CONDA_ARCHIVE"
 
   pypi_deployment:
     name: PyPI deployment of package
