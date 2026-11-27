@@ -50,6 +50,9 @@ jobs:
           python maintenance/check-release-version.py --tag "$RELEASE_TAG"
           git log -1 --format='%H %s'
       - name: Build and test Conda package
+        env:
+          QT_QPA_PLATFORM: offscreen
+          MPLBACKEND: Agg
         run: |
           set -euo pipefail
           conda build recipe --python=3.12 --no-anaconda-upload \
