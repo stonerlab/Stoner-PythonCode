@@ -73,7 +73,16 @@ jobs:
         run: |
           set -euo pipefail
           test -s "$CONDA_ARCHIVE"
-          anaconda --verbose upload --user phygbu --label main "$CONDA_ARCHIVE"
+          ANACONDA_CLIENT_FORCE_STANDALONE=1 anaconda --verbose upload --user phygbu --label main "$CONDA_ARCHIVE"
+
+      - name: Retain Conda archive if upload fails
+        if: failure() && steps.conda_build.outcome == 'success'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: stoner-conda-${{ env.RELEASE_TAG }}
+          path: ${{ steps.conda_build.outputs.archive }}
+          if-no-files-found: error
+          retention-days: 7
 
   pypi_deployment:
     name: PyPI deployment of package
