@@ -73,7 +73,7 @@ jobs:
         run: |
           set -euo pipefail
           test -s "$CONDA_ARCHIVE"
-          anaconda upload --user phygbu --label main "$CONDA_ARCHIVE"
+          anaconda --verbose upload --user phygbu --label main "$CONDA_ARCHIVE"
 
   pypi_deployment:
     name: PyPI deployment of package
