@@ -71,7 +71,8 @@ def test_kerr_ops():
 
 
 @pytest.mark.ocr
-def test_tesseract_ocr():
+def test_tesseract_ocr(monkeypatch):
+    monkeypatch.delenv("TESSDATA_PREFIX", raising=False)
     if not kerr._tesseractable or which("tesseract") is None:
         pytest.skip("Optional pytesseract wrapper and Tesseract executable are required")
     image = KerrImageFile(os.path.join(testdir, "kermit3.png"), ocr_metadata=True)
@@ -82,6 +83,7 @@ def test_tesseract_ocr():
     assert metadata["ocr_microns_per_pixel"] == pytest.approx(50.0 / 189)
     assert metadata["ocr_pixels_per_micron"] == pytest.approx(189 / 50.0)
     assert "ocr_field" not in selfimage2.metadata
+    assert "TESSDATA_PREFIX" not in os.environ
 
 
 @pytest.mark.parametrize("field_only", [False, True])

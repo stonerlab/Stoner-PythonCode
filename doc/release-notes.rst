@@ -1,6 +1,22 @@
 Release notes
 =============
 
+Unreleased
+----------
+
+- Stoner file dialogs and image clipboard actions use Matplotlib's selected Qt
+  binding. Range selection processes GUI events on the calling thread and
+  restores the previously active plot when it closes.
+- TDI 2.0 metadata preserves ``None`` and non-finite floats. Malformed metadata
+  raises the usual load error.
+- Conda test and documentation environments install matching conda-forge h5py
+  and HDF5 builds. The test matrix uses conda-forge pytest-xdist 3.8 or later.
+- Boolean TIFF round trips retain 8-bit grayscale storage and the original
+  Boolean dtype under Pillow 13. TIFFs with legacy packed RGBX pixels remain
+  readable.
+- Kerr OCR uses the bundled English language data when ``TESSDATA_PREFIX``
+  is unset.
+
 0.12.0b1 (2026-11-10)
 ---------------------
 

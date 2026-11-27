@@ -77,3 +77,29 @@ def test_loader_rejects_invalid_tdi(text):
         with pytest.raises(StonerLoadError):
             load_tdi2_format(Data(), stream)
         assert not stream.closed
+
+
+@pytest.mark.parametrize("expression", ["missing_name", "1 / 0", "[1, 2"])
+def test_loader_rejects_invalid_metadata_value(expression):
+    """Report malformed metadata through the format loader."""
+    with StringIO(f"TDI Format 2.0\tx\nentry{{float}}={expression}\t1\n") as stream:
+        with pytest.raises(StonerLoadError):
+            load_tdi2_format(Data(), stream)
+        assert not stream.closed
+
+
+def test_loader_preserves_none_and_nonfinite_metadata():
+    """Read non-finite Python float representations in scalar and tuple metadata."""
+    with StringIO(
+        "TDI Format 2.0\tx\n"
+        "empty{NoneType}=None\t1\n"
+        "missing{float}=nan\t2\n"
+        "limits{tuple}=(-inf, inf)\t3\n"
+        "label{str}='nan'\t4\n"
+    ) as stream:
+        loaded = load_tdi2_format(Data(), stream)
+        assert not stream.closed
+    assert loaded["empty"] is None
+    assert np.isnan(loaded["missing"])
+    assert loaded["limits"] == (-np.inf, np.inf)
+    assert loaded["label"] == "nan"

@@ -19,7 +19,9 @@ dependencies:
   # Required runtime dependencies for autodoc imports
   - asteval
   - chardet >=5.2.0
-  - h5py
+  # Keep the compiled extension and its HDF5 library on the same channel.
+  - conda-forge::h5py
+  - conda-forge::hdf5
   - lmfit >=1.3
   - looseversion >=1.0
   - matplotlib >=3.8

@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-"""Creat File dialog boxes using the PyQt5 module.
+"""Create file dialog boxes using Matplotlib's selected Qt binding.
 
 Code based on the PyQt5 Tutorial code,
 """
 
 __all__ = ["file_dialog"]
 import pathlib
+from time import sleep
 from typing import Any, Dict, Optional, Type, Union
 
 import matplotlib.pyplot as plt
@@ -18,18 +19,14 @@ from ..compat import mpl_version
 # Retain the established public Qt binding indicator used by clients and widgets.
 QT_VERSION = None  # pylint: disable=invalid-name
 try:
-    from PyQt5.QtWidgets import QApplication, QFileDialog, QWidget
+    from matplotlib.backends.qt_compat import QtCore, QtWidgets
 
-    QT_VERSION = 5  # pylint: disable=invalid-name
+    QApplication = QtWidgets.QApplication
+    QFileDialog = QtWidgets.QFileDialog
+    QWidget = QtWidgets.QWidget
+    QT_VERSION = int(QtCore.qVersion().split(".", 1)[0])  # pylint: disable=invalid-name
 except ImportError:
     pass
-if QT_VERSION is None:
-    try:
-        from PyQt6.QtWidgets import QApplication, QFileDialog, QWidget  # noQA
-
-        QT_VERSION = 6  # pylint: disable=invalid-name
-    except ImportError:
-        pass
 if QT_VERSION is None:
 
     class App:
@@ -44,13 +41,13 @@ if QT_VERSION is None:
             patterns: Optional[Dict] = None,
             mode: str = "OpenFile",
         ) -> Optional[pathlib.Path]:
-            """Raise and error because PyQT5 not present."""
-            raise ValueError("Cammpt open a dialog box because PqQt5 library missing!")
+            """Raise an error because no supported Qt binding is present."""
+            raise ValueError("Cannot open a dialog box because a supported Qt library is missing!")
 
 else:
 
     class App(QApplication):
-        """Placehold PyQT5 Application for producing filedialog boxes."""
+        """Qt application for producing file dialog boxes."""
 
         modes = {
             "OpenFile": {
@@ -207,8 +204,12 @@ class RangeSelect:
                 kwargs = {"rectprops": {"edgecolor": col, "facecolor": col, "alpha": 0.5}}
             self.selector = SpanSelector(self.ax, self.onselect, "horizontal", useblit=True, **kwargs)
             fig.canvas.mpl_connect("key_press_event", self.keypress)
+            # Process GUI events without repeatedly creating Qt event loops.
+            fig.canvas.draw_idle()
+            fig.show()
             while not self.finished:
-                plt.pause(0.1)
+                fig.canvas.flush_events()
+                sleep(0.1)
         finally:
             plt.close(fig)
             self.data.__dict__.pop("_plot_state", None)

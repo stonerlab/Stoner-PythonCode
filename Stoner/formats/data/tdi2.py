@@ -40,14 +40,24 @@ _ENTRY_RE = re.compile(
 )
 
 
+class _NonFiniteLiterals(ast.NodeTransformer):
+    """Recognise the names emitted by repr() for non-finite floats."""
+
+    def visit_Name(self, node):  # pylint: disable=invalid-name
+        """Replace supported names with numeric constants."""
+        if node.id in {"inf", "nan"}:
+            return ast.copy_location(ast.Constant(float(node.id)), node)
+        return node
+
+
 def _parse_entry(entry: str):
     match = _ENTRY_RE.match(entry)
     if not match:
         raise ValueError(f"Invalid entry format: {entry}")
     path, _typename, value_str = match.groups()
 
-    # Convert string to Python value safely
-    value = ast.literal_eval(value_str)
+    literal = ast.parse(value_str.lstrip(" \t"), mode="eval")
+    value = ast.literal_eval(_NonFiniteLiterals().visit(literal))
     return path, value
 
 

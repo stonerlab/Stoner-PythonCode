@@ -150,10 +150,17 @@ def _tesseract_image(kerr_im, key):
     # call tesseract
     if kerr_im.tesseractable:
         tesseract = which("tesseract")
+        tessdata = os.path.join(os.path.dirname(__file__), "tessdata")
+        environment = None
+        if "TESSDATA_PREFIX" not in os.environ and os.path.isfile(os.path.join(tessdata, "eng.traineddata")):
+            environment = dict(os.environ, TESSDATA_PREFIX=tessdata)
         with open(stdoutfile, "w", encoding="utf-8") as stdout:
             subprocess.call(  # nosec
-                [tesseract, imagefile, textfile[:-4], "--psm", "7"], stdout=stdout, stderr=subprocess.STDOUT
-            )  # adds '.txt' extension itkerr_im
+                [tesseract, imagefile, textfile[:-4], "--psm", "7"],
+                stdout=stdout,
+                stderr=subprocess.STDOUT,
+                env=environment,
+            )
         os.unlink(stdoutfile)
     with open(textfile, "r", encoding="utf-8") as tf:
         data = tf.readline()
@@ -212,6 +219,8 @@ def ocr_metadata(kerr_im, field_only=False):
     Notes:
         Requires the optional pytesseract wrapper and a Tesseract executable on
         PATH. Each text crop is recognised using single-line segmentation.
+        When TESSDATA_PREFIX is unset, Tesseract uses the bundled English
+        language data if available.
     """
     if not kerr_im.tesseractable:
         return kerr_im.metadata

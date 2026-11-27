@@ -265,14 +265,14 @@ def test_save(tmp_path):
 
 @pytest.mark.parametrize("forcetype", [False, True])
 def test_savetiff(tmp_path, forcetype):
-    testfile = str(tmp_path / "testsave.tiff")
     # create a few different data types
     testb = ImageFile(np.zeros((4, 5), dtype=bool))  # bool
     testb[0, :] = True
     testui = ImageFile(np.arange(20).reshape(4, 5))  # int32
     testi = ImageFile(np.copy(testui) - 10)
     testf = ImageFile(np.linspace(-1, 1, 20).reshape(4, 5))  # float64
-    for im in [testb, testui, testi, testf]:
+    for index, im in enumerate([testb, testui, testi, testf]):
+        testfile = str(tmp_path / f"testsave-{index}.tiff")
         im["a"] = [1, 2, 3]
         im["b"] = "abc"  # add some test metadata
         im.filename = testfile
@@ -280,10 +280,7 @@ def test_savetiff(tmp_path, forcetype):
         if im.dtype.kind == "b":
             with Image.open(testfile) as stored:
                 assert stored.mode == "L"
-                pixels = np.array(stored)
-                # Release Pillow's TIFF memory map before this filename is reused on Windows.
-                stored.close()
-            np.testing.assert_array_equal(pixels, im.to_numpy().astype("uint8"))
+                np.testing.assert_array_equal(np.asarray(stored), im.to_numpy().astype(np.uint8))
         n = ImageFile(testfile)
         assert all([n["a"][i] == im["a"][i] for i in range(len(n["a"]))])
         assert n["b"] == im["b"]

@@ -362,12 +362,12 @@ def test_errorfill_zero_and_two_sample_asymmetric_errors(errors):
 
 
 def test_range_selector_restores_recent_plot_and_closes_only_its_figure(measurements, monkeypatch):
-    from Stoner.tools.widgets import RangeSelect
+    from Stoner.tools import widgets
 
     previous = measurements.plot.line(y=1)
     other = plt.figure()
-    selector = RangeSelect()
-    monkeypatch.setattr(plt, "pause", lambda delay: setattr(selector, "finished", True))
+    selector = widgets.RangeSelect()
+    monkeypatch.setattr(widgets, "sleep", lambda delay: setattr(selector, "finished", True))
     selector(measurements, 0, 0.0)
     assert measurements.plot.ax is previous and plt.gcf() is other
     assert set(plt.get_fignums()) == {previous.figure.number, other.number}
