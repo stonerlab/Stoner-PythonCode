@@ -3,21 +3,36 @@ name: Conda
 
 on:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing release tag to build and publish
+        required: true
+        type: string
+      target:
+        description: Registry to publish
+        required: true
+        default: conda
+        type: choice
+        options: [conda, pypi, all]
   release:
     types: ['released', 'prereleased']
 
-# workflow_dispatch:        # Un comment line if you also want to trigger action manually
+env:
+  RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
 
 jobs:
   conda_deployment_with_new_tag:
     name: Conda deployment (Python 3.12)
+    if: github.event_name == 'release' || inputs.target != 'pypi'
     runs-on: ubuntu-latest
     permissions:
       contents: read
 
     steps:
-      - name: Checkout
+      - name: Checkout release tag
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: refs/tags/${{ env.RELEASE_TAG }}
       - name: Conda environment creation and activation
         uses: mamba-org/setup-micromamba@f457c30a868e4760d3a6fcea5f25dc655b8edf39 # v3.2.1
         with:
@@ -26,14 +41,14 @@ jobs:
           create-args: python=3.12
           init-shell: bash
       - name: Check release version
-        if: github.event_name == 'release'
         shell: bash -l {0}
-        env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: python maintenance/check-release-version.py --tag "$RELEASE_TAG"
       - name: Build and test Conda package
         id: conda_build
         shell: bash -l {0}
+        env:
+          QT_QPA_PLATFORM: offscreen
+          MPLBACKEND: Agg
         run: |
           set -euo pipefail
           conda build recipe --python=3.12 --no-anaconda-upload \
@@ -58,25 +73,25 @@ jobs:
         run: |
           set -euo pipefail
           test -s "$CONDA_ARCHIVE"
-          anaconda upload --user phygbu --label main --force "$CONDA_ARCHIVE"
+          anaconda upload --user phygbu --label main "$CONDA_ARCHIVE"
 
   pypi_deployment:
     name: PyPI deployment of package
+    if: github.event_name == 'release' || inputs.target != 'conda'
     runs-on: ubuntu-latest
     permissions:
       contents: read
 
     steps:
-      - name: Checkout
+      - name: Checkout release tag
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: refs/tags/${{ env.RELEASE_TAG }}
       - name: Set up Python
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: "3.12"
       - name: Check release version
-        if: github.event_name == 'release'
-        env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: python maintenance/check-release-version.py --tag "$RELEASE_TAG"
       - name: Install build tools
         run: pip install build==1.2.2
