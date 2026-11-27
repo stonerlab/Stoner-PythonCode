@@ -13,12 +13,14 @@ dependencies:
   - pytest
   - pytest-cov
   - pytest-forked
-  - pytest-xdist
+  - conda-forge::pytest-xdist >=3.8
 
   # Required runtime dependencies (keep aligned with recipe/meta.yaml)
   - asteval
   - chardet >=5.2.0
-  - h5py
+  # Keep the compiled extension and its HDF5 library on the same channel.
+  - conda-forge::h5py
+  - conda-forge::hdf5
   - lmfit >=1.3
   - looseversion >=1.0
   - matplotlib >=3.8

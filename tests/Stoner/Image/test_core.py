@@ -90,14 +90,19 @@ def test_load_save_all(tmp_path):
     image = ImageFile(path.join(datadir, "kermit.png"))
     ims = {}
     fmts = ["uint8", "uint16", "uint32", "float32"]
-    modes = {"uint8": "L", "uint32": "RGBX", "float32": "F"}
     for fmt in fmts:
         ims[fmt] = image.clone.convert(fmt)
         ims[fmt].save_tiff(path.join(tmpdir, "kermit-{}.tiff".format(fmt)))
         ims[fmt].save_tiff(path.join(tmpdir, "kermit-forcetype{}.tiff".format(fmt)), forcetype=True)
         ims[fmt].save_npy(path.join(tmpdir, "kermit-{}.npy".format(fmt)))
         if fmt != "uint16":
-            im = Image.fromarray((ims[fmt].image.view(np.ndarray)).astype(fmt), mode=modes[fmt])
+            pixels = np.asarray(ims[fmt].image)
+            if fmt == "uint32":
+                # The legacy TIFF stores each uint32 pixel as four RGBX bytes.
+                height, width = pixels.shape
+                im = Image.frombytes("RGBX", (width, height), pixels.tobytes())
+            else:
+                im = Image.fromarray(pixels)
             im.save(path.join(tmpdir, "kermit-nometadata-{}.tiff".format(fmt)))
         del ims[fmt]["Loaded from"]
     for fmt in fmts:
@@ -260,19 +265,24 @@ def test_save(tmp_path):
         os.remove(testfile + e)  # tidy up
 
 
-def test_savetiff(tmp_path):
-    testfile = str(tmp_path / "testsave.tiff")
+@pytest.mark.parametrize("forcetype", [False, True])
+def test_savetiff(tmp_path, forcetype):
     # create a few different data types
     testb = ImageArray(np.zeros((4, 5), dtype=bool))  # bool
     testb[0, :] = True
     testui = ImageArray(np.arange(20).reshape(4, 5))  # int32
     testi = ImageArray(np.copy(testui) - 10)
     testf = ImageArray(np.linspace(-1, 1, 20).reshape(4, 5))  # float64
-    for im in [testb, testui, testi, testf]:
+    for index, im in enumerate([testb, testui, testi, testf]):
+        testfile = str(tmp_path / f"testsave-{index}.tiff")
         im["a"] = [1, 2, 3]
         im["b"] = "abc"  # add some test metadata
         im.filename = testfile
-        im.save()
+        im.save(forcetype=forcetype)
+        if im.dtype.kind == "b":
+            with Image.open(testfile) as saved:
+                assert saved.mode == "L"
+                np.testing.assert_array_equal(np.asarray(saved), np.asarray(im, dtype=np.uint8))
         n = ImageArray(testfile)
         assert all([n["a"][i] == im["a"][i] for i in range(len(n["a"]))])
         assert n["b"] == im["b"]
