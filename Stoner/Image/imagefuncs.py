@@ -80,8 +80,10 @@ from .util import _supported_types, dtype_range, prec_loss, sign_loss
 from .widgets import LineSelect
 
 try:
-    from PyQt5.QtGui import QImage
-    from PyQt5.QtWidgets import QApplication
+    from matplotlib.backends.qt_compat import QtGui, QtWidgets
+
+    QImage = QtGui.QImage
+    QApplication = QtWidgets.QApplication
 except ImportError:
     QImage = None
     QApplication = None
@@ -731,7 +733,7 @@ def imshow(
     except IndexError:
         pass
 
-    if QImage is None:  # No Qt5
+    if QImage is None:  # No supported Qt binding
         return fig
 
     def add_figure_to_clipboard(event):

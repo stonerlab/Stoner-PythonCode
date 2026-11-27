@@ -8,7 +8,7 @@ and it uses Python type names rather than LabVIEW type descriptors.
 """
 
 import re
-import ast
+from asteval import Interpreter
 from typing import Any, Union
 from pathlib import Path
 
@@ -39,6 +39,7 @@ _ENTRY_RE = re.compile(
     re.VERBOSE,
 )
 
+literal_eval = Interpreter()
 
 def _parse_entry(entry: str):
     match = _ENTRY_RE.match(entry)
@@ -47,7 +48,10 @@ def _parse_entry(entry: str):
     path, _typename, value_str = match.groups()
 
     # Convert string to Python value safely
-    value = ast.literal_eval(value_str)
+    try:
+        value = literal_eval(value_str, show_errors=False, raise_errors=True)
+    except Exception as err:
+        raise ValueError(f"Invalid metadata value: {value_str}") from err
     return path, value
 
 

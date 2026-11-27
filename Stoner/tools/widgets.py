@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-"""Creat File dialog boxes using the PyQt5 module.
+"""Create file dialog boxes using Matplotlib's selected Qt binding.
 
 Code based on the PyQt5 Tutorial code,
 """
 
 __all__ = ["file_dialog"]
 import pathlib
+from time import sleep
 from typing import Any, Dict, Optional, Type, Union
 
 import matplotlib.pyplot as plt
@@ -17,18 +18,16 @@ from ..compat import mpl_version
 
 QT_VERSION = None
 try:
-    from PyQt5.QtWidgets import QApplication, QFileDialog, QWidget
+    # Share Matplotlib's binding selection, including QT_API and existing imports.
+    # Importing PyQt5 independently can create a second, incompatible QApplication.
+    from matplotlib.backends.qt_compat import QtCore, QtWidgets
 
-    QT_VERSION = 5
+    QApplication = QtWidgets.QApplication
+    QFileDialog = QtWidgets.QFileDialog
+    QWidget = QtWidgets.QWidget
+    QT_VERSION = int(QtCore.qVersion().split(".")[0])
 except ImportError:
     pass
-if QT_VERSION is None:
-    try:
-        from PyQt6.QtWidgets import QApplication, QFileDialog, QWidget  # noQA
-
-        QT_VERSION = 6
-    except ImportError:
-        pass
 if QT_VERSION is None:
 
     class App:
@@ -43,13 +42,13 @@ if QT_VERSION is None:
             patterns: Optional[Dict] = None,
             mode: str = "OpenFile",
         ) -> Optional[pathlib.Path]:
-            """Raise and error because PyQT5 not present."""
-            raise ValueError("Cammpt open a dialog box because PqQt5 library missing!")
+            """Raise an error because no supported Qt binding is present."""
+            raise ValueError("Cannot open a dialog box because a supported Qt library is missing!")
 
 else:
 
     class App(QApplication):
-        """Placehold PyQT5 Application for producing filedialog boxes."""
+        """Qt application for producing file dialog boxes."""
 
         modes = {
             "OpenFile": {
@@ -202,8 +201,13 @@ class RangeSelect:
             **kwargs,
         )
         fig.canvas.mpl_connect("key_press_event", self.keypress)
+        # Process events without repeatedly creating Qt event loops. On Windows,
+        # plt.pause() can crash while disposing of its SIGINT socket notifier.
+        fig.canvas.draw_idle()
+        fig.show()
         while not self.finished:
-            plt.pause(0.1)
+            fig.canvas.flush_events()
+            sleep(0.1)
         # Clean up and restore the figure settings
         plt.close(self.data.fig.number)
         if fig_tmp[0] is not None and fig_tmp[0] in plt.get_fignums():

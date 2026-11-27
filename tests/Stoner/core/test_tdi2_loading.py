@@ -77,3 +77,20 @@ def test_loader_rejects_invalid_tdi(text):
         with pytest.raises(StonerLoadError):
             load_tdi2_format(Data(), stream)
         assert not stream.closed
+
+
+@pytest.mark.parametrize("expression", ["missing_name", "1 / 0", "[1, 2"])
+def test_loader_rejects_invalid_metadata_value(expression):
+    """Reject evaluator errors rather than storing None or entering a debugger."""
+    with StringIO(f"TDI Format 2.0\tx\nentry{{float}}={expression}\t1\n") as stream:
+        with pytest.raises(StonerLoadError):
+            load_tdi2_format(Data(), stream)
+        assert not stream.closed
+
+
+def test_loader_preserves_none_and_nan_metadata():
+    """Distinguish valid None and non-finite values from evaluator failures."""
+    with StringIO("TDI Format 2.0\tx\nempty{NoneType}=None\t1\nmissing{float}=nan\t2\n") as stream:
+        loaded = load_tdi2_format(Data(), stream)
+    assert loaded["empty"] is None
+    assert np.isnan(loaded["missing"])

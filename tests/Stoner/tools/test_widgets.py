@@ -6,8 +6,6 @@ Created on Sun Apr 19 12:04:58 2020
 """
 
 import sys
-import threading
-import time
 
 import numpy as np
 import pytest
@@ -107,29 +105,22 @@ def _event(data, name, **kwargs):
     event = Event("fake", select.data.fig.canvas)
     for k, v in kwargs.items():
         setattr(event, k, v)
-    try:
-        getattr(select, name)(event)
-    except Exception:
-        breakpoint()
-        pass
+    getattr(select, name)(event)
 
 
 def _trigger0(data):
-    time.sleep(1)
     select = data._select
     select.onselect(50, 100)
     _event(data, "keypress", key="escape")
 
 
 def _trigger1(data):
-    time.sleep(1)
     select = data._select
     select.onselect(50, 100)
     _event(data, "keypress", key="enter")
 
 
 def _trigger2(data):
-    time.sleep(1)
     select = data._select
     select.onselect(50, 100)
     select.onselect(150, 200)
@@ -138,20 +129,23 @@ def _trigger2(data):
     _event(data, "keypress", key="enter")
 
 
-def test_range_select():
+def test_range_select(monkeypatch):
+    """Deliver selections on the GUI thread at the selector's polling boundary."""
     data = Stoner.Data(ret_pth, setas="xy")
-    thread = threading.Thread(target=_trigger0, args=(data,))
-    thread.start()
+    interactions = iter([_trigger0, _trigger1, _trigger2])
+
+    def interact(interval):
+        # Worker threads must not modify Matplotlib artists or draw Qt canvases.
+        # No wall-clock delay or race with construction of the selector is needed.
+        next(interactions)(data)
+
+    monkeypatch.setattr(widgets, "sleep", interact)
     result = data.search()
     xmin, xmax = result.x.min(), result.x.max()
     assert xmin < 4.4 and xmax > 291, "Failed to select and clear"
-    thread = threading.Thread(target=_trigger1, args=(data,))
-    thread.start()
     result = data.search()
     xmin1, xmax1 = result.x.min(), result.x.max()
     assert np.isclose(xmin1, 50, atol=1) and np.isclose(xmax1, 100, 1), "Single selection failed."
-    thread = threading.Thread(target=_trigger2, args=(data,))
-    thread.start()
     result = data.search()
     xmin2, xmax2 = result.x.min(), result.x.max()
     assert np.isclose(xmin, xmin2) and np.isclose(xmax, xmax2), "Selection with keypresses failed"
